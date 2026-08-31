@@ -1,0 +1,21 @@
+{
+  "name": "@package/env",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./server": "./src/server.ts",
+    "./mobile": "./src/mobile.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^20.19.43",
+    "typescript": "^7.0.2"
+  }
+}
