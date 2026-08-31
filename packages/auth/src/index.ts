@@ -1,11 +1,14 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { expo } from "@better-auth/expo";
+import { env } from "@package/env/server";
 import { openAPI } from "better-auth/plugins";
 import { db } from "@repo/database";
 import { authI18n } from "./i18n.ts";
 
 export const auth = betterAuth({
+  baseURL: env.BETTER_AUTH_URL,
+  secret: env.BETTER_AUTH_SECRET,
   plugins: [openAPI(), expo(), authI18n],
   emailAndPassword: {
     enabled: true,
@@ -18,7 +21,7 @@ export const auth = betterAuth({
     "localhost:*",
 
     // Development mode - Expo's exp:// scheme with local IP ranges
-    ...(process.env.NODE_ENV === "development"
+    ...(env.NODE_ENV === "development"
       ? [
           "exp://", // Trust all Expo URLs (prefix matching)
           "exp://**", // Trust all Expo URLs (wildcard matching)
