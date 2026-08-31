@@ -1,8 +1,9 @@
 import { i18n } from "@better-auth/i18n";
 
 export const authI18n = i18n({
+  defaultLocale: "pt",
   translations: {
-    "pt-BR": {
+    pt: {
       USER_NOT_FOUND: "Usuário não encontrado",
       FAILED_TO_CREATE_USER: "Falha ao criar usuário",
       FAILED_TO_UPDATE_USER: "Falha ao atualizar usuário",
