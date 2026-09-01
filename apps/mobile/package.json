@@ -5,6 +5,7 @@
   "scripts": {
     "env:load": "dotenv -e ../../.env --",
     "dev": "pnpm env:load expo start --clear --offline",
+    "dev:tunnel": "pnpm env:load expo start --clear --tunnel",
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
