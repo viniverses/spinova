@@ -1,6 +1,7 @@
 import { i18n } from "@better-auth/i18n";
+import type { BetterAuthPlugin } from "better-auth";
 
-export const authI18n = i18n({
+export const authI18n: BetterAuthPlugin = i18n({
   defaultLocale: "pt",
   translations: {
     pt: {
