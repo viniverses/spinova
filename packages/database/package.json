@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./query": "./src/query.ts",
     "./schema": "./src/schema/index.ts"
   },
   "scripts": {
@@ -13,6 +14,7 @@
     "db:push": "pnpm env:load drizzle-kit push",
     "db:generate": "pnpm env:load drizzle-kit generate",
     "db:migrate": "pnpm env:load drizzle-kit migrate",
+    "db:seed": "pnpm env:load node src/seed.ts",
     "db:studio": "pnpm env:load drizzle-kit studio"
   },
   "dependencies": {
