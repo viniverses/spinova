@@ -1,5 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Pressable } from "react-native";
+import { colors } from "../../lib/theme";
 
 type PasswordVisibilityToggleProps = {
   visible: boolean;
@@ -24,7 +25,7 @@ export const PasswordVisibilityToggle = ({
     <Ionicons
       name={visible ? "eye-off-outline" : "eye-outline"}
       size={22}
-      color="#E14842"
+      color={colors.primary.DEFAULT}
       accessible={false}
     />
   </Pressable>

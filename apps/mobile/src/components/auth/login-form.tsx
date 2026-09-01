@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { authClient } from "../../lib/auth-client";
+import { colors } from "../../lib/theme";
 import { loginSchema, type LoginFormValues } from "../../schemas/auth/login";
 import { TextInput } from "../ui/textinput";
 import { PasswordVisibilityToggle } from "./password-visibility-toggle";
@@ -167,7 +168,7 @@ export const LoginForm = () => {
         accessibilityState={{ disabled: busy, busy }}
       >
         {busy ? (
-          <ActivityIndicator color="#211719" />
+          <ActivityIndicator color={colors.primary.foreground} />
         ) : (
           <Text className="font-golos-semibold text-base text-white">
             Entrar
