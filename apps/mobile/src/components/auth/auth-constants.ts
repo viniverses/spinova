@@ -14,18 +14,17 @@ export const AUTH_COLUMN_IMAGES: {
   col3: ImageSourcePropType[];
 } = {
   col1: [
-    require("../../../assets/albums/4.png"),
-    require("../../../assets/albums/2.png"),
-    require("../../../assets/albums/6.png"),
+    require("../../../assets/albums/kelela-raven.png"),
+    require("../../../assets/albums/yves-tumor-praise-a-lord-who-chews-but-which-does-not-consume-or-simply-hot-between-worlds.png"),
+    require("../../../assets/albums/the-xx-i-see-you.png"),
   ],
   col2: [
-    require("../../../assets/albums/1.png"),
-    require("../../../assets/albums/3.png"),
-    require("../../../assets/albums/5.png"),
+    require("../../../assets/albums/caroline-polachek-desire-i-want-to-turn-into-you.png"),
+    require("../../../assets/albums/kali-uchis-red-moon-in-venus.png"),
+    require("../../../assets/albums/sza-sos.png"),
   ],
   col3: [
-    require("../../../assets/albums/7.png"),
-    require("../../../assets/albums/8.png"),
-    require("../../../assets/albums/9.png"),
+    require("../../../assets/albums/bjork-fossora.png"),
+    require("../../../assets/albums/fka-twigs-lp1.png"),
   ],
 };

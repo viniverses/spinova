@@ -1,0 +1,140 @@
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import type { ComponentProps } from "react";
+import { Pressable, ScrollView, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { authClient } from "@/lib/auth-client";
+import { useSession } from "@/hooks/use-auth";
+
+const SCROLL_BOTTOM_PADDING = 112;
+
+type ProfileAction = {
+  id: string;
+  label: string;
+  icon: ComponentProps<typeof Ionicons>["name"];
+};
+
+export default function ProfileScreen() {
+  const router = useRouter();
+  const { data: session } = useSession();
+
+  const handleLogout = async () => {
+    await authClient.signOut();
+  };
+
+  const profileActions: ProfileAction[] = [
+    { id: "orders", label: "Seus pedidos", icon: "checkmark-circle-outline" },
+    { id: "account", label: "Sua conta", icon: "person-outline" },
+    { id: "wishlist", label: "Lista de desejos", icon: "heart-outline" },
+    { id: "coupons", label: "Cupons", icon: "ticket-outline" },
+    { id: "giftcards", label: "Vale-presente", icon: "gift-outline" },
+    { id: "support", label: "Suporte", icon: "chatbubble-ellipses-outline" },
+  ];
+
+  const handleBackPress = () => {
+    router.back();
+  };
+
+  const handleHelpPress = () => {
+    // Ex.: abrir tela de ajuda no futuro
+  };
+
+  const handleActionPress = (id: string) => {
+    // Ex.: navegar para cada seção no futuro
+    void id;
+  };
+
+  const handleLogoutPress = () => {
+    handleLogout();
+    router.replace("/login");
+  };
+
+  return (
+    <View className="flex-1 bg-black">
+      <StatusBar style="light" />
+
+      <SafeAreaView className="bg-black" edges={["top", "left", "right"]}>
+        <View className="flex-row items-center justify-between px-4 pt-2 pb-2">
+          <Pressable
+            onPress={handleBackPress}
+            accessibilityRole="button"
+            accessibilityLabel="Voltar"
+            className="h-12 w-12 items-center justify-center rounded-2xl bg-[#2C2C2E] active:opacity-80"
+          >
+            <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
+          </Pressable>
+
+          <View className="flex-1" />
+
+          <Pressable
+            onPress={handleHelpPress}
+            accessibilityRole="button"
+            accessibilityLabel="Ajuda"
+            className="h-12 w-12 items-center justify-center rounded-2xl bg-[#2C2C2E] active:opacity-80"
+          >
+            <Ionicons name="help" size={20} color="#D4D4D4" />
+          </Pressable>
+        </View>
+      </SafeAreaView>
+
+      <ScrollView
+        className="flex-1"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: SCROLL_BOTTOM_PADDING }}
+      >
+        <View className="px-4 pt-1">
+          <View className="flex-row items-center gap-4">
+            <View className="h-16 w-16 items-center justify-center rounded-2xl bg-[#F4C24C]">
+              <Ionicons name="globe-outline" size={26} color="#E14842" />
+            </View>
+
+            <View className="flex-1">
+              <Text className="font-sans text-2xl font-bold text-white">
+                {session?.user.name}
+              </Text>
+              <Text className="mt-1 font-sans text-sm text-white/60">
+                {session?.user.email}
+              </Text>
+            </View>
+          </View>
+
+          <View className="mt-4">
+            {profileActions.map((action, index) => (
+              <View key={action.id}>
+                <Pressable
+                  onPress={() => handleActionPress(action.id)}
+                  accessibilityRole="button"
+                  accessibilityLabel={action.label}
+                  className="flex-row items-center gap-3 py-4 px-1"
+                >
+                  <View className="h-7 w-7 items-center justify-center">
+                    <Ionicons name={action.icon} size={20} color="#FFFFFF" />
+                  </View>
+                  <Text className="flex-1 font-sans text-lg font-bold text-white">
+                    {action.label}
+                  </Text>
+                </Pressable>
+
+                {index < profileActions.length - 1 ? (
+                  <View className="h-px w-full bg-white/10" />
+                ) : null}
+              </View>
+            ))}
+          </View>
+
+          <Pressable
+            onPress={handleLogoutPress}
+            accessibilityRole="button"
+            accessibilityLabel="Deslogar"
+            className="mt-6 items-center justify-center rounded-2xl bg-primary py-4 active:opacity-90"
+          >
+            <Text className="font-sans text-base font-bold text-white">
+              Deslogar
+            </Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    </View>
+  );
+}
