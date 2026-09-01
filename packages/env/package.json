@@ -4,10 +4,17 @@
   "type": "module",
   "private": true,
   "exports": {
-    "./server": "./src/server.ts",
-    "./mobile": "./src/mobile.ts"
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js"
+    },
+    "./mobile": {
+      "types": "./dist/mobile.d.ts",
+      "import": "./dist/mobile.js"
+    }
   },
   "scripts": {
+    "build": "tsup",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
@@ -16,6 +23,7 @@
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^20.19.43",
-    "typescript": "^7.0.2"
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
   }
 }
