@@ -3,15 +3,11 @@ import { Elysia } from "elysia";
 
 export const corsPlugin = new Elysia({ name: "cors" }).use(
   cors({
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
-    allowedHeaders: ["content-type", "authorization", "cookie"],
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
     origin: (request) => {
-      // const origin = request.headers.get('origin');
-
-      // if (!origin) {
-      //   return false;
-      // }
+      console.log(request);
 
       return true;
     },
