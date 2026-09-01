@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { ScrollView, View } from "react-native";
+import { colors } from "@/lib/theme";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HomeBannerCarousel } from "@/components/home/home-banner-carousel";
 import { HelpDrawer } from "@/components/help/help-drawer";
@@ -9,25 +16,19 @@ import { HomeHeader } from "@/components/home/home-header";
 import { HomeRecommendationRow } from "@/components/home/home-recommendation-row";
 import { HomeReleaseRow } from "@/components/home/home-release-row";
 import { HomeSectionTitle } from "@/components/home/home-section-title";
-import { HOME_RECOMMENDATIONS, HOME_RELEASES } from "../../data/home-content";
+import { useProducts } from "@/hooks/use-products";
 
 const SCROLL_BOTTOM_PADDING = 112;
 
 export default function HomeScreen() {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
-  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(() => new Set());
 
-  const handleToggleFavorite = (id: string) => {
-    setFavoriteIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-        return next;
-      }
-      next.add(id);
-      return next;
-    });
-  };
+  const releases = useProducts({ collection: "releases", pageSize: 10 });
+
+  const recommendations = useProducts({
+    collection: "recommendations",
+    pageSize: 10,
+  });
 
   return (
     <View className="flex-1 bg-black">
@@ -50,20 +51,56 @@ export default function HomeScreen() {
 
         <View className="pt-4">
           <HomeSectionTitle title="Lançamentos" />
-          <HomeReleaseRow
-            items={HOME_RELEASES}
-            favoriteIds={favoriteIds}
-            onToggleFavorite={handleToggleFavorite}
-          />
+          {releases.isPending ? (
+            <ActivityIndicator
+              className="my-8"
+              color={colors.primary.DEFAULT}
+            />
+          ) : releases.isError ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => void releases.refetch()}
+              className="mx-4 rounded-2xl bg-[#262329] px-4 py-5 active:opacity-80"
+            >
+              <Text className="text-center font-golos text-sm text-white/80">
+                Não foi possível carregar os lançamentos. Toque para tentar
+                novamente.
+              </Text>
+            </Pressable>
+          ) : releases.data.data.length === 0 ? (
+            <Text className="px-4 font-golos text-sm text-white/60">
+              Nenhum lançamento disponível no momento.
+            </Text>
+          ) : (
+            <HomeReleaseRow items={releases.data.data} />
+          )}
         </View>
 
         <View className="pt-6">
           <HomeSectionTitle title="Recomendações" />
-          <HomeRecommendationRow
-            items={HOME_RECOMMENDATIONS}
-            favoriteIds={favoriteIds}
-            onToggleFavorite={handleToggleFavorite}
-          />
+          {recommendations.isPending ? (
+            <ActivityIndicator
+              className="my-8"
+              color={colors.primary.DEFAULT}
+            />
+          ) : recommendations.isError ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => void recommendations.refetch()}
+              className="mx-4 rounded-2xl bg-[#262329] px-4 py-5 active:opacity-80"
+            >
+              <Text className="text-center font-golos text-sm text-white/80">
+                Não foi possível carregar as recomendações. Toque para tentar
+                novamente.
+              </Text>
+            </Pressable>
+          ) : recommendations.data.data.length === 0 ? (
+            <Text className="px-4 font-golos text-sm text-white/60">
+              Nenhuma recomendação disponível no momento.
+            </Text>
+          ) : (
+            <HomeRecommendationRow items={recommendations.data.data} />
+          )}
         </View>
       </ScrollView>
 

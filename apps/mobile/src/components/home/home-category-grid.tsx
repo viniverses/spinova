@@ -1,6 +1,17 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React from "react";
 import { Pressable, Text, useWindowDimensions, View } from "react-native";
-import { HOME_CATEGORIES } from "../../../data/home-content";
+import { HOME_CATEGORIES } from "./constants";
+
+// Categories that map to a /collection/[id] route
+const NAVIGABLE_IDS = new Set([
+  "bestsellers",
+  "new",
+  "promo",
+  "import",
+  "national",
+]);
 
 type HomeCategoryGridProps = {
   onPressCategory?: (id: string) => void;
@@ -13,10 +24,14 @@ export const HomeCategoryGrid = ({
   onPressCategory,
 }: HomeCategoryGridProps) => {
   const { width } = useWindowDimensions();
+  const router = useRouter();
   const itemWidth = (width - H_PADDING * 2 - GAP * 2) / 3;
 
   const handlePress = (id: string) => {
     onPressCategory?.(id);
+    if (NAVIGABLE_IDS.has(id)) {
+      router.push(`/collection/${id}` as never);
+    }
   };
 
   return (
@@ -36,7 +51,9 @@ export const HomeCategoryGrid = ({
               }`}
             >
               <Ionicons
-                name={item.icon}
+                name={
+                  item.icon as React.ComponentProps<typeof Ionicons>["name"]
+                }
                 size={26}
                 color={isPrimary ? "#FFFFFF" : "#111111"}
               />

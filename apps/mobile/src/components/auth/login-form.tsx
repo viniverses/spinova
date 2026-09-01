@@ -1,8 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { useSession } from "../../hooks/use-auth";
 import { authClient } from "../../lib/auth-client";
 import { colors } from "../../lib/theme";
 import { loginSchema, type LoginFormValues } from "../../schemas/auth/login";
@@ -11,6 +12,7 @@ import { PasswordVisibilityToggle } from "./password-visibility-toggle";
 
 export const LoginForm = () => {
   const router = useRouter();
+  const { data: session, refetch: refetchSession } = useSession();
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const {
@@ -27,6 +29,12 @@ export const LoginForm = () => {
     },
     mode: "onSubmit",
   });
+
+  useEffect(() => {
+    if (session?.user) {
+      router.replace("/home");
+    }
+  }, [router, session?.user]);
 
   const onSubmit = useCallback(
     async (values: LoginFormValues) => {
@@ -45,12 +53,14 @@ export const LoginForm = () => {
           return;
         }
 
-        router.replace("/home");
+        // Wait for the session atom to reflect the new browser cookie before
+        // entering the authenticated route guard.
+        await refetchSession();
       } catch {
         setError("root", { message: "Algo deu errado. Tente novamente." });
       }
     },
-    [router, setError, clearErrors],
+    [refetchSession, setError, clearErrors],
   );
 
   const busy = isSubmitting;

@@ -6,6 +6,7 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { authClient } from "@/lib/auth-client";
 import { useSession } from "@/hooks/use-auth";
+import { colors } from "@/lib/theme";
 
 const SCROLL_BOTTOM_PADDING = 112;
 
@@ -86,7 +87,11 @@ export default function ProfileScreen() {
         <View className="px-4 pt-1">
           <View className="flex-row items-center gap-4">
             <View className="h-16 w-16 items-center justify-center rounded-2xl bg-[#F4C24C]">
-              <Ionicons name="globe-outline" size={26} color="#E14842" />
+              <Ionicons
+                name="globe-outline"
+                size={26}
+                color={colors.primary.DEFAULT}
+              />
             </View>
 
             <View className="flex-1">

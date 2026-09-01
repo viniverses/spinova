@@ -3,21 +3,55 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Pressable, Text, View } from "react-native";
-import type { Product } from "../../data/products-content";
+import type { ProductListItem } from "@/services/products";
+import { colors } from "@/lib/theme";
+import { useIsWishlisted, useToggleWishlist } from "@/hooks/use-wishlist";
 
 export type ProductCardVariant =
-  | "wishlist"
-  | "homeRelease"
-  | "homeRecommendation";
+  "wishlist" | "homeRelease" | "homeRecommendation";
+
+type VariantConfig = {
+  overlayGradientHeight: string;
+  favoriteButtonSize: number;
+  favoriteButtonBg: string;
+  favoriteButtonClassName: string;
+  titleClassName: string;
+  showArtist: boolean;
+};
+
+const variantConfig: Record<ProductCardVariant, VariantConfig> = {
+  homeRelease: {
+    overlayGradientHeight: "48%",
+    favoriteButtonSize: 20,
+    favoriteButtonBg: "bg-white/25",
+    favoriteButtonClassName: "h-9 w-9 right-2 top-2",
+    titleClassName: "font-sans text-base",
+    showArtist: true,
+  },
+  wishlist: {
+    overlayGradientHeight: "48%",
+    favoriteButtonSize: 20,
+    favoriteButtonBg: "bg-white/25",
+    favoriteButtonClassName: "h-9 w-9 right-2 top-2",
+    titleClassName: "font-sans text-base",
+    showArtist: true,
+  },
+  homeRecommendation: {
+    overlayGradientHeight: "52%",
+    favoriteButtonSize: 18,
+    favoriteButtonBg: "bg-black/35",
+    favoriteButtonClassName: "h-8 w-8 right-2 top-2",
+    titleClassName: "font-golos text-xs",
+    showArtist: false,
+  },
+};
 
 type ProductCardProps = {
-  product: Product;
+  product: ProductListItem;
   width: number;
   height: number;
   variant?: ProductCardVariant;
-  isFavorite?: boolean;
   showFavorite?: boolean;
-  onToggleFavorite?: (productId: string) => void;
   showCart?: boolean;
   onAddToCart?: (productId: string) => void;
 };
@@ -27,53 +61,53 @@ export const ProductCard = ({
   width,
   height,
   variant = "homeRelease",
-  isFavorite = false,
   showFavorite = false,
-  onToggleFavorite,
   showCart = false,
   onAddToCart,
 }: ProductCardProps) => {
   const router = useRouter();
+  const config = variantConfig[variant];
+  const isFavorite = useIsWishlisted(product.id).data ?? false;
+  const { mutate: toggleWishlist } = useToggleWishlist();
+
+  const handleToggleFavorite = () => {
+    toggleWishlist({ productId: product.id, isFavorited: isFavorite });
+  };
 
   const handlePress = () => {
     router.push(`/product/${product.id}`);
   };
 
-  const showArtist = variant !== "homeRecommendation";
-  const overlayGradientHeight = variant === "homeRecommendation" ? "52%" : "48%";
-
-  const favoriteButtonSize = variant === "homeRecommendation" ? 18 : 20;
-  const favoriteButtonBg =
-    variant === "homeRecommendation" ? "bg-black/35" : "bg-white/25";
-  const favoriteButtonClassName = variant === "homeRecommendation"
-    ? "h-8 w-8 right-2 top-2"
-    : "h-9 w-9 right-2 top-2";
-
-  const showTitleInSmall = variant === "homeRecommendation";
-
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${product.title}, ${product.artist}`}
+      accessibilityLabel={`${product.title}, ${product.artist.name}`}
       onPress={handlePress}
       style={{ width, height }}
       className="overflow-hidden rounded-2xl active:opacity-95"
     >
       <View style={{ width, height }}>
-        <Image
-          source={product.cover}
-          style={{ width: "100%", height: "100%" }}
-          contentFit="cover"
-        />
+        {product.image ? (
+          <Image
+            source={product.image.url}
+            accessibilityLabel={product.image.altText ?? product.title}
+            style={{ width: "100%", height: "100%" }}
+            contentFit="cover"
+          />
+        ) : (
+          <View className="h-full w-full items-center justify-center bg-[#262329]">
+            <Ionicons name="disc-outline" size={40} color="#777179" />
+          </View>
+        )}
 
         <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.75)"]}
+          colors={["transparent", "rgba(0,0,0,0.8)"]}
           style={{
             position: "absolute",
             left: 0,
             right: 0,
-            bottom: 0,
-            height: overlayGradientHeight,
+            bottom: -5,
+            height: config.overlayGradientHeight,
           }}
         />
 
@@ -81,25 +115,27 @@ export const ProductCard = ({
           <Pressable
             onPress={(e) => {
               e.stopPropagation();
-              onToggleFavorite?.(product.id);
+              handleToggleFavorite();
             }}
             accessibilityRole="button"
             accessibilityLabel={
-              isFavorite ? `Desfavoritar ${product.title}` : `Favoritar ${product.title}`
+              isFavorite
+                ? `Desfavoritar ${product.title}`
+                : `Favoritar ${product.title}`
             }
             hitSlop={8}
-            className={`absolute items-center justify-center rounded-full ${favoriteButtonBg} ${favoriteButtonClassName} active:opacity-80`}
+            className={`absolute items-center justify-center rounded-full ${config.favoriteButtonBg} ${config.favoriteButtonClassName} active:opacity-80`}
           >
             {isFavorite ? (
               <Ionicons
                 name="heart"
-                size={favoriteButtonSize}
-                color="#E14842"
+                size={config.favoriteButtonSize}
+                color={colors.primary.DEFAULT}
               />
             ) : (
               <Ionicons
                 name="heart-outline"
-                size={favoriteButtonSize}
+                size={config.favoriteButtonSize}
                 color="#FFFFFF"
               />
             )}
@@ -123,16 +159,17 @@ export const ProductCard = ({
 
         <View className="absolute bottom-0 left-0 right-0 px-3 pb-3 pt-2">
           <Text
-            className={`${
-              showTitleInSmall ? "font-golos text-xs" : "font-sans text-base"
-            } text-white`}
+            className={`${config.titleClassName} text-white`}
             numberOfLines={1}
           >
             {product.title}
           </Text>
-          {showArtist ? (
-            <Text className="mt-0.5 font-golos text-sm text-white/80" numberOfLines={1}>
-              {product.artist}
+          {config.showArtist ? (
+            <Text
+              className="mt-0.5 font-golos text-sm text-white/80"
+              numberOfLines={1}
+            >
+              {product.artist.name}
             </Text>
           ) : null}
         </View>
@@ -140,4 +177,3 @@ export const ProductCard = ({
     </Pressable>
   );
 };
-

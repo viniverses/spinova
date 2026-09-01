@@ -36,7 +36,7 @@ export const AuthGlassCard = ({ children }: AuthGlassCardProps) => (
       {
         width: "100%",
         maxWidth: 440,
-        alignSelf: "stretch",
+        alignSelf: "center",
         borderRadius: GLASS_BORDER_RADIUS,
         ...glassDropShadowStyle,
       },

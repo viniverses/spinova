@@ -1,5 +1,3 @@
-import { PRODUCTS, type Product } from "./products-content";
-
 export type HomeCategory = {
   id: string;
   label: string;
@@ -35,7 +33,3 @@ export const HOME_CATEGORIES: HomeCategory[] = [
     variant: "primary",
   },
 ];
-
-export const HOME_RELEASES: Product[] = PRODUCTS.slice(0, 3);
-
-export const HOME_RECOMMENDATIONS: Product[] = PRODUCTS.slice(1, 5);

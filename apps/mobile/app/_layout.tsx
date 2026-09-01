@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useSession } from "../src/hooks/use-auth";
+import { QueryProvider } from "../src/providers/query-provider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -34,15 +35,17 @@ export default function RootLayout() {
   }
 
   return (
-    <SafeAreaProvider>
-      <View className="flex-1 font-sans">
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            animation: "slide_from_right",
-          }}
-        />
-      </View>
-    </SafeAreaProvider>
+    <QueryProvider>
+      <SafeAreaProvider>
+        <View className="flex-1 font-sans">
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              animation: "slide_from_right",
+            }}
+          />
+        </View>
+      </SafeAreaProvider>
+    </QueryProvider>
   );
 }

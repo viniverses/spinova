@@ -1,20 +1,14 @@
 import { ScrollView, useWindowDimensions } from "react-native";
-import type { Product } from "../../../data/products-content";
+import type { ProductListItem } from "@/services/products";
 import { ProductCard } from "../product/product-card";
 
 type HomeReleaseRowProps = {
-  items: Product[];
-  favoriteIds: Set<string>;
-  onToggleFavorite: (productId: string) => void;
+  items: ProductListItem[];
 };
 
 const CARD_GAP = 12;
 
-export const HomeReleaseRow = ({
-  items,
-  favoriteIds,
-  onToggleFavorite,
-}: HomeReleaseRowProps) => {
+export const HomeReleaseRow = ({ items }: HomeReleaseRowProps) => {
   const { width } = useWindowDimensions();
   const horizontalPad = 16;
   const cardWidth = Math.min(
@@ -37,8 +31,6 @@ export const HomeReleaseRow = ({
           height={cardWidth}
           variant="homeRelease"
           showFavorite
-          isFavorite={favoriteIds.has(item.id)}
-          onToggleFavorite={onToggleFavorite}
         />
       ))}
     </ScrollView>
