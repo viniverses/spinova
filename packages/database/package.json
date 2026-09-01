@@ -4,11 +4,21 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
-    "./query": "./src/query.ts",
-    "./schema": "./src/schema/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./query": {
+      "types": "./dist/query.d.ts",
+      "import": "./dist/query.js"
+    },
+    "./schema": {
+      "types": "./dist/schema.d.ts",
+      "import": "./dist/schema.js"
+    }
   },
   "scripts": {
+    "build": "tsup",
     "check-types": "tsc --noEmit",
     "env:load": "dotenv -e ../../.env --",
     "db:push": "pnpm env:load drizzle-kit push",
@@ -28,6 +38,7 @@
     "@types/pg": "^8.16.0",
     "dotenv-cli": "^8.0.0",
     "drizzle-kit": "^0.31.10",
+    "tsup": "^8.5.1",
     "typescript": "^5.9.2"
   }
 }
