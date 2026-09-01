@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "scripts": {
-    "dev": "expo start --clear --offline",
+    "env:load": "dotenv -e ../../.env --",
+    "dev": "pnpm env:load expo start --clear --offline",
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
@@ -49,6 +50,7 @@
   "devDependencies": {
     "@types/react": "19.1.17",
     "babel-preset-expo": "54.0.10",
+    "dotenv-cli": "^8.0.0",
     "prettier-plugin-tailwindcss": "0.5.14",
     "tailwindcss": "3.4.19",
     "typescript": "5.9.3"

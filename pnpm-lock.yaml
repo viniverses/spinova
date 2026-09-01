@@ -193,6 +193,9 @@ importers:
       babel-preset-expo:
         specifier: 54.0.10
         version: 54.0.10(@babel/core@7.29.7(supports-color@8.1.1))(@babel/runtime@7.29.7)(expo@54.0.33)(react-refresh@0.14.2)(supports-color@8.1.1)
+      dotenv-cli:
+        specifier: ^8.0.0
+        version: 8.0.0
       prettier-plugin-tailwindcss:
         specifier: 0.5.14
         version: 0.5.14(prettier@3.9.6)
