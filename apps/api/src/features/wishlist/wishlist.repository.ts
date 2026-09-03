@@ -1,6 +1,6 @@
 import { RepositoryError } from "../../errors/index.ts";
-import { albums, artists, db, products, wishlists } from "@repo/database";
-import { and, asc, eq } from "@repo/database/query";
+import { albums, artists, db, products, wishlists } from "@spinova/database";
+import { and, asc, eq } from "@spinova/database/query";
 
 export const getWishlistByUserId = async (userId: string) => {
   try {

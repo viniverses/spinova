@@ -1,5 +1,5 @@
 {
-  "name": "@package/env",
+  "name": "@spinova/env",
   "version": "0.0.0",
   "type": "module",
   "private": true,
@@ -21,7 +21,7 @@
     "zod": "^4.5.4"
   },
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
+    "@spinova/typescript-config": "workspace:*",
     "@types/node": "^20.19.43",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3"

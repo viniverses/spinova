@@ -12,7 +12,7 @@ import {
   products,
   productTags,
   reviews,
-} from "@repo/database";
+} from "@spinova/database";
 import {
   and,
   asc,
@@ -28,7 +28,7 @@ import {
   or,
   sql,
   type SQL,
-} from "@repo/database/query";
+} from "@spinova/database/query";
 
 import type { ProductListFilters } from "./product.filters.ts";
 

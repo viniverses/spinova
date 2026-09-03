@@ -1,5 +1,5 @@
 import { node } from "@elysia/node";
-import { env } from "@package/env/server";
+import { env } from "@spinova/env/server";
 import { Elysia } from "elysia";
 
 import api from "./index.ts";

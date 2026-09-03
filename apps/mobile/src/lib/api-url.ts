@@ -1,4 +1,4 @@
-import { env } from "@package/env/mobile";
+import { env } from "@spinova/env/mobile";
 import { Platform } from "react-native";
 
 export const apiUrl =

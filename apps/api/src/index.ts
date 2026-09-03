@@ -6,7 +6,7 @@ import { wishlistRoutes } from "./features/wishlist/wishlist.routes.ts";
 import { corsPlugin } from "./plugins/cors.ts";
 import { errorHandlerPlugin } from "./plugins/error-handler.ts";
 import { swaggerPlugin } from "./plugins/swagger.ts";
-import { auth } from "@repo/auth";
+import { auth } from "@spinova/auth";
 
 const app = new Elysia({ adapter: node() });
 

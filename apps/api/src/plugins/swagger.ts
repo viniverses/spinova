@@ -1,7 +1,7 @@
 import { swagger } from "@elysiajs/swagger";
 import { Elysia } from "elysia";
 
-import { env } from "@package/env/server";
+import { env } from "@spinova/env/server";
 
 export const swaggerPlugin = new Elysia({ name: "swagger" }).use(
   swagger({

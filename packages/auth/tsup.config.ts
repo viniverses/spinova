@@ -8,5 +8,5 @@ export default defineConfig({
   dts: true,
   clean: true,
   sourcemap: true,
-  external: ["better-auth", "drizzle-orm", "@repo/database", "@package/env"],
+  external: ["better-auth", "drizzle-orm", "@spinova/database", "@spinova/env"],
 });

@@ -1,9 +1,9 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { expo } from "@better-auth/expo";
-import { env } from "@package/env/server";
+import { env } from "@spinova/env/server";
 import { openAPI } from "better-auth/plugins";
-import { db } from "@repo/database";
+import { db } from "@spinova/database";
 import { authI18n } from "./i18n.ts";
 
 export const auth = betterAuth({

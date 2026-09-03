@@ -14,7 +14,7 @@ export default defineConfig({
   dts: false,
   minify: false,
   external: ["pg"],
-  noExternal: [/^@repo\//, /^@package\//],
+  noExternal: [/^@spinova\//],
   sourcemap: true,
   splitting: false,
   treeshake: true,

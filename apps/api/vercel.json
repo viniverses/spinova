@@ -1,4 +1,4 @@
 {
   "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
-  "buildCommand": "cd ../.. && pnpm turbo run build --filter=@repo/api"
+  "buildCommand": "cd ../.. && pnpm turbo run build --filter=@spinova/api"
 }

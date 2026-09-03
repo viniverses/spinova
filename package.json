@@ -1,5 +1,5 @@
 {
-  "name": "spinova",
+  "name": "@spinova/root",
   "private": true,
   "scripts": {
     "build": "turbo run build",

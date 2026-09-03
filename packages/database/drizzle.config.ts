@@ -1,5 +1,5 @@
 import { defineConfig } from "drizzle-kit";
-import { env } from "@package/env/server";
+import { env } from "@spinova/env/server";
 
 export default defineConfig({
   out: "./migrations",

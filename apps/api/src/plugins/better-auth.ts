@@ -1,4 +1,4 @@
-import { auth } from "@repo/auth";
+import { auth } from "@spinova/auth";
 import { Elysia } from "elysia";
 
 export const betterAuthPlugin = new Elysia({ name: "better-auth" }).macro({

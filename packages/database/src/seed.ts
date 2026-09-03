@@ -1,6 +1,6 @@
 import { inArray, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
-import { env } from "@package/env/server";
+import { env } from "@spinova/env/server";
 import { Pool } from "pg";
 
 import {
