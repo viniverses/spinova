@@ -16,9 +16,15 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
   }),
+  advanced: {
+    defaultCookieAttributes: {
+      sameSite: "none",
+      secure: true,
+    },
+  },
   trustedOrigins: [
     "spinova-app://",
-    "localhost:*",
+    "http://localhost:*",
     "https://spinova-api-v2.vercel.app",
     "exp://", // Trust all Expo URLs (prefix matching)
     "exp://**", // Trust all Expo URLs (wildcard matching)

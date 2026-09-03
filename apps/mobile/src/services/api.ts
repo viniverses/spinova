@@ -1,14 +1,14 @@
 import { authClient } from "@/lib/auth-client";
+import { env } from "@spinova/env/mobile";
 import axios from "axios";
 import { Platform } from "react-native";
-import { apiUrl } from "../lib/api-url";
 
 export const api = axios.create({
-  baseURL: apiUrl,
+  baseURL: env.EXPO_PUBLIC_API_URL,
   headers: {
     Accept: "application/json",
   },
-  withCredentials: true,
+  withCredentials: Platform.OS === "web",
 });
 
 api.interceptors.request.use(async (config) => {
