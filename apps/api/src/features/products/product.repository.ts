@@ -172,7 +172,7 @@ const buildOrderBy = (sort: ProductListFilters["sort"]): SQL[] => {
   }
 };
 
-const productListSelection = {
+const productCatalogSelection = {
   id: products.id,
   albumId: albums.id,
   title: albums.title,
@@ -188,16 +188,20 @@ const productListSelection = {
   isImported: products.isImported,
   genre: albums.genre,
   releaseDate: albums.releaseDate,
-  description: albums.description,
   imageUrl: primaryImage.url,
   imageAltText: primaryImage.altText,
+};
+
+const productDetailSelection = {
+  ...productCatalogSelection,
+  description: albums.description,
   ratingAverage: productRatings.average,
   ratingCount: productRatings.count,
   unitsSold: productSales.unitsSold,
   createdAt: products.createdAt,
 };
 
-const mapProductListItem = (row: {
+type ProductCatalogRow = {
   id: string;
   albumId: string;
   title: string;
@@ -215,11 +219,9 @@ const mapProductListItem = (row: {
   releaseDate: string | null;
   imageUrl: string | null;
   imageAltText: string | null;
-  ratingAverage: number | null;
-  ratingCount: number | null;
-  unitsSold: number | null;
-  createdAt: Date;
-}) => ({
+};
+
+const mapProductCatalogItem = (row: ProductCatalogRow) => ({
   id: row.id,
   albumId: row.albumId,
   title: row.title,
@@ -243,6 +245,17 @@ const mapProductListItem = (row: {
     row.imageUrl === null
       ? null
       : { url: row.imageUrl, altText: row.imageAltText },
+});
+
+const mapProductDetail = (
+  row: ProductCatalogRow & {
+    ratingAverage: number | null;
+    ratingCount: number | null;
+    unitsSold: number | null;
+    createdAt: Date;
+  },
+) => ({
+  ...mapProductCatalogItem(row),
   rating: {
     average:
       row.ratingAverage === null
@@ -260,19 +273,32 @@ export const listProducts = async (filters: ProductListFilters) => {
     const where = and(...conditions);
     const offset = (filters.page - 1) * filters.pageSize;
 
+    const productRows =
+      filters.sort === "best_selling"
+        ? db
+            .select(productCatalogSelection)
+            .from(products)
+            .innerJoin(albums, eq(albums.id, products.albumId))
+            .innerJoin(artists, eq(artists.id, albums.artistId))
+            .leftJoin(primaryImage, eq(primaryImage.productId, products.id))
+            .leftJoin(productSales, eq(productSales.productId, products.id))
+            .where(where)
+            .orderBy(...buildOrderBy(filters.sort))
+            .limit(filters.pageSize)
+            .offset(offset)
+        : db
+            .select(productCatalogSelection)
+            .from(products)
+            .innerJoin(albums, eq(albums.id, products.albumId))
+            .innerJoin(artists, eq(artists.id, albums.artistId))
+            .leftJoin(primaryImage, eq(primaryImage.productId, products.id))
+            .where(where)
+            .orderBy(...buildOrderBy(filters.sort))
+            .limit(filters.pageSize)
+            .offset(offset);
+
     const [rows, countRows] = await Promise.all([
-      db
-        .select(productListSelection)
-        .from(products)
-        .innerJoin(albums, eq(albums.id, products.albumId))
-        .innerJoin(artists, eq(artists.id, albums.artistId))
-        .leftJoin(primaryImage, eq(primaryImage.productId, products.id))
-        .leftJoin(productSales, eq(productSales.productId, products.id))
-        .leftJoin(productRatings, eq(productRatings.productId, products.id))
-        .where(where)
-        .orderBy(...buildOrderBy(filters.sort))
-        .limit(filters.pageSize)
-        .offset(offset),
+      productRows,
       db
         .select({ total: count() })
         .from(products)
@@ -285,7 +311,7 @@ export const listProducts = async (filters: ProductListFilters) => {
     const totalPages = Math.ceil(totalItems / filters.pageSize);
 
     return {
-      data: rows.map(mapProductListItem),
+      data: rows.map(mapProductCatalogItem),
       pagination: {
         page: filters.page,
         pageSize: filters.pageSize,
@@ -301,7 +327,7 @@ export const listProducts = async (filters: ProductListFilters) => {
 export const findProductById = async (id: string) => {
   try {
     const rows = await db
-      .select(productListSelection)
+      .select(productDetailSelection)
       .from(products)
       .innerJoin(albums, eq(albums.id, products.albumId))
       .innerJoin(artists, eq(artists.id, albums.artistId))
@@ -344,7 +370,7 @@ export const findProductById = async (id: string) => {
 
     return {
       data: {
-        ...mapProductListItem(row),
+        ...mapProductDetail(row),
         description: row.description,
         images,
         tags: tags.map(({ tag }) => tag),

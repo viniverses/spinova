@@ -1,13 +1,10 @@
 import { t as Type, type Static } from "elysia";
-import {
-  DateTimeStringSchema,
-  NullableStringSchema,
-} from "../../schemas/common.schemas.ts";
 import { createErrorResponseSchema } from "../../schemas/error.schemas.ts";
 import {
   ProductEditionSchema,
   ProductFormatSchema,
-  ProductSummarySchema,
+  ProductCatalogItemSchema,
+  ProductSchema,
 } from "../../schemas/product-summary.schemas.ts";
 
 export {
@@ -163,26 +160,6 @@ export const ProductParamsSchema = Type.Object(
   { additionalProperties: false },
 );
 
-const ProductImageSchema = Type.Object({
-  url: Type.String({ format: "uri" }),
-  altText: NullableStringSchema,
-});
-
-const RatingSummarySchema = Type.Object({
-  average: Type.Union([Type.Number({ minimum: 1, maximum: 5 }), Type.Null()]),
-  count: Type.Integer({ minimum: 0 }),
-});
-
-export const ProductListItemSchema = Type.Composite([
-  ProductSummarySchema,
-  Type.Object({
-    image: Type.Union([ProductImageSchema, Type.Null()]),
-    rating: RatingSummarySchema,
-    unitsSold: Type.Integer({ minimum: 0 }),
-    createdAt: DateTimeStringSchema,
-  }),
-]);
-
 export const PaginationSchema = Type.Object({
   page: Type.Integer({ minimum: 1 }),
   pageSize: Type.Integer({ minimum: 1, maximum: 100 }),
@@ -192,7 +169,7 @@ export const PaginationSchema = Type.Object({
 
 export const ProductListResponseSchema = Type.Object(
   {
-    data: Type.Array(ProductListItemSchema),
+    data: Type.Array(ProductCatalogItemSchema),
     pagination: PaginationSchema,
   },
   {
@@ -202,32 +179,7 @@ export const ProductListResponseSchema = Type.Object(
 
 export const ProductDetailResponseSchema = Type.Object(
   {
-    data: Type.Intersect([
-      ProductListItemSchema,
-      Type.Object({
-        description: NullableStringSchema,
-        images: Type.Array(
-          Type.Object({
-            url: Type.String({ format: "uri" }),
-            position: Type.Integer({ minimum: 0 }),
-            altText: NullableStringSchema,
-          }),
-        ),
-        tags: Type.Array(Type.String()),
-        categories: Type.Array(
-          Type.Object({
-            id: Type.String(),
-            name: Type.String(),
-            slug: Type.String(),
-            type: Type.Union([
-              Type.Literal("genre"),
-              Type.Literal("tag"),
-              Type.Literal("curated"),
-            ]),
-          }),
-        ),
-      }),
-    ]),
+    data: ProductSchema,
   },
   {
     description: "The requested product was returned successfully.",

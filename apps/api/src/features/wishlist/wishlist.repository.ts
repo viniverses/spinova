@@ -1,5 +1,12 @@
 import { RepositoryError } from "../../errors/index.ts";
-import { albums, artists, db, products, wishlists } from "@spinova/database";
+import {
+  albums,
+  artists,
+  db,
+  productImages,
+  products,
+  wishlists,
+} from "@spinova/database";
 import { and, asc, eq } from "@spinova/database/query";
 
 export const getWishlistByUserId = async (userId: string) => {
@@ -22,12 +29,21 @@ export const getWishlistByUserId = async (userId: string) => {
         isImported: products.isImported,
         genre: albums.genre,
         releaseDate: albums.releaseDate,
+        imageUrl: productImages.url,
+        imageAltText: productImages.altText,
         createdAt: wishlists.createdAt,
       })
       .from(wishlists)
       .innerJoin(products, eq(products.id, wishlists.productId))
       .innerJoin(albums, eq(albums.id, products.albumId))
       .innerJoin(artists, eq(artists.id, albums.artistId))
+      .leftJoin(
+        productImages,
+        and(
+          eq(productImages.productId, products.id),
+          eq(productImages.position, 0),
+        ),
+      )
       .where(eq(wishlists.userId, userId))
       .orderBy(asc(wishlists.createdAt));
 
@@ -53,6 +69,10 @@ export const getWishlistByUserId = async (userId: string) => {
         isImported: row.isImported,
         genre: row.genre,
         releaseDate: row.releaseDate,
+        image:
+          row.imageUrl === null
+            ? null
+            : { url: row.imageUrl, altText: row.imageAltText },
       },
       createdAt: row.createdAt.toISOString(),
     }));

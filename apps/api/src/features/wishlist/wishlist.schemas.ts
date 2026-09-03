@@ -1,7 +1,7 @@
 import { t as Type } from "elysia";
 import { DateTimeStringSchema } from "../../schemas/common.schemas.ts";
 import { createErrorResponseSchema } from "../../schemas/error.schemas.ts";
-import { ProductSummarySchema } from "../../schemas/product-summary.schemas.ts";
+import { ProductCatalogItemSchema } from "../../schemas/product-summary.schemas.ts";
 
 export {
   InternalServerErrorResponseSchema,
@@ -10,7 +10,7 @@ export {
 
 export const WishlistItemSchema = Type.Object({
   id: Type.String(),
-  product: ProductSummarySchema,
+  product: ProductCatalogItemSchema,
   createdAt: DateTimeStringSchema,
 });
 
