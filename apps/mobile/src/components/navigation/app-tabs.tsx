@@ -19,7 +19,7 @@ const tabScreens: (TabScreen & AppTab)[] = [
   },
   {
     name: "lists",
-    title: "Listas",
+    title: "Categorias",
     icon: "list",
   },
   {

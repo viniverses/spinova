@@ -46,7 +46,7 @@ export const HomeCategoryGrid = ({
               accessibilityRole="button"
               accessibilityLabel={item.label}
               style={{ width: itemWidth, height: 72 }}
-              className={`items-center justify-center rounded-2xl active:opacity-90 ${
+              className={`items-center justify-center rounded-[10] active:opacity-90 ${
                 isPrimary ? "bg-primary" : "bg-[#E8E8E8]"
               }`}
             >

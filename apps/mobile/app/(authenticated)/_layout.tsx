@@ -1,4 +1,4 @@
-import { Redirect } from "expo-router";
+import { Redirect, usePathname, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { View } from "react-native";
@@ -11,6 +11,9 @@ import { useSession } from "@/hooks/use-auth";
 export default function AuthenticatedLayout() {
   const { data, isPending } = useSession();
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+  const showBackButton = pathname !== "/home";
 
   if (isPending) {
     return <View className="flex-1 bg-[#171518]" />;
@@ -24,7 +27,11 @@ export default function AuthenticatedLayout() {
     <View className="flex-1 bg-black">
       <StatusBar style="light" />
       <SafeAreaView className="bg-black" edges={["top", "left", "right"]}>
-        <HomeHeader onPressHelp={() => setIsHelpOpen(true)} />
+        <HomeHeader
+          leadingVariant={showBackButton ? "back" : "brand"}
+          onPressLogo={showBackButton ? () => router.back() : undefined}
+          onPressHelp={() => setIsHelpOpen(true)}
+        />
       </SafeAreaView>
       <View className="flex-1">
         <AppTabs />
