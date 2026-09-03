@@ -8,12 +8,12 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import type { ProductListItem } from "@/services/products";
+import type { ProductCatalogItem } from "@/services/products";
 import { colors } from "@/lib/theme";
 import { ProductCard } from "./product-card";
 
 type ProductGridProps = {
-  items: ProductListItem[];
+  items: ProductCatalogItem[];
   isLoading: boolean;
   isError: boolean;
   isFetchingNextPage: boolean;
@@ -48,8 +48,6 @@ export const ProductGrid = ({
   const { width } = useWindowDimensions();
   const cardWidth =
     (width - H_PADDING * 2 - COLUMN_GAP * (NUM_COLUMNS - 1)) / NUM_COLUMNS;
-  const cardHeight = cardWidth * 1.1;
-
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center">
@@ -132,8 +130,6 @@ export const ProductGrid = ({
         <ProductCard
           product={item}
           width={cardWidth}
-          height={cardHeight}
-          variant="homeRelease"
           showFavorite={showFavorite}
         />
       )}

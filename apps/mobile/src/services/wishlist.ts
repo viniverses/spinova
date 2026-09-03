@@ -1,30 +1,9 @@
 import { api } from "./api";
-
-export type WishlistProduct = {
-  id: string;
-  albumId: string;
-  title: string;
-  artist: {
-    id: string;
-    name: string;
-    slug: string;
-  };
-  sku: string;
-  format: "vinyl" | "cd" | "cassette";
-  edition: "standard" | "deluxe" | "colored";
-  price: string;
-  compareAtPrice: string | null;
-  currency: "BRL";
-  stockQuantity: number;
-  inStock: boolean;
-  isImported: boolean;
-  genre: string | null;
-  releaseDate: string | null;
-};
+import type { ProductCatalogItem } from "./products";
 
 export type WishlistItem = {
   id: string;
-  product: WishlistProduct;
+  product: ProductCatalogItem;
   createdAt: string;
 };
 

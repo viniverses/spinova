@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { colors } from "@/lib/theme";
 import {
@@ -8,11 +7,8 @@ import {
   Text,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { HomeBannerCarousel } from "@/components/home/home-banner-carousel";
-import { HelpDrawer } from "@/components/help/help-drawer";
 import { HomeCategoryGrid } from "@/components/home/home-category-grid";
-import { HomeHeader } from "@/components/home/home-header";
 import { HomeRecommendationRow } from "@/components/home/home-recommendation-row";
 import { HomeReleaseRow } from "@/components/home/home-release-row";
 import { HomeSectionTitle } from "@/components/home/home-section-title";
@@ -21,8 +17,6 @@ import { useProducts } from "@/hooks/use-products";
 const SCROLL_BOTTOM_PADDING = 112;
 
 export default function HomeScreen() {
-  const [isHelpOpen, setIsHelpOpen] = useState(false);
-
   const releases = useProducts({ collection: "releases", pageSize: 10 });
 
   const recommendations = useProducts({
@@ -33,9 +27,6 @@ export default function HomeScreen() {
   return (
     <View className="flex-1 bg-black">
       <StatusBar style="light" />
-      <SafeAreaView className="bg-black" edges={["top", "left", "right"]}>
-        <HomeHeader onPressHelp={() => setIsHelpOpen(true)} />
-      </SafeAreaView>
 
       <ScrollView
         className="flex-1"
@@ -103,8 +94,6 @@ export default function HomeScreen() {
           )}
         </View>
       </ScrollView>
-
-      <HelpDrawer isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
     </View>
   );
 }

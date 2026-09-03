@@ -1,9 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 import type { ComponentProps } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { authClient } from "@/lib/auth-client";
 import { useSession } from "@/hooks/use-auth";
 import { colors } from "@/lib/theme";
@@ -33,17 +31,10 @@ export default function ProfileScreen() {
     { id: "support", label: "Suporte", icon: "chatbubble-ellipses-outline" },
   ];
 
-  const handleBackPress = () => {
-    router.back();
-  };
-
-  const handleHelpPress = () => {
-    // Ex.: abrir tela de ajuda no futuro
-  };
-
   const handleActionPress = (id: string) => {
-    // Ex.: navegar para cada seção no futuro
-    void id;
+    if (id === "wishlist") {
+      router.push("/wishlist" as never);
+    }
   };
 
   const handleLogoutPress = () => {
@@ -53,32 +44,6 @@ export default function ProfileScreen() {
 
   return (
     <View className="flex-1 bg-black">
-      <StatusBar style="light" />
-
-      <SafeAreaView className="bg-black" edges={["top", "left", "right"]}>
-        <View className="flex-row items-center justify-between px-4 pt-2 pb-2">
-          <Pressable
-            onPress={handleBackPress}
-            accessibilityRole="button"
-            accessibilityLabel="Voltar"
-            className="h-12 w-12 items-center justify-center rounded-2xl bg-[#2C2C2E] active:opacity-80"
-          >
-            <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
-          </Pressable>
-
-          <View className="flex-1" />
-
-          <Pressable
-            onPress={handleHelpPress}
-            accessibilityRole="button"
-            accessibilityLabel="Ajuda"
-            className="h-12 w-12 items-center justify-center rounded-2xl bg-[#2C2C2E] active:opacity-80"
-          >
-            <Ionicons name="help" size={20} color="#D4D4D4" />
-          </Pressable>
-        </View>
-      </SafeAreaView>
-
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}

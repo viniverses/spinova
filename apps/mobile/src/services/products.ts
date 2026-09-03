@@ -33,7 +33,12 @@ export type ProductListParams = {
   sort?: ProductSort;
 };
 
-export type ProductListItem = {
+export type ProductImage = {
+  url: string;
+  altText: string | null;
+};
+
+export type ProductCatalogItem = {
   id: string;
   albumId: string;
   title: string;
@@ -53,42 +58,39 @@ export type ProductListItem = {
   isImported: boolean;
   genre: string | null;
   releaseDate: string | null;
-  image: {
-    url: string;
-    altText: string | null;
-  } | null;
-  rating: {
-    average: number | null;
-    count: number;
-  };
+  image: ProductImage | null;
+};
+
+export type ProductRating = {
+  average: number | null;
+  count: number;
+};
+
+export type ProductCategory = {
+  id: string;
+  name: string;
+  slug: string;
+  type: "genre" | "tag" | "curated";
+};
+
+export type ProductDetail = ProductCatalogItem & {
+  images: Array<ProductImage & { position: number }>;
+  description: string | null;
+  tags: string[];
+  categories: ProductCategory[];
+  rating: ProductRating;
   unitsSold: number;
   createdAt: string;
 };
 
 export type ProductListResponse = {
-  data: ProductListItem[];
+  data: ProductCatalogItem[];
   pagination: {
     page: number;
     pageSize: number;
     totalItems: number;
     totalPages: number;
   };
-};
-
-export type ProductDetail = ProductListItem & {
-  description: string | null;
-  images: Array<{
-    url: string;
-    position: number;
-    altText: string | null;
-  }>;
-  tags: string[];
-  categories: Array<{
-    id: string;
-    name: string;
-    slug: string;
-    type: "genre" | "tag" | "curated";
-  }>;
 };
 
 export const getProducts = async (params: ProductListParams = {}) => {

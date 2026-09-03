@@ -14,6 +14,12 @@ type ToggleWishlistVariables = {
   isFavorited: boolean;
 };
 
+export const useWishlist = () =>
+  useQuery({
+    queryKey: wishlistQueryKey,
+    queryFn: getWishlist,
+  });
+
 export const useIsWishlisted = (productId: string) =>
   useQuery({
     queryKey: wishlistQueryKey,
@@ -73,6 +79,7 @@ export const useToggleWishlist = () => {
             isImported: false,
             genre: null,
             releaseDate: null,
+            image: null,
           },
           createdAt: new Date().toISOString(),
         };
