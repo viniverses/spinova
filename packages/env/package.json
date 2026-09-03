@@ -5,16 +5,15 @@
   "private": true,
   "exports": {
     "./server": {
-      "types": "./dist/server.d.ts",
-      "import": "./dist/server.js"
+      "types": "./src/server.ts",
+      "import": "./src/server.ts"
     },
     "./mobile": {
-      "types": "./dist/mobile.d.ts",
-      "import": "./dist/mobile.js"
+      "types": "./src/mobile.ts",
+      "import": "./src/mobile.ts"
     }
   },
   "scripts": {
-    "build": "tsup",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
@@ -23,7 +22,6 @@
   "devDependencies": {
     "@spinova/typescript-config": "workspace:*",
     "@types/node": "^20.19.43",
-    "tsup": "^8.5.1",
     "typescript": "^5.9.3"
   }
 }

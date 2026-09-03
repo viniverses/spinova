@@ -5,7 +5,7 @@ export default defineConfig({
     index: "src/index.ts",
     local: "src/local.ts",
   },
-  outDir: ".",
+  outDir: "./dist",
   format: ["esm"],
   platform: "node",
   target: "node24",
