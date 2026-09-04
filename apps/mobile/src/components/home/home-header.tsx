@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { Pressable, Text, View } from "react-native";
 
 type HomeHeaderProps = {
@@ -28,7 +29,7 @@ export const HomeHeader = ({
         accessibilityLabel={
           isBackHeader ? "Voltar" : "Spinova, menu"
         }
-        className={`items-center justify-center rounded-xl active:opacity-90 ${
+        className={`items-center justify-center rounded-xl overflow-hidden active:opacity-90 ${
           isBackHeader
             ? "h-[52px] w-[52px] bg-[#2C2C2E]"
             : "h-12 w-12 bg-primary"
@@ -37,9 +38,12 @@ export const HomeHeader = ({
         {isBackHeader ? (
           <Ionicons name="chevron-back" size={22} color="#D4D4D4" />
         ) : (
-          <View className="h-9 w-9 items-center justify-center rounded-full bg-white/15">
-            <Ionicons name="globe-outline" size={22} color="#FFFFFF" />
-          </View>
+          <Image
+            source={require("../../../assets/rounded-logo.svg")}
+            contentFit="contain"
+            style={{ width: "100%", height: "100%" }}
+            accessible={false}
+          />
         )}
       </Pressable>
 
