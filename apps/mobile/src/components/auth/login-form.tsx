@@ -53,7 +53,7 @@ export const LoginForm = () => {
         // Aguarda a sessão ser atualizada completamente
         const result = await refetchSession();
 
-        // Só navega para home se a sessão foi carregada com sucesso
+        // Só navega se a sessão foi carregada com sucesso
         if (result.data?.user) {
           router.replace("/home");
         } else {
