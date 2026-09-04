@@ -1,10 +1,11 @@
 import { createAuthClient } from "better-auth/react";
 import { expoClient } from "@better-auth/expo/client";
-import { env } from "@spinova/env/mobile";
 import * as SecureStore from "expo-secure-store";
 
+import { apiBaseUrl } from "./api-base-url";
+
 export const authClient = createAuthClient({
-  baseURL: env.EXPO_PUBLIC_API_URL,
+  baseURL: apiBaseUrl,
   plugins: [
     expoClient({
       scheme: "spinova-app",

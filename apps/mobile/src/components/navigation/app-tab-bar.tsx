@@ -55,9 +55,9 @@ export const AppTabBar = ({
       className="absolute bottom-0 left-0 right-0 bg-[#2C2C2E]"
       style={{
         paddingBottom: Math.max(insets.bottom, 10),
-        borderTopLeftRadius: 24,
-        borderTopRightRadius: 24,
-        paddingTop: 10,
+        borderTopLeftRadius: 40,
+        borderTopRightRadius: 40,
+        paddingTop: 14,
       }}
     >
       <View className="relative flex-row items-center justify-between px-6">
@@ -66,7 +66,7 @@ export const AppTabBar = ({
 
           return (
             <View key={tab.name} className="flex-row items-center">
-              {index === 2 ? <View style={{ width: 64 }} /> : null}
+              {index === 2 ? <View style={{ width: 72 }} /> : null}
               <Pressable
                 onPress={() => handleTabPress(tab.name)}
                 accessibilityRole="tab"
@@ -77,7 +77,7 @@ export const AppTabBar = ({
                 <Image
                   source={TAB_ICONS[tab.name as keyof typeof TAB_ICONS]}
                   contentFit="contain"
-                  style={{ width: 26, height: 26 }}
+                  style={{ width: 28, height: 28 }}
                   accessible={false}
                 />
                 <View
@@ -95,11 +95,11 @@ export const AppTabBar = ({
         onPress={() => router.push("/cart" as never)}
         accessibilityRole="button"
         accessibilityLabel="Carrinho"
-        className="absolute h-14 w-14 items-center justify-center rounded-full bg-primary active:opacity-90"
+        className="absolute h-[68px] w-[68px] items-center justify-center rounded-full bg-primary active:opacity-90"
         style={{
-          top: -26,
+          top: -23,
           left: "50%",
-          marginLeft: -28,
+          marginLeft: -34,
           elevation: 8,
           shadowColor: "#000",
           shadowOffset: { width: 0, height: 4 },
@@ -110,7 +110,7 @@ export const AppTabBar = ({
         <Image
           source={require("../../../assets/svg/cart.svg")}
           contentFit="contain"
-          style={{ width: 24, height: 24 }}
+          style={{ width: 29, height: 29 }}
           accessible={false}
         />
       </Pressable>

@@ -9,7 +9,9 @@
         "API_VERSION",
         "BETTER_AUTH_SECRET",
         "BETTER_AUTH_URL",
-        "DATABASE_URL"
+        "DATABASE_URL",
+        "EXPO_PUBLIC_API_URL",
+        "EXPO_PUBLIC_WEB_API_URL"
       ],
       "outputs": [
         ".next/**",

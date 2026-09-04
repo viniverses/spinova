@@ -14,10 +14,9 @@ export default function AuthenticatedLayout() {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  const isCart = pathname === "/cart";
   const showBackButton = pathname !== "/home";
 
-  // Mostra loading enquanto carrega ou se não há usuário
-  // O redirecionamento é handled por login.tsx e index.tsx
   if (isPending || !data?.user) {
     return <LoadingScreen />;
   }
@@ -25,13 +24,15 @@ export default function AuthenticatedLayout() {
   return (
     <View className="flex-1 bg-black">
       <StatusBar style="light" />
-      <SafeAreaView className="bg-black" edges={["top", "left", "right"]}>
-        <HomeHeader
-          leadingVariant={showBackButton ? "back" : "brand"}
-          onPressLogo={showBackButton ? () => router.back() : undefined}
-          onPressHelp={() => setIsHelpOpen(true)}
-        />
-      </SafeAreaView>
+      {!isCart ? (
+        <SafeAreaView className="bg-black" edges={["top", "left", "right"]}>
+          <HomeHeader
+            leadingVariant={showBackButton ? "back" : "brand"}
+            onPressLogo={showBackButton ? () => router.back() : undefined}
+            onPressHelp={() => setIsHelpOpen(true)}
+          />
+        </SafeAreaView>
+      ) : null}
       <View className="flex-1">
         <AppTabs />
       </View>

@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -13,6 +12,7 @@ import {
 
 import { ProductDetailHero } from "@/components/product/product-detail-hero";
 import { ProductCard } from "@/components/product/product-card";
+import { useAddToCart, useCartItemQuantity } from "@/hooks/use-cart";
 import { useProduct, useProducts } from "@/hooks/use-products";
 import { colors } from "@/lib/theme";
 
@@ -33,8 +33,9 @@ const placeholderAlbumImages = [2, 3, 4].map((position) => ({
 export default function ProductDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { width } = useWindowDimensions();
-  const [isAdded, setIsAdded] = useState(false);
   const product = useProduct(id ?? "");
+  const cartQuantity = useCartItemQuantity(id ?? "");
+  const addToCart = useAddToCart();
   const recommendations = useProducts({
     collection: "recommendations",
     pageSize: 10,
@@ -74,6 +75,9 @@ export default function ProductDetailScreen() {
   }
 
   const item = product.data;
+  const isAdded = (cartQuantity.data ?? 0) > 0;
+  const isAtStockLimit =
+    (cartQuantity.data ?? 0) >= Math.min(item.stockQuantity, 99);
   const heroWidth = width - 32;
   const year = item.releaseDate
     ? new Date(item.releaseDate).getFullYear()
@@ -143,28 +147,52 @@ export default function ProductDetailScreen() {
           </View>
 
           <Pressable
-            onPress={() => setIsAdded(true)}
-            disabled={!item.inStock}
+            onPress={() => addToCart.mutate(item.id)}
+            disabled={!item.inStock || addToCart.isPending || isAtStockLimit}
             accessibilityRole="button"
             accessibilityLabel={
-              item.inStock ? "Adicionar ao carrinho" : "Produto esgotado"
+              !item.inStock
+                ? "Produto esgotado"
+                : isAtStockLimit
+                  ? "Quantidade máxima no carrinho"
+                  : "Adicionar ao carrinho"
             }
-            accessibilityState={{ disabled: !item.inStock }}
+            accessibilityState={{
+              disabled: !item.inStock || addToCart.isPending || isAtStockLimit,
+              busy: addToCart.isPending,
+            }}
             className="mt-5 min-h-[50px] flex-row items-center justify-center gap-2 rounded-[11px] bg-primary px-5 active:opacity-85 disabled:bg-[#4D474E]"
           >
             <Text className="font-sans text-xl text-white">
               {!item.inStock
                 ? "Produto esgotado"
-                : isAdded
-                  ? "Adicionado ao carrinho"
-                  : "Adicione ao carrinho"}
+                : addToCart.isPending
+                  ? "Adicionando…"
+                  : isAtStockLimit
+                    ? "Limite em estoque"
+                    : isAdded
+                      ? "Adicionado ao carrinho"
+                      : "Adicione ao carrinho"}
             </Text>
-            <Ionicons
-              name={isAdded ? "checkmark-circle" : "cart"}
-              size={24}
-              color="#FFFFFF"
-            />
+            {addToCart.isPending ? (
+              <ActivityIndicator color="#FFFFFF" size="small" />
+            ) : (
+              <Ionicons
+                name={isAdded ? "checkmark-circle" : "cart"}
+                size={24}
+                color="#FFFFFF"
+              />
+            )}
           </Pressable>
+
+          {addToCart.isError ? (
+            <Text
+              accessibilityRole="alert"
+              className="mt-2 font-golos text-xs text-[#FF9B96]"
+            >
+              Não foi possível atualizar o carrinho. Tente novamente.
+            </Text>
+          ) : null}
 
           <View className="mt-5">
             <Text className="mb-2 font-sans text-base text-white">

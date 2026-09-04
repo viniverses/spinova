@@ -1,10 +1,10 @@
 import { authClient } from "@/lib/auth-client";
-import { env } from "@spinova/env/mobile";
+import { apiBaseUrl } from "@/lib/api-base-url";
 import axios from "axios";
 import { Platform } from "react-native";
 
 export const api = axios.create({
-  baseURL: env.EXPO_PUBLIC_API_URL,
+  baseURL: apiBaseUrl,
   headers: {
     Accept: "application/json",
   },
