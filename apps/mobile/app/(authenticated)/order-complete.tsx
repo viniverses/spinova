@@ -87,28 +87,27 @@ export default function OrderCompleteScreen() {
               entering={FadeIn.duration(450)
                 .delay(2250)
                 .reduceMotion(ReduceMotion.System)}
-              className="w-full"
+              style={{ alignSelf: "center" }}
+              className="mt-8 self-center items-center"
             >
-              <View className="w-full border-y border-white/15 py-3 mt-5">
-                <View className="flex-row items-center justify-between">
-                  <View className="flex-row items-center gap-3">
-                    <View className="h-11 w-11 items-center justify-center rounded-full bg-[#211D1F]">
-                      <Ionicons
-                        name="receipt-outline"
-                        size={21}
-                        color="#E14842"
-                      />
-                    </View>
-                    <View>
-                      <Text className="font-golos text-sm text-white/55">
-                        Total do pedido
-                      </Text>
-                      <Text className="mt-0.5 font-golos-semibold text-lg text-white">
-                        {displayTotal}
-                      </Text>
-                    </View>
-                  </View>
-                  <Ionicons name="checkmark" size={24} color="#E14842" />
+              <View
+                style={{ alignSelf: "center" }}
+                className="flex-row items-center border-y border-white/15 px-7 py-3"
+              >
+                <View className="h-11 w-11 items-center justify-center rounded-full bg-[#211D1F]">
+                  <Ionicons
+                    name="receipt-outline"
+                    size={21}
+                    color="#E14842"
+                  />
+                </View>
+                <View className="ml-3 justify-center">
+                  <Text className="font-golos text-sm text-white/55">
+                    Total do pedido
+                  </Text>
+                  <Text className="mt-0.5 font-golos-semibold text-lg text-white">
+                    {displayTotal}
+                  </Text>
                 </View>
               </View>
             </Animated.View>
@@ -118,6 +117,7 @@ export default function OrderCompleteScreen() {
             entering={FadeIn.duration(420)
               .delay(2450)
               .reduceMotion(ReduceMotion.System)}
+            style={{ width: "100%", alignSelf: "stretch" }}
             className="w-full pt-3"
           >
             <Pressable
