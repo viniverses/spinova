@@ -4,7 +4,7 @@ import { Elysia } from "elysia";
 
 import api from "./index.ts";
 
-const app = new Elysia({ adapter: node() }).use(api);
+const app = new Elysia({ adapter: node(), normalize: "typebox" }).use(api);
 
 app.listen(
   {

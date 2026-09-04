@@ -11,7 +11,7 @@ import { errorHandlerPlugin } from "./plugins/error-handler.ts";
 import { swaggerPlugin } from "./plugins/swagger.ts";
 import { auth } from "@spinova/auth";
 
-const app = new Elysia({ adapter: node() });
+const app = new Elysia({ adapter: node(), normalize: "typebox" });
 
 // Health check
 app.get("/", () => "OK");
