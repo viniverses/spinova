@@ -1,7 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { useLocalSearchParams } from "expo-router";
 import { useMemo } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { View } from "react-native";
 import { COLLECTION_CONFIG } from "@/components/product/constants";
 import { ProductGrid } from "@/components/product/product-grid";
@@ -44,12 +43,10 @@ export default function CollectionScreen() {
   return (
     <View className="flex-1 bg-black">
       <StatusBar style="light" />
-      <SafeAreaView className="bg-black" edges={["top", "left", "right"]}>
-        <ProductListHeader
-          title={title}
-          totalItems={!isPending && !isError ? totalItems : undefined}
-        />
-      </SafeAreaView>
+      <ProductListHeader
+        title={title}
+        totalItems={!isPending && !isError ? totalItems : undefined}
+      />
 
       <ProductGrid
         items={items}
