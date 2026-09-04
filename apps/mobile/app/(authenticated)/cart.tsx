@@ -52,10 +52,7 @@ function QuantityControl({
       accessibilityValue={{ min: 0, now: quantity }}
     >
       <Pressable
-        onPress={(event) => {
-          event.stopPropagation();
-          onDecrease();
-        }}
+        onPress={onDecrease}
         disabled={decreaseDisabled}
         hitSlop={8}
         accessibilityRole="button"
@@ -71,10 +68,7 @@ function QuantityControl({
       </Text>
 
       <Pressable
-        onPress={(event) => {
-          event.stopPropagation();
-          onIncrease();
-        }}
+        onPress={onIncrease}
         disabled={increaseDisabled}
         hitSlop={8}
         accessibilityRole="button"
@@ -203,101 +197,106 @@ export default function CartScreen() {
                   );
 
                   return (
-                    <Pressable
+                    <View
                       key={item.id}
-                      onPress={() =>
-                        router.push(`/product/${item.product.id}` as never)
-                      }
-                      accessibilityRole="button"
-                      accessibilityLabel={`Abrir ${item.product.title}, de ${item.product.artist.name}`}
-                      className="flex-row rounded-xl bg-[#272627] px-2.5 py-4 active:opacity-85"
+                      className="relative rounded-xl bg-[#272627]"
                       style={{ minHeight: coverSize + 32 }}
                     >
-                      {item.product.image?.url ? (
-                        <Image
-                          source={{ uri: item.product.image.url }}
-                          contentFit="cover"
-                          transition={160}
-                          style={{
-                            width: coverSize,
-                            height: coverSize,
-                            borderRadius: 12,
-                          }}
-                          accessibilityLabel={
-                            item.product.image.altText ??
-                            `Capa do álbum ${item.product.title}`
-                          }
-                        />
-                      ) : (
-                        <View
-                          className="items-center justify-center rounded-xl bg-[#363438]"
-                          style={{ width: coverSize, height: coverSize }}
-                          accessibilityLabel={`Capa indisponível para ${item.product.title}`}
-                        >
-                          <Ionicons
-                            name="disc-outline"
-                            size={36}
-                            color="#8F8991"
+                      <Pressable
+                        onPress={() =>
+                          router.push(`/product/${item.product.id}` as never)
+                        }
+                        accessibilityRole="button"
+                        accessibilityLabel={`Abrir ${item.product.title}, de ${item.product.artist.name}`}
+                        className="flex-row rounded-xl px-2.5 py-4 active:opacity-85"
+                      >
+                        {item.product.image?.url ? (
+                          <Image
+                            source={{ uri: item.product.image.url }}
+                            contentFit="cover"
+                            transition={160}
+                            style={{
+                              width: coverSize,
+                              height: coverSize,
+                              borderRadius: 12,
+                            }}
+                            accessibilityLabel={
+                              item.product.image.altText ??
+                              `Capa do álbum ${item.product.title}`
+                            }
                           />
-                        </View>
-                      )}
-
-                      <View className="ml-3 min-w-0 flex-1 justify-between py-0.5">
-                        <View>
-                          <Text
-                            numberOfLines={1}
-                            className="font-sans text-[20px] leading-6 text-[#F8F7F8]"
+                        ) : (
+                          <View
+                            className="items-center justify-center rounded-xl bg-[#363438]"
+                            style={{ width: coverSize, height: coverSize }}
+                            accessibilityLabel={`Capa indisponível para ${item.product.title}`}
                           >
-                            {item.product.title}
-                          </Text>
-                          <Text
-                            numberOfLines={1}
-                            className="mt-1 font-golos text-[15px] leading-5 text-[#ECEAEC]"
-                          >
-                            {item.product.artist.name}
-                          </Text>
-                        </View>
+                            <Ionicons
+                              name="disc-outline"
+                              size={36}
+                              color="#8F8991"
+                            />
+                          </View>
+                        )}
 
-                        <View className="flex-row items-end justify-between gap-2">
+                        <View className="ml-3 min-w-0 flex-1 justify-between py-0.5 pr-20">
+                          <View>
+                            <Text
+                              numberOfLines={1}
+                              className="font-sans text-[20px] leading-6 text-[#F8F7F8]"
+                            >
+                              {item.product.title}
+                            </Text>
+                            <Text
+                              numberOfLines={1}
+                              className="mt-1 font-golos text-[15px] leading-5 text-[#ECEAEC]"
+                            >
+                              {item.product.artist.name}
+                            </Text>
+                          </View>
+
                           <Text
                             numberOfLines={1}
                             adjustsFontSizeToFit
-                            className="min-w-0 flex-1 font-golos-semibold text-[17px] text-[#F8F7F8]"
+                            className="font-golos-semibold text-[17px] text-[#F8F7F8]"
                           >
                             {formatCurrency(Number(item.product.price))}
                           </Text>
-                          <QuantityControl
-                            title={item.product.title}
-                            quantity={item.quantity}
-                            decreaseDisabled={updateQuantity.isPending}
-                            increaseDisabled={
-                              updateQuantity.isPending ||
-                              item.quantity >= maximumQuantity
-                            }
-                            onDecrease={() => {
-                              if (item.quantity === 1) {
-                                setPendingRemoval({
-                                  productId: item.product.id,
-                                  title: item.product.title,
-                                });
-                                return;
-                              }
-
-                              updateQuantity.mutate({
-                                productId: item.product.id,
-                                quantity: item.quantity - 1,
-                              });
-                            }}
-                            onIncrease={() =>
-                              updateQuantity.mutate({
-                                productId: item.product.id,
-                                quantity: item.quantity + 1,
-                              })
-                            }
-                          />
                         </View>
+                      </Pressable>
+
+                      <View className="absolute bottom-4 right-2.5">
+                        <QuantityControl
+                          title={item.product.title}
+                          quantity={item.quantity}
+                          decreaseDisabled={updateQuantity.isPending}
+                          increaseDisabled={
+                            updateQuantity.isPending ||
+                            item.quantity >= maximumQuantity
+                          }
+                          onDecrease={() => {
+                            if (item.quantity === 1) {
+                              setPendingRemoval({
+                                productId: item.product.id,
+                                title: item.product.title,
+                              });
+                              return;
+                            }
+
+                            updateQuantity.mutate({
+                              productId: item.product.id,
+                              quantity: item.quantity - 1,
+                            });
+                          }}
+                          onIncrease={() =>
+                            updateQuantity.mutate({
+                              productId: item.product.id,
+                              quantity: item.quantity + 1,
+                            })
+                          }
+                        />
                       </View>
-                    </Pressable>
+                    </View>
                   );
                 })}
               </View>
@@ -361,9 +360,7 @@ export default function CartScreen() {
                 accessibilityState={{ disabled: updateQuantity.isPending }}
                 className="mt-3 min-h-[50px] flex-row items-center justify-center gap-2 rounded-[11px] bg-primary px-5 active:opacity-85 disabled:bg-[#4D474E]"
               >
-                <Text className="font-sans text-xl text-white">
-                  Check-out
-                </Text>
+                <Text className="font-sans text-xl text-white">Check-out</Text>
                 <Ionicons name="arrow-forward" size={24} color="#FFFFFF" />
               </Pressable>
             </>

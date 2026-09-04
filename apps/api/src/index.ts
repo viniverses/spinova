@@ -4,6 +4,8 @@ import { node } from "@elysia/node";
 import { productRoutes } from "./features/products/product.routes.ts";
 import { wishlistRoutes } from "./features/wishlist/wishlist.routes.ts";
 import { cartRoutes } from "./features/cart/cart.routes.ts";
+import { orderRoutes } from "./features/orders/order.routes.ts";
+import { addressRoutes } from "./features/addresses/address.routes.ts";
 import { corsPlugin } from "./plugins/cors.ts";
 import { errorHandlerPlugin } from "./plugins/error-handler.ts";
 import { swaggerPlugin } from "./plugins/swagger.ts";
@@ -26,6 +28,8 @@ app.mount(auth.handler);
 app.use(productRoutes);
 app.use(wishlistRoutes);
 app.use(cartRoutes);
+app.use(orderRoutes);
+app.use(addressRoutes);
 
 // Export
 export default app;

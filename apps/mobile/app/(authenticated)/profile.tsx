@@ -1,7 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useQueryClient } from "@tanstack/react-query";
 import type { ComponentProps } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { useState } from "react";
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { authClient } from "@/lib/auth-client";
 import { useSession } from "@/hooks/use-auth";
 import { colors } from "@/lib/theme";
@@ -17,9 +19,12 @@ type ProfileAction = {
 export default function ProfileScreen() {
   const router = useRouter();
   const { data: session } = useSession();
+  const queryClient = useQueryClient();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const profileActions: ProfileAction[] = [
     { id: "orders", label: "Seus pedidos", icon: "checkmark-circle-outline" },
+    { id: "address", label: "Endereço de entrega", icon: "location-outline" },
     { id: "account", label: "Sua conta", icon: "person-outline" },
     { id: "wishlist", label: "Lista de desejos", icon: "heart-outline" },
     { id: "coupons", label: "Cupons", icon: "ticket-outline" },
@@ -30,12 +35,26 @@ export default function ProfileScreen() {
   const handleActionPress = (id: string) => {
     if (id === "wishlist") {
       router.push("/wishlist" as never);
+    } else if (id === "address") {
+      router.push({
+        pathname: "/address",
+        params: { returnTo: "/profile" },
+      } as never);
     }
   };
 
   const handleLogoutPress = async () => {
-    await authClient.signOut();
-    router.replace("/login");
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      await authClient.signOut();
+      queryClient.clear();
+    } catch (error) {
+      console.error("Erro ao deslogar:", error);
+    } finally {
+      setIsLoggingOut(false);
+      router.replace("/login");
+    }
   };
 
   return (
@@ -91,13 +110,18 @@ export default function ProfileScreen() {
 
           <Pressable
             onPress={handleLogoutPress}
+            disabled={isLoggingOut}
             accessibilityRole="button"
             accessibilityLabel="Deslogar"
-            className="mt-6 items-center justify-center rounded-2xl bg-primary py-4 active:opacity-90"
+            className="mt-6 items-center justify-center rounded-2xl bg-primary py-4 active:opacity-90 disabled:opacity-50"
           >
-            <Text className="font-sans text-base font-bold text-white">
-              Deslogar
-            </Text>
+            {isLoggingOut ? (
+              <ActivityIndicator color="#FFFFFF" />
+            ) : (
+              <Text className="font-sans text-base font-bold text-white">
+                Deslogar
+              </Text>
+            )}
           </Pressable>
         </View>
       </ScrollView>

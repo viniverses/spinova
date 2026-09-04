@@ -30,6 +30,7 @@ const tabScreens: (TabScreen & AppTab)[] = [
 
 export const AppTabs = () => (
   <Tabs
+    backBehavior="history"
     screenOptions={{
       headerShown: false,
       sceneStyle: { backgroundColor: "#000000" },
@@ -57,5 +58,7 @@ export const AppTabs = () => (
     <Tabs.Screen name="product/[id]" options={{ href: null }} />
     <Tabs.Screen name="cart" options={{ href: null }} />
     <Tabs.Screen name="checkout" options={{ href: null }} />
+    <Tabs.Screen name="address" options={{ href: null }} />
+    <Tabs.Screen name="order-complete" options={{ href: null }} />
   </Tabs>
 );

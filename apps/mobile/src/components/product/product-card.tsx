@@ -51,84 +51,82 @@ export const ProductCard = ({
 
   return (
     <View className="mb-2" style={{ width }}>
-      <Pressable
-        onPress={handlePress}
-        accessibilityRole="button"
-        accessibilityLabel={`${product.title}, ${product.artist.name}`}
-        className="active:opacity-90"
-      >
-        <View className="aspect-square overflow-hidden rounded-2xl bg-[#242126]">
-          {product.image ? (
-            <Image
-              source={product.image.url}
-              accessibilityLabel={product.image.altText ?? product.title}
-              contentFit="cover"
-              style={{ width: "100%", height: "100%" }}
-              transition={180}
-            />
-          ) : (
-            <View className="flex-1 items-center justify-center bg-[#242126]">
-              <Ionicons name="disc-outline" size={44} color="#777179" />
-            </View>
-          )}
-
-          {showFavorite ? (
-            <Pressable
-              onPress={(event) => {
-                event.stopPropagation();
-                handleToggleFavorite();
-              }}
-              disabled={isPending}
-              accessibilityRole="button"
-              accessibilityLabel={favoriteLabel}
-              accessibilityState={{ disabled: isPending }}
-              hitSlop={6}
-
-              className="absolute right-2 top-2 h-9 w-9 items-center justify-center rounded-full bg-black/60 active:opacity-75 disabled:opacity-50"
-            >
-              <Ionicons
-                name={isWishlistItem || isFavorite ? "heart" : "heart-outline"}
-                size={20}
-                className="-mt-[1]"
-                color={
-                  isWishlistItem || isFavorite
-                    ? colors.primary.DEFAULT
-                    : "#FFFFFF"
-                }
+      <View className="relative">
+        <Pressable
+          onPress={handlePress}
+          accessibilityRole="button"
+          accessibilityLabel={`${product.title}, ${product.artist.name}`}
+          className="active:opacity-90"
+        >
+          <View className="aspect-square overflow-hidden rounded-2xl bg-[#242126]">
+            {product.image ? (
+              <Image
+                source={product.image.url}
+                accessibilityLabel={product.image.altText ?? product.title}
+                contentFit="cover"
+                style={{ width: "100%", height: "100%" }}
+                transition={180}
               />
-            </Pressable>
-          ) : null}
+            ) : (
+              <View className="flex-1 items-center justify-center bg-[#242126]">
+                <Ionicons name="disc-outline" size={44} color="#777179" />
+              </View>
+            )}
 
-          {!product.inStock ? (
-            <View className="absolute bottom-2 left-2 rounded-full bg-black/75 px-3 py-1.5">
-              <Text className="font-golos-semibold text-xs text-white">
-                Esgotado
+            {!product.inStock ? (
+              <View className="absolute bottom-2 left-2 rounded-full bg-black/75 px-3 py-1.5">
+                <Text className="font-golos-semibold text-xs text-white">
+                  Esgotado
+                </Text>
+              </View>
+            ) : null}
+          </View>
+
+          <View className="min-h-28 pt-3">
+            <Text
+              className="font-sans text-base leading-5 text-white"
+              numberOfLines={2}
+            >
+              {product.title}
+            </Text>
+            <Text
+              className="mt-1 font-golos text-sm text-white/60"
+              numberOfLines={1}
+            >
+              {product.artist.name}
+            </Text>
+
+            <View className="mt-1">
+              <Text className="font-golos-semibold text-base text-white">
+                {formatPrice(product.price)}
               </Text>
             </View>
-          ) : null}
-        </View>
-
-        <View className="min-h-28 pt-3">
-          <Text
-            className="font-sans text-base leading-5 text-white"
-            numberOfLines={2}
-          >
-            {product.title}
-          </Text>
-          <Text
-            className="mt-1 font-golos text-sm text-white/60"
-            numberOfLines={1}
-          >
-            {product.artist.name}
-          </Text>
-
-          <View className="mt-1">
-            <Text className="font-golos-semibold text-base text-white">
-              {formatPrice(product.price)}
-            </Text>
           </View>
-        </View>
-      </Pressable>
+        </Pressable>
+
+        {showFavorite ? (
+          <Pressable
+            onPress={handleToggleFavorite}
+            disabled={isPending}
+            accessibilityRole="button"
+            accessibilityLabel={favoriteLabel}
+            accessibilityState={{ disabled: isPending }}
+            hitSlop={6}
+            className="absolute right-2 top-2 h-9 w-9 items-center justify-center rounded-full bg-black/60 active:opacity-75 disabled:opacity-50"
+          >
+            <Ionicons
+              name={isWishlistItem || isFavorite ? "heart" : "heart-outline"}
+              size={20}
+              className="-mt-[1]"
+              color={
+                isWishlistItem || isFavorite
+                  ? colors.primary.DEFAULT
+                  : "#FFFFFF"
+              }
+            />
+          </Pressable>
+        ) : null}
+      </View>
     </View>
   );
 };

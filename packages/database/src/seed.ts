@@ -4,6 +4,7 @@ import { env } from "@spinova/env/server";
 import { Pool } from "pg";
 
 import {
+  account,
   addresses,
   albums,
   artists,
@@ -206,6 +207,10 @@ const REVIEW = {
 
 const ADDRESS = {
   collector_home: "fcdafb22-fb02-4e93-979f-585de9f0c03b",
+} as const;
+
+const ACCOUNT = {
+  collector_credential: "seed_account_collector_credential",
 } as const;
 
 // user.id é text (Better Auth), não UUID
@@ -1165,6 +1170,23 @@ const seedUsers = [
   },
 ] satisfies (typeof user.$inferInsert)[];
 
+// Senha: Spinova@123 — hash gerado via `hashPassword` do better-auth/crypto (scrypt)
+const COLLECTOR_PASSWORD_HASH =
+  "a3ce55a95116dec8d53252f4f3186e7e:4197a827a5860781e4fb236d3edb66ff5693e862c63e0e32b12d0914ecd0b23405914af4ac1fa63227593a227b6fb9dace7679a8ef601fb2b034c9f7aefbc33a";
+
+const seedAccounts = [
+  {
+    id: ACCOUNT.collector_credential,
+    issuer: "local:credential",
+    accountId: USER_ID,
+    providerId: "credential",
+    userId: USER_ID,
+    password: COLLECTOR_PASSWORD_HASH,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+] satisfies (typeof account.$inferInsert)[];
+
 const seedAddresses = [
   {
     id: ADDRESS.collector_home,
@@ -1172,6 +1194,7 @@ const seedAddresses = [
     label: "Casa",
     street: "Rua dos Discos",
     number: "33",
+    neighborhood: "República",
     city: "São Paulo",
     state: "SP",
     zipCode: "01000-000",
@@ -1483,6 +1506,17 @@ async function seed() {
       });
 
     await transaction
+      .insert(account)
+      .values(seedAccounts)
+      .onConflictDoUpdate({
+        target: account.id,
+        set: {
+          password: sql`excluded."password"`,
+          updatedAt: sql`excluded."updated_at"`,
+        },
+      });
+
+    await transaction
       .insert(addresses)
       .values(seedAddresses)
       .onConflictDoUpdate({
@@ -1493,6 +1527,7 @@ async function seed() {
           street: sql`excluded."street"`,
           number: sql`excluded."number"`,
           complement: sql`excluded."complement"`,
+          neighborhood: sql`excluded."neighborhood"`,
           city: sql`excluded."city"`,
           state: sql`excluded."state"`,
           zipCode: sql`excluded."zip_code"`,

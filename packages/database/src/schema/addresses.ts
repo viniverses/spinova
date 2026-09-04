@@ -22,6 +22,7 @@ export const addresses = pgTable(
     street: text("street").notNull(),
     number: varchar("number", { length: 30 }).notNull(),
     complement: text("complement"),
+    neighborhood: text("neighborhood"),
     city: text("city").notNull(),
     state: varchar("state", { length: 100 }).notNull(),
     zipCode: varchar("zip_code", { length: 20 }).notNull(),

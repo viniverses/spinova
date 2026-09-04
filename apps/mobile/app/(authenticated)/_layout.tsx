@@ -1,4 +1,4 @@
-import { usePathname, useRouter } from "expo-router";
+import { Redirect, usePathname, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { View } from "react-native";
@@ -14,11 +14,19 @@ export default function AuthenticatedLayout() {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const isCheckoutFlow = pathname === "/cart" || pathname === "/checkout";
+  const isCheckoutFlow =
+    pathname === "/cart" ||
+    pathname === "/checkout" ||
+    pathname === "/address" ||
+    pathname === "/order-complete";
   const showBackButton = pathname !== "/home";
 
-  if (isPending || !data?.user) {
+  if (isPending) {
     return <LoadingScreen />;
+  }
+
+  if (!data?.user) {
+    return <Redirect href="/login" />;
   }
 
   return (

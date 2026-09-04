@@ -1,13 +1,23 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import type { ComponentProps } from "react";
-import { Alert, Pressable, ScrollView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
+import { isAxiosError } from "axios";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useCart } from "@/hooks/use-cart";
+import { useDefaultAddress } from "@/hooks/use-addresses";
+import { useCompleteCheckout } from "@/hooks/use-orders";
 
 const SHIPPING = 15;
-const TAB_BAR_CLEARANCE = 132;
+const CONTENT_BOTTOM_PADDING = 24;
 
 const formatCurrency = (value: number) =>
   `R$${value.toFixed(2).replace(".", ",")}`;
@@ -15,11 +25,18 @@ const formatCurrency = (value: number) =>
 type CheckoutDetailProps = {
   title: string;
   icon: ComponentProps<typeof Ionicons>["name"];
+  actionIcon?: ComponentProps<typeof Ionicons>["name"];
   lines: string[];
   onEdit: () => void;
 };
 
-function CheckoutDetail({ title, icon, lines, onEdit }: CheckoutDetailProps) {
+function CheckoutDetail({
+  title,
+  icon,
+  actionIcon = "create-outline",
+  lines,
+  onEdit,
+}: CheckoutDetailProps) {
   return (
     <View className="flex-row items-center">
       <View className="h-[104px] w-[104px] shrink-0 items-center justify-center rounded-xl bg-[#272628]">
@@ -57,7 +74,7 @@ function CheckoutDetail({ title, icon, lines, onEdit }: CheckoutDetailProps) {
         hitSlop={8}
         className="h-12 w-12 shrink-0 items-center justify-center rounded-full active:bg-white/10"
       >
-        <Ionicons name="create-outline" size={25} color="#F7F6F7" />
+        <Ionicons name={actionIcon} size={25} color="#F7F6F7" />
       </Pressable>
     </View>
   );
@@ -66,7 +83,12 @@ function CheckoutDetail({ title, icon, lines, onEdit }: CheckoutDetailProps) {
 export default function CheckoutScreen() {
   const router = useRouter();
   const cart = useCart();
-  const subtotal = Number(cart.data?.subtotal ?? 374.7);
+  const defaultAddress = useDefaultAddress();
+  const completeCheckout = useCompleteCheckout();
+
+  const address = defaultAddress.data;
+  const hasAddress = Boolean(address);
+  const subtotal = Number(cart.data?.subtotal ?? 0);
   const total = subtotal + SHIPPING;
 
   const showEditNotice = (section: string) => {
@@ -74,21 +96,64 @@ export default function CheckoutScreen() {
   };
 
   const handleFinishPurchase = () => {
-    Alert.alert(
-      "Confirmar compra",
-      `O total do pedido é ${formatCurrency(total)}. A integração de pagamento ainda não está disponível.`,
-    );
+    if (!hasAddress) {
+      Alert.alert(
+        "Endereço de entrega necessário",
+        "Cadastre um endereço para poder finalizar a compra.",
+        [
+          { text: "Cancelar", style: "cancel" },
+          {
+            text: "Cadastrar",
+            onPress: () =>
+              router.push({
+                pathname: "/address",
+                params: { returnTo: "/checkout" },
+              } as never),
+          },
+        ],
+      );
+      return;
+    }
+
+    completeCheckout.mutate(undefined, {
+      onSuccess: (order) => {
+        router.replace({
+          pathname: "/order-complete",
+          params: { total: formatCurrency(Number(order.total)) },
+        } as never);
+      },
+      onError: (error: unknown) => {
+        const message =
+          isAxiosError<{ error?: { message?: string } }>(error) &&
+          error.response?.data?.error?.message
+            ? error.response.data.error.message
+            : "Confira seu carrinho e endereço de entrega, depois tente novamente.";
+
+        Alert.alert("Não foi possível concluir a compra", message);
+      },
+    });
   };
+
+  const addressLines = defaultAddress.isLoading
+    ? ["Carregando endereço..."]
+    : address
+      ? [
+          `${address.street}, ${address.number}${address.complement ? ` - ${address.complement}` : ""}`,
+          address.neighborhood
+            ? `${address.neighborhood}, ${address.city} - ${address.state}`
+            : `${address.city} - ${address.state}`,
+        ]
+      : ["Nenhum endereço cadastrado", "Toque para adicionar um endereço"];
 
   return (
     <View className="flex-1 bg-[#151315]">
-      <SafeAreaView className="flex-1" edges={["top", "left", "right"]}>
+      <SafeAreaView className="flex-1" edges={["top", "bottom", "left", "right"]}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             flexGrow: 1,
             paddingHorizontal: 23,
-            paddingBottom: TAB_BAR_CLEARANCE,
+            paddingBottom: CONTENT_BOTTOM_PADDING,
           }}
         >
           <Pressable
@@ -115,8 +180,21 @@ export default function CheckoutScreen() {
             <CheckoutDetail
               title="Endereço de entrega"
               icon="location"
-              lines={["Rua dos Discos, 12", "República", "São Paulo - SP"]}
-              onEdit={() => showEditNotice("endereço de entrega")}
+              actionIcon={hasAddress ? "create-outline" : "add-circle-outline"}
+              lines={addressLines}
+              onEdit={() => {
+                if (address) {
+                  router.push({
+                    pathname: "/address",
+                    params: { id: address.id, returnTo: "/checkout" },
+                  } as never);
+                } else {
+                  router.push({
+                    pathname: "/address",
+                    params: { returnTo: "/checkout" },
+                  } as never);
+                }
+              }}
             />
 
             <CheckoutDetail
@@ -154,11 +232,39 @@ export default function CheckoutScreen() {
             </View>
           </View>
 
+          {!hasAddress && !defaultAddress.isLoading ? (
+            <Pressable
+              onPress={() =>
+                router.push({
+                  pathname: "/address",
+                  params: { returnTo: "/checkout" },
+                } as never)
+              }
+              className="mt-6 rounded-xl border border-primary/30 bg-primary/10 p-3.5"
+            >
+              <Text className="text-center font-golos text-sm text-primary">
+                Cadastre um endereço de entrega para finalizar a compra
+              </Text>
+            </Pressable>
+          ) : null}
+
           <Pressable
             onPress={handleFinishPurchase}
+            disabled={
+              completeCheckout.isPending ||
+              cart.isPending ||
+              !cart.data?.items.length
+            }
             accessibilityRole="button"
             accessibilityLabel={`Finalizar compra, total ${formatCurrency(total)}`}
-            className="mt-7 min-h-[50px] flex-row items-center justify-center gap-2 rounded-[11px] bg-primary px-5 active:opacity-85"
+            accessibilityState={{
+              disabled:
+                completeCheckout.isPending ||
+                cart.isPending ||
+                !cart.data?.items.length,
+              busy: completeCheckout.isPending,
+            }}
+            className="mt-7 min-h-[50px] flex-row items-center justify-center gap-2 rounded-[11px] bg-primary px-5 active:opacity-85 disabled:bg-[#4D474E]"
           >
             <Text
               numberOfLines={1}
@@ -166,9 +272,15 @@ export default function CheckoutScreen() {
               minimumFontScale={0.78}
               className="font-sans text-xl text-white"
             >
-              Finalizar compra
+              {completeCheckout.isPending
+                ? "Finalizando compra"
+                : "Finalizar compra"}
             </Text>
-            <Ionicons name="arrow-forward" size={24} color="#FFFFFF" />
+            {completeCheckout.isPending ? (
+              <ActivityIndicator size="small" color="#FFFFFF" />
+            ) : (
+              <Ionicons name="arrow-forward" size={24} color="#FFFFFF" />
+            )}
           </Pressable>
         </ScrollView>
       </SafeAreaView>
