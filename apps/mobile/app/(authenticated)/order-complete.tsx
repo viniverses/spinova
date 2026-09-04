@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect } from "react";
-import { BackHandler, Pressable, Text, View } from "react-native";
+import { BackHandler, Platform, Pressable, Text, View } from "react-native";
 import Animated, {
   Easing,
   FadeIn,
@@ -19,6 +19,10 @@ export default function OrderCompleteScreen() {
     typeof total === "string" && total.trim() ? total : "R$ 0,00";
 
   useEffect(() => {
+    if (Platform.OS !== "android") {
+      return;
+    }
+
     const handleBack = () => {
       router.replace("/home");
       return true;
