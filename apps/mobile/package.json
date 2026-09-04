@@ -4,7 +4,7 @@
   "main": "expo-router/entry",
   "scripts": {
     "env:load": "dotenv -e ../../.env --",
-    "dev": "pnpm env:load expo start --clear --offline",
+    "dev": "pnpm env:load expo start --clear",
     "dev:tunnel": "pnpm env:load expo start --clear --tunnel",
     "start": "expo start",
     "android": "expo run:android",

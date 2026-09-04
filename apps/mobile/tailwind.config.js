@@ -3,6 +3,7 @@ const { colors } = require("./src/lib/theme");
 
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}", "./app/**/*.{js,jsx,ts,tsx}"],
+  darkMode: "class",
   presets: [require("nativewind/preset")],
   theme: {
     extend: {

@@ -8,7 +8,6 @@ module.exports = function (api) {
     ],
     plugins: [
       "@babel/plugin-proposal-export-namespace-from",
-      "expo-router/babel",
       "react-native-reanimated/plugin",
     ],
   };
