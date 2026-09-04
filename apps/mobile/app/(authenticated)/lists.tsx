@@ -131,7 +131,7 @@ export default function CategoriesScreen() {
               onPress={() => openCollection(category.id)}
               accessibilityRole="button"
               accessibilityLabel={category.label.replace("\n", " ")}
-              className={`min-h-[60] flex-row items-center justify-center gap-1.5 rounded-xl px-2 active:opacity-85 ${
+              className={`min-h-[60] flex-row items-center justify-center gap-1.5 rounded-[10] px-2 active:opacity-85 ${
                 "featured" in category && category.featured
                   ? "bg-primary"
                   : "bg-[#F2F2F4]"
