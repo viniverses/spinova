@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { cartQueryKey } from "@/hooks/use-cart";
+import { productKeys } from "@/hooks/use-products";
 import type { Cart } from "@/services/cart";
 import { completeCheckout } from "@/services/orders";
 
@@ -23,6 +24,7 @@ export const useCompleteCheckout = () => {
     },
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: cartQueryKey });
+      void queryClient.invalidateQueries({ queryKey: productKeys.all });
     },
   });
 };
