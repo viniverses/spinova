@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Pressable, Text, useWindowDimensions, View } from "react-native";
@@ -19,6 +19,14 @@ type HomeCategoryGridProps = {
 
 const H_PADDING = 16;
 const GAP = 12;
+const CATEGORY_ICONS = {
+  bestsellers: require("../../../assets/svg/best-sellers.svg"),
+  new: require("../../../assets/svg/new.svg"),
+  promo: require("../../../assets/svg/sales.svg"),
+  import: require("../../../assets/svg/imported.svg"),
+  national: require("../../../assets/svg/national.svg"),
+  more: require("../../../assets/svg/more.png"),
+} as const;
 
 export const HomeCategoryGrid = ({
   onPressCategory,
@@ -50,12 +58,11 @@ export const HomeCategoryGrid = ({
                 isPrimary ? "bg-primary" : "bg-[#E8E8E8]"
               }`}
             >
-              <Ionicons
-                name={
-                  item.icon as React.ComponentProps<typeof Ionicons>["name"]
-                }
-                size={26}
-                color={isPrimary ? "#FFFFFF" : "#111111"}
+              <Image
+                source={CATEGORY_ICONS[item.id as keyof typeof CATEGORY_ICONS]}
+                contentFit="contain"
+                style={{ width: 26, height: 26 }}
+                accessible={false}
               />
               <Text
                 className={`mt-1.5 px-1 text-center font-golos text-[11px] leading-tight ${
