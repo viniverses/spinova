@@ -1,10 +1,8 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import type { ComponentProps } from "react";
 import { Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-import { colors } from "@/lib/theme";
 
 type TabsProps = ComponentProps<typeof import("expo-router").Tabs>;
 type AppTabBarProps = Parameters<NonNullable<TabsProps["tabBar"]>>[0];
@@ -12,12 +10,18 @@ type AppTabBarProps = Parameters<NonNullable<TabsProps["tabBar"]>>[0];
 export type AppTab = {
   name: string;
   title: string;
-  icon: ComponentProps<typeof Ionicons>["name"];
 };
 
 type AppTabBarPropsWithTabs = AppTabBarProps & {
   tabs: AppTab[];
 };
+
+const TAB_ICONS = {
+  home: require("../../../assets/svg/home.svg"),
+  lists: require("../../../assets/svg/categories.svg"),
+  wishlist: require("../../../assets/svg/wishlist.svg"),
+  profile: require("../../../assets/svg/profile.svg"),
+} as const;
 
 export const AppTabBar = ({
   state,
@@ -70,10 +74,11 @@ export const AppTabBar = ({
                 accessibilityLabel={tab.title}
                 className="min-w-[52px] items-center py-1 active:opacity-80"
               >
-                <Ionicons
-                  name={tab.icon}
-                  size={26}
-                  color={isActive ? colors.primary.DEFAULT : "#A3A3A3"}
+                <Image
+                  source={TAB_ICONS[tab.name as keyof typeof TAB_ICONS]}
+                  contentFit="contain"
+                  style={{ width: 26, height: 26 }}
+                  accessible={false}
                 />
                 <View
                   className={`mt-1 h-0.5 w-6 rounded-full ${
@@ -102,7 +107,12 @@ export const AppTabBar = ({
           shadowRadius: 6,
         }}
       >
-        <Ionicons name="cart" size={28} color="#111111" />
+        <Image
+          source={require("../../../assets/svg/cart.svg")}
+          contentFit="contain"
+          style={{ width: 24, height: 24 }}
+          accessible={false}
+        />
       </Pressable>
     </View>
   );

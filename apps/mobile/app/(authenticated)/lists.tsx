@@ -147,13 +147,7 @@ export default function CategoriesScreen() {
                     : colors.primary.DEFAULT
                 }
               />
-              <Text
-                className={`text-center font-golos-semibold text-[13] leading-4 ${
-                  "featured" in category && category.featured
-                    ? "text-white"
-                    : "text-[#28262A]"
-                }`}
-              >
+              <Text className="text-center font-golos-semibold text-black leading-4 ">
                 {category.label}
               </Text>
             </Pressable>

@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import type { ComponentProps } from "react";
 
@@ -8,29 +7,24 @@ import { colors } from "@/lib/theme";
 type AppTabScreen = ComponentProps<typeof Tabs.Screen>;
 type TabScreen = Pick<AppTabScreen, "name"> & {
   title: string;
-  icon: ComponentProps<typeof Ionicons>["name"];
 };
 
 const tabScreens: (TabScreen & AppTab)[] = [
   {
     name: "home",
     title: "Início",
-    icon: "home-outline",
   },
   {
     name: "lists",
     title: "Categorias",
-    icon: "list",
   },
   {
     name: "wishlist",
     title: "Favoritos",
-    icon: "heart-outline",
   },
   {
     name: "profile",
     title: "Perfil",
-    icon: "person-outline",
   },
 ];
 
@@ -50,15 +44,12 @@ export const AppTabs = () => (
     }}
     tabBar={(props) => <AppTabBar {...props} tabs={tabScreens} />}
   >
-    {tabScreens.map(({ name, title, icon }) => (
+    {tabScreens.map(({ name, title }) => (
       <Tabs.Screen
         key={name}
         name={name}
         options={{
           title,
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name={icon} size={size} color={color} />
-          ),
         }}
       />
     ))}
