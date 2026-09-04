@@ -133,7 +133,6 @@ export const ProductListQuerySchema = Type.Object(
           Type.Literal("best_selling"),
         ],
         {
-          default: "newest",
           description: "Product listing sort order.",
           examples: ["newest"],
         },
