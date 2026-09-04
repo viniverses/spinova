@@ -75,6 +75,8 @@ const buildConditions = (filters: ProductListFilters) => {
         ilike(albums.title, search),
         ilike(artists.name, search),
         ilike(products.sku, search),
+        ilike(sql<string>`${artists.name} || ' ' || ${albums.title}`, search),
+        ilike(sql<string>`${albums.title} || ' ' || ${artists.name}`, search),
       )!,
     );
   }
