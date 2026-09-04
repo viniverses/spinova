@@ -4,7 +4,6 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Modal,
   Pressable,
   ScrollView,
@@ -107,10 +106,7 @@ export default function CartScreen() {
   const total = subtotal + shipping;
 
   const handleCheckout = () => {
-    Alert.alert(
-      "Pedido pronto para continuar",
-      `Total: ${formatCurrency(total)}`,
-    );
+    router.push("/checkout" as never);
   };
 
   const confirmRemoval = () => {
@@ -143,7 +139,7 @@ export default function CartScreen() {
             <Ionicons name="chevron-back" size={24} color="#D5D4D7" />
           </Pressable>
 
-          <Text className="mb-3 mt-8 font-sans text-[32px] leading-10 text-[#F7F6F7]">
+          <Text className="mb-3 mt-8 font-sans text-[28px] leading-9 text-[#F7F6F7]">
             Carrinho
           </Text>
 
@@ -266,7 +262,7 @@ export default function CartScreen() {
                           <Text
                             numberOfLines={1}
                             adjustsFontSizeToFit
-                            className="min-w-0 flex-1 font-golos-semibold text-[19px] text-[#F8F7F8]"
+                            className="min-w-0 flex-1 font-golos-semibold text-[17px] text-[#F8F7F8]"
                           >
                             {formatCurrency(Number(item.product.price))}
                           </Text>
@@ -321,16 +317,16 @@ export default function CartScreen() {
 
               <View className="mt-6 gap-1">
                 <View className="flex-row items-center justify-between">
-                  <Text className="font-golos text-base text-[#F2F0F2]">
+                  <Text className="font-golos text-[17px] text-[#F2F0F2]">
                     Subtotal
                   </Text>
-                  <Text className="font-golos text-base text-[#F2F0F2]">
+                  <Text className="font-golos text-[17px] text-[#F2F0F2]">
                     {formatCurrency(subtotal)}
                   </Text>
                 </View>
 
                 <View className="flex-row items-center justify-between">
-                  <Text className="font-golos text-base text-[#F2F0F2]">
+                  <Text className="font-golos text-[17px] text-[#F2F0F2]">
                     Frete
                   </Text>
                   <Pressable
@@ -339,7 +335,7 @@ export default function CartScreen() {
                     accessibilityLabel="Calcular frete"
                     className="active:opacity-70"
                   >
-                    <Text className="font-golos text-base text-[#F2F0F2] underline">
+                    <Text className="font-golos text-[17px] text-[#F2F0F2] underline">
                       {shippingCalculated
                         ? formatCurrency(SHIPPING)
                         : "Calcular"}
@@ -348,10 +344,10 @@ export default function CartScreen() {
                 </View>
 
                 <View className="flex-row items-center justify-between">
-                  <Text className="font-golos text-base text-[#F2F0F2]">
+                  <Text className="font-golos text-[17px] text-[#F2F0F2]">
                     Total
                   </Text>
-                  <Text className="font-golos text-base text-[#F2F0F2]">
+                  <Text className="font-golos text-[17px] text-[#F2F0F2]">
                     {formatCurrency(total)}
                   </Text>
                 </View>
@@ -363,18 +359,12 @@ export default function CartScreen() {
                 accessibilityRole="button"
                 accessibilityLabel={`Continuar para o checkout, total ${formatCurrency(total)}`}
                 accessibilityState={{ disabled: updateQuantity.isPending }}
-                className="mt-3 min-h-[60px] flex-row items-center justify-between rounded-xl bg-primary py-2 pl-6 pr-2 active:opacity-85 disabled:opacity-50"
+                className="mt-3 min-h-[50px] flex-row items-center justify-center gap-2 rounded-[11px] bg-primary px-5 active:opacity-85 disabled:bg-[#4D474E]"
               >
-                <Text className="font-sans text-[28px] leading-9 text-white">
+                <Text className="font-sans text-xl text-white">
                   Check-out
                 </Text>
-                <View className="h-12 w-12 items-center justify-center rounded-full bg-[#F7F6F7]">
-                  <Ionicons
-                    name="arrow-forward"
-                    size={28}
-                    color={colors.primary.DEFAULT}
-                  />
-                </View>
+                <Ionicons name="arrow-forward" size={24} color="#FFFFFF" />
               </Pressable>
             </>
           )}

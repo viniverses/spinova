@@ -14,7 +14,7 @@ export default function AuthenticatedLayout() {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const isCart = pathname === "/cart";
+  const isCheckoutFlow = pathname === "/cart" || pathname === "/checkout";
   const showBackButton = pathname !== "/home";
 
   if (isPending || !data?.user) {
@@ -24,7 +24,7 @@ export default function AuthenticatedLayout() {
   return (
     <View className="flex-1 bg-black">
       <StatusBar style="light" />
-      {!isCart ? (
+      {!isCheckoutFlow ? (
         <SafeAreaView className="bg-black" edges={["top", "left", "right"]}>
           <HomeHeader
             leadingVariant={showBackButton ? "back" : "brand"}
