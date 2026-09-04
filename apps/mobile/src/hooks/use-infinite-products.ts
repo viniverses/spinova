@@ -3,6 +3,7 @@ import { getProducts, type ProductListParams } from "@/services/products";
 
 export const useInfiniteProducts = (
   params: Omit<ProductListParams, "page"> = {},
+  options?: { enabled?: boolean },
 ) =>
   useInfiniteQuery({
     queryKey: ["products", "infinite", params],
@@ -13,4 +14,5 @@ export const useInfiniteProducts = (
       const { page, totalPages } = lastPage.pagination;
       return page < totalPages ? page + 1 : undefined;
     },
+    ...options,
   });

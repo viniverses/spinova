@@ -54,6 +54,7 @@ export const AppTabs = () => (
         }}
       />
     ))}
+    <Tabs.Screen name="search" options={{ href: null }} />
     <Tabs.Screen name="collection/[id]" options={{ href: null }} />
     <Tabs.Screen name="product/[id]" options={{ href: null }} />
     <Tabs.Screen name="cart" options={{ href: null }} />

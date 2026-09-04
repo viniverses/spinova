@@ -16,18 +16,6 @@ export const HomeHeader = ({
 }: HomeHeaderProps) => {
   const isBackHeader = leadingVariant === "back";
 
-  const handleSearchPress = () => {
-    onPressSearch?.();
-  };
-
-  const handleHelpPress = () => {
-    onPressHelp?.();
-  };
-
-  const handleLogoPress = () => {
-    onPressLogo?.();
-  };
-
   return (
     <View
       className={`flex-row items-center ${
@@ -35,10 +23,10 @@ export const HomeHeader = ({
       }`}
     >
       <Pressable
-        onPress={handleLogoPress}
+        onPress={onPressLogo}
         accessibilityRole="button"
         accessibilityLabel={
-          leadingVariant === "back" ? "Voltar" : "Spinova, menu"
+          isBackHeader ? "Voltar" : "Spinova, menu"
         }
         className={`items-center justify-center rounded-xl active:opacity-90 ${
           isBackHeader
@@ -56,22 +44,28 @@ export const HomeHeader = ({
       </Pressable>
 
       <Pressable
-        onPress={handleSearchPress}
+        onPress={onPressSearch}
         accessibilityRole="button"
-        accessibilityLabel="Buscar"
-        className={`flex-1 flex-row items-center justify-end bg-[#2C2C2E] px-4 active:opacity-90 ${
+        accessibilityLabel="Buscar artista ou álbum"
+        className={`flex-1 flex-row items-center bg-[#2C2C2E] px-3.5 active:opacity-90 ${
           isBackHeader ? "h-[52px] rounded-xl" : "h-12 rounded-2xl"
         }`}
       >
         <Ionicons
           name="search"
-          size={isBackHeader ? 24 : 22}
-          color={isBackHeader ? "#C7C7CC" : "#FFFFFF"}
+          size={isBackHeader ? 22 : 20}
+          color={isBackHeader ? "#C7C7CC" : "#A3A3A3"}
         />
+        <Text
+          className="flex-1 px-2.5 font-golos text-sm text-white/40"
+          numberOfLines={1}
+        >
+          Buscar artista ou álbum...
+        </Text>
       </Pressable>
 
       <Pressable
-        onPress={handleHelpPress}
+        onPress={onPressHelp}
         accessibilityRole="button"
         accessibilityLabel="Ajuda"
         className={`items-center justify-center bg-[#2C2C2E] active:opacity-90 ${
