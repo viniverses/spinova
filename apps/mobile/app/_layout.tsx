@@ -7,9 +7,10 @@ import {
 } from "@expo-google-fonts/syne";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { LoadingScreen } from "../src/components/ui/loading-screen";
 import { useSession } from "../src/hooks/use-auth";
 import { QueryProvider } from "../src/providers/query-provider";
 
@@ -23,15 +24,17 @@ export default function RootLayout() {
     "GolosText-SemiBold": require("../assets/fonts/golos-text-semibold.ttf"),
   });
   const { isPending: isSessionLoading } = useSession();
+  const isInitialLoad = useRef(true);
 
   useEffect(() => {
-    if (fontsLoaded && !isSessionLoading) {
+    if (fontsLoaded && !isSessionLoading && isInitialLoad.current) {
+      isInitialLoad.current = false;
       void SplashScreen.hideAsync();
     }
   }, [fontsLoaded, isSessionLoading]);
 
-  if (!fontsLoaded || isSessionLoading) {
-    return <View className="flex-1 bg-[#171518]" />;
+  if (!fontsLoaded || (isSessionLoading && isInitialLoad.current)) {
+    return <LoadingScreen />;
   }
 
   return (
@@ -42,6 +45,7 @@ export default function RootLayout() {
             screenOptions={{
               headerShown: false,
               animation: "slide_from_right",
+              contentStyle: { backgroundColor: "#000000" },
             }}
           />
         </View>

@@ -18,10 +18,6 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { data: session } = useSession();
 
-  const handleLogout = async () => {
-    await authClient.signOut();
-  };
-
   const profileActions: ProfileAction[] = [
     { id: "orders", label: "Seus pedidos", icon: "checkmark-circle-outline" },
     { id: "account", label: "Sua conta", icon: "person-outline" },
@@ -37,9 +33,8 @@ export default function ProfileScreen() {
     }
   };
 
-  const handleLogoutPress = () => {
-    handleLogout();
-    router.replace("/login");
+  const handleLogoutPress = async () => {
+    await authClient.signOut();
   };
 
   return (

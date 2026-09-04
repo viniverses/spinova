@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { useSession } from "../../hooks/use-auth";
@@ -12,8 +12,9 @@ import { PasswordVisibilityToggle } from "./password-visibility-toggle";
 
 export const LoginForm = () => {
   const router = useRouter();
-  const { data: session, refetch: refetchSession } = useSession();
+  const { refetch: refetchSession } = useSession();
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const {
     control,
@@ -30,15 +31,10 @@ export const LoginForm = () => {
     mode: "onSubmit",
   });
 
-  useEffect(() => {
-    if (session?.user) {
-      router.replace("/home");
-    }
-  }, [router, session?.user]);
-
   const onSubmit = useCallback(
     async (values: LoginFormValues) => {
       clearErrors("root");
+      setIsLoggingIn(true);
 
       try {
         const { error } = await authClient.signIn.email({
@@ -47,23 +43,34 @@ export const LoginForm = () => {
         });
 
         if (error) {
+          setIsLoggingIn(false);
           setError("root", {
             message: error.message || "Não foi possível entrar.",
           });
           return;
         }
 
-        // Wait for the session atom to reflect the new browser cookie before
-        // entering the authenticated route guard.
-        await refetchSession();
+        // Aguarda a sessão ser atualizada completamente
+        const result = await refetchSession();
+
+        // Só navega para home se a sessão foi carregada com sucesso
+        if (result.data?.user) {
+          router.replace("/home");
+        } else {
+          setIsLoggingIn(false);
+          setError("root", {
+            message: "Falha ao carregar sessão. Tente novamente.",
+          });
+        }
       } catch {
+        setIsLoggingIn(false);
         setError("root", { message: "Algo deu errado. Tente novamente." });
       }
     },
-    [refetchSession, setError, clearErrors],
+    [refetchSession, setError, clearErrors, router],
   );
 
-  const busy = isSubmitting;
+  const busy = isSubmitting || isLoggingIn;
 
   return (
     <>

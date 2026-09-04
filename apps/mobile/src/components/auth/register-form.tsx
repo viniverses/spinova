@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { useSession } from "../../hooks/use-auth";
 import { authClient } from "../../lib/auth-client";
 import { colors } from "../../lib/theme";
 import {
@@ -14,6 +15,7 @@ import { PasswordVisibilityToggle } from "./password-visibility-toggle";
 
 export const RegisterForm = () => {
   const router = useRouter();
+  const { refetch: refetchSession } = useSession();
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const {
@@ -50,12 +52,13 @@ export const RegisterForm = () => {
           return;
         }
 
-        router.replace("/home");
+        await refetchSession();
+        router.replace("/");
       } catch {
         setError("root", { message: "Algo deu errado. Tente novamente." });
       }
     },
-    [router, setError, clearErrors],
+    [router, refetchSession, setError, clearErrors],
   );
 
   const busy = isSubmitting;

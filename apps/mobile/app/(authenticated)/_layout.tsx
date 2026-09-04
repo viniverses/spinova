@@ -1,26 +1,31 @@
 import { Redirect, usePathname, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HelpDrawer } from "@/components/help/help-drawer";
 import { HomeHeader } from "@/components/home/home-header";
 import { AppTabs } from "@/components/navigation/app-tabs";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 import { useSession } from "@/hooks/use-auth";
 
 export default function AuthenticatedLayout() {
-  const { data, isPending } = useSession();
+  const { data } = useSession();
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const showBackButton = pathname !== "/home";
+  const hasRedirected = useRef(false);
 
-  if (isPending) {
-    return <View className="flex-1 bg-[#171518]" />;
-  }
+  useEffect(() => {
+    if (!data?.user && !hasRedirected.current) {
+      hasRedirected.current = true;
+      router.replace("/login");
+    }
+  }, [data?.user, router]);
 
   if (!data?.user) {
-    return <Redirect href="/login" />;
+    return <LoadingScreen />;
   }
 
   return (

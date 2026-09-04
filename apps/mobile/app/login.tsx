@@ -1,3 +1,13 @@
-import AuthScreen from "../src/components/auth/auth-screen";
+import { Redirect } from "expo-router";
+import { useSession } from "@/hooks/use-auth";
+import AuthScreen from "@/components/auth/auth-screen";
 
-export default AuthScreen;
+export default function LoginRoute() {
+  const { data } = useSession();
+
+  if (data?.user) {
+    return <Redirect href="/home" />;
+  }
+
+  return <AuthScreen />;
+}
