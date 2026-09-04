@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
 import Animated, {
+  cancelAnimation,
   Easing,
   interpolate,
   useAnimatedProps,
@@ -31,6 +32,10 @@ export function PurchaseCompleteMark() {
       return;
     }
 
+    rotation.value = 0;
+    ringProgress.value = 0;
+    badgeProgress.value = 0;
+
     // Slower, smoother vinyl rotation decelerating realistically
     rotation.value = withTiming(720, {
       duration: 2200,
@@ -51,6 +56,12 @@ export function PurchaseCompleteMark() {
         easing: Easing.out(Easing.back(1.6)),
       }),
     );
+
+    return () => {
+      cancelAnimation(rotation);
+      cancelAnimation(ringProgress);
+      cancelAnimation(badgeProgress);
+    };
   }, [badgeProgress, reduceMotion, ringProgress, rotation]);
 
   const ringAnimatedProps = useAnimatedProps(() => ({

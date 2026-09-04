@@ -1,6 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect } from "react";
+import {
+  useFocusEffect,
+  useIsFocused,
+  useLocalSearchParams,
+  useRouter,
+} from "expo-router";
+import { useCallback } from "react";
 import { BackHandler, Platform, Pressable, Text, View } from "react-native";
 import Animated, {
   Easing,
@@ -14,31 +19,38 @@ import { PurchaseCompleteMark } from "@/components/checkout/purchase-complete-ma
 
 export default function OrderCompleteScreen() {
   const router = useRouter();
+  const isFocused = useIsFocused();
   const { total } = useLocalSearchParams<{ total?: string }>();
   const displayTotal =
     typeof total === "string" && total.trim() ? total : "R$ 0,00";
 
-  useEffect(() => {
-    if (Platform.OS !== "android") {
-      return;
-    }
+  useFocusEffect(
+    useCallback(() => {
+      if (Platform.OS !== "android") {
+        return;
+      }
 
-    const handleBack = () => {
-      router.replace("/home");
-      return true;
-    };
+      const handleBack = () => {
+        router.replace("/home");
+        return true;
+      };
 
-    const subscription = BackHandler.addEventListener(
-      "hardwareBackPress",
-      handleBack,
-    );
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleBack,
+      );
 
-    return () => subscription.remove();
-  }, [router]);
+      return () => subscription.remove();
+    }, [router]),
+  );
 
   const returnHome = () => {
     router.replace("/home");
   };
+
+  if (!isFocused) {
+    return <View className="flex-1 bg-black" />;
+  }
 
   return (
     <View className="flex-1 bg-black">
