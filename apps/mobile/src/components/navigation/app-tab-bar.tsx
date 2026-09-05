@@ -31,7 +31,7 @@ export const AppTabBar = ({
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const activeRouteName = state.routes[state.index]?.name;
-  const HIDDEN_TAB_BAR_ROUTES = ["order-complete", "checkout", "address"];
+  const HIDDEN_TAB_BAR_ROUTES = ["order-complete", "checkout"];
   if (HIDDEN_TAB_BAR_ROUTES.includes(activeRouteName ?? "")) return null;
 
   const handleTabPress = (name: string) => {

@@ -14,7 +14,6 @@ import {
   Text,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 import { TextInput } from "@/components/ui/textinput";
 import {
@@ -25,7 +24,7 @@ import {
 import { useLookupCep } from "@/hooks/use-lookup-cep";
 import { addressSchema, type AddressFormValues } from "@/schemas/address";
 
-const CONTENT_BOTTOM_PADDING = 24;
+const CONTENT_BOTTOM_PADDING = 116;
 
 const formatCep = (value: string) => {
   const digits = value.replace(/\D/g, "").slice(0, 8);
@@ -195,301 +194,291 @@ export default function AddressScreen() {
     (isEditing && isLoadingAddresses);
 
   return (
-    <View className="flex-1 bg-[#151315]">
-      <SafeAreaView className="flex-1" edges={["top", "bottom", "left", "right"]}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-          className="flex-1"
+    <View className="flex-1 bg-black">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        className="flex-1"
+      >
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: 20,
+            paddingTop: 12,
+            paddingBottom: CONTENT_BOTTOM_PADDING,
+          }}
         >
-          <ScrollView
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              flexGrow: 1,
-              paddingHorizontal: 23,
-              paddingBottom: CONTENT_BOTTOM_PADDING,
-            }}
-          >
-            {/* Header */}
-            <View className="mt-4 flex-row items-center gap-4">
-              <Pressable
-                onPress={handleNavigateBack}
-                accessibilityRole="button"
-                accessibilityLabel="Voltar"
-                className="h-12 w-12 items-center justify-center rounded-xl bg-[#272628] active:opacity-75"
-              >
-                <Ionicons name="chevron-back" size={24} color="#D5D4D7" />
-              </Pressable>
-              <Text className="font-sans text-2xl text-[#F7F6F7]">
-                {isEditing ? "Editar endereço" : "Endereço de entrega"}
-              </Text>
-            </View>
-
-            <Text className="mt-6 font-golos text-sm text-white/60">
+          {/* Title */}
+          <View>
+            <Text className="font-sans text-2xl font-bold text-white">
+              {isEditing ? "Editar endereço" : "Endereço de entrega"}
+            </Text>
+            <Text className="mt-2 font-golos text-sm text-white/60">
               Informe seu CEP para preencher o endereço automaticamente através
               da base dos Correios.
             </Text>
+          </View>
 
-            {/* Form Fields */}
-            <View className="mt-6 gap-4">
-              {/* CEP field */}
-              <View>
-                <Text className="mb-2 font-golos-semibold text-sm text-white/80">
-                  CEP *
-                </Text>
-                <View className="relative justify-center">
-                  <Controller
-                    control={control}
-                    name="zipCode"
-                    render={({ field: { onChange, onBlur, value } }) => (
-                      <TextInput
-                        placeholder="00000-000"
-                        keyboardType="number-pad"
-                        maxLength={9}
-                        value={value}
-                        onChangeText={(text) => {
-                          const formatted = formatCep(text);
-                          onChange(formatted);
-                          if (formatted.replace(/\D/g, "").length === 8) {
-                            handleLookupCep(formatted);
-                          }
-                        }}
-                        onBlur={onBlur}
-                        editable={!isBusy}
-                        accessibilityLabel="CEP"
-                        className="pr-12"
-                      />
-                    )}
-                  />
-                  <View className="absolute right-3">
-                    {isSearchingCep ? (
-                      <ActivityIndicator size="small" color="#E14842" />
-                    ) : (
-                      <Pressable
-                        onPress={() => handleLookupCep(getValues("zipCode"))}
-                        hitSlop={8}
-                        accessibilityRole="button"
-                        accessibilityLabel="Buscar CEP"
-                      >
-                        <Ionicons
-                          name="search-outline"
-                          size={20}
-                          color="#F7F6F7"
-                        />
-                      </Pressable>
-                    )}
-                  </View>
-                </View>
-                {cepNotice ? (
-                  <Text className="mt-1 font-golos text-xs text-green-400">
-                    {cepNotice}
-                  </Text>
-                ) : null}
-                {errors.zipCode?.message ? (
-                  <Text className="mt-1 font-golos text-sm text-error">
-                    {errors.zipCode.message}
-                  </Text>
-                ) : null}
-              </View>
-
-              {/* Logradouro / Rua */}
-              <View>
-                <Text className="mb-2 font-golos-semibold text-sm text-white/80">
-                  Logradouro / Rua *
-                </Text>
+          {/* Form Fields */}
+          <View className="mt-6 gap-4">
+            {/* CEP field */}
+            <View>
+              <Text className="mb-2 font-golos-semibold text-sm text-white/80">
+                CEP *
+              </Text>
+              <View className="relative justify-center">
                 <Controller
                   control={control}
-                  name="street"
+                  name="zipCode"
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
-                      placeholder="Ex: Av. Paulista, Rua dos Discos"
+                      placeholder="00000-000"
+                      keyboardType="number-pad"
+                      maxLength={9}
                       value={value}
-                      onChangeText={onChange}
+                      onChangeText={(text) => {
+                        const formatted = formatCep(text);
+                        onChange(formatted);
+                        if (formatted.replace(/\D/g, "").length === 8) {
+                          handleLookupCep(formatted);
+                        }
+                      }}
                       onBlur={onBlur}
                       editable={!isBusy}
-                      accessibilityLabel="Logradouro"
+                      accessibilityLabel="CEP"
+                      className="pr-12"
                     />
                   )}
                 />
-                {errors.street?.message ? (
-                  <Text className="mt-1 font-golos text-sm text-error">
-                    {errors.street.message}
-                  </Text>
-                ) : null}
-              </View>
-
-              {/* Número e Complemento */}
-              <View className="flex-row gap-3">
-                <View className="flex-1">
-                  <Text className="mb-2 font-golos-semibold text-sm text-white/80">
-                    Número *
-                  </Text>
-                  <Controller
-                    control={control}
-                    name="number"
-                    render={({ field: { onChange, onBlur, value } }) => (
-                      <TextInput
-                        placeholder="123"
-                        keyboardType="default"
-                        value={value}
-                        onChangeText={onChange}
-                        onBlur={onBlur}
-                        editable={!isBusy}
-                        accessibilityLabel="Número"
+                <View className="absolute right-3">
+                  {isSearchingCep ? (
+                    <ActivityIndicator size="small" color="#E14842" />
+                  ) : (
+                    <Pressable
+                      onPress={() => handleLookupCep(getValues("zipCode"))}
+                      hitSlop={8}
+                      accessibilityRole="button"
+                      accessibilityLabel="Buscar CEP"
+                    >
+                      <Ionicons
+                        name="search-outline"
+                        size={20}
+                        color="#F7F6F7"
                       />
-                    )}
-                  />
-                  {errors.number?.message ? (
-                    <Text className="mt-1 font-golos text-sm text-error">
-                      {errors.number.message}
-                    </Text>
-                  ) : null}
-                </View>
-
-                <View className="flex-1">
-                  <Text className="mb-2 font-golos-semibold text-sm text-white/80">
-                    Complemento
-                  </Text>
-                  <Controller
-                    control={control}
-                    name="complement"
-                    render={({ field: { onChange, onBlur, value } }) => (
-                      <TextInput
-                        placeholder="Apto, Bloco (opcional)"
-                        value={value}
-                        onChangeText={onChange}
-                        onBlur={onBlur}
-                        editable={!isBusy}
-                        accessibilityLabel="Complemento"
-                      />
-                    )}
-                  />
-                </View>
-              </View>
-
-              {/* Bairro */}
-              <View>
-                <Text className="mb-2 font-golos-semibold text-sm text-white/80">
-                  Bairro
-                </Text>
-                <Controller
-                  control={control}
-                  name="neighborhood"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                      placeholder="Ex: Bela Vista, República"
-                      value={value}
-                      onChangeText={onChange}
-                      onBlur={onBlur}
-                      editable={!isBusy}
-                      accessibilityLabel="Bairro"
-                    />
+                    </Pressable>
                   )}
-                />
-              </View>
-
-              {/* Cidade e Estado */}
-              <View className="flex-row gap-3">
-                <View className="flex-[2]">
-                  <Text className="mb-2 font-golos-semibold text-sm text-white/80">
-                    Cidade *
-                  </Text>
-                  <Controller
-                    control={control}
-                    name="city"
-                    render={({ field: { onChange, onBlur, value } }) => (
-                      <TextInput
-                        placeholder="São Paulo"
-                        value={value}
-                        onChangeText={onChange}
-                        onBlur={onBlur}
-                        editable={!isBusy}
-                        accessibilityLabel="Cidade"
-                      />
-                    )}
-                  />
-                  {errors.city?.message ? (
-                    <Text className="mt-1 font-golos text-sm text-error">
-                      {errors.city.message}
-                    </Text>
-                  ) : null}
-                </View>
-
-                <View className="flex-1">
-                  <Text className="mb-2 font-golos-semibold text-sm text-white/80">
-                    UF *
-                  </Text>
-                  <Controller
-                    control={control}
-                    name="state"
-                    render={({ field: { onChange, onBlur, value } }) => (
-                      <TextInput
-                        placeholder="SP"
-                        maxLength={2}
-                        autoCapitalize="characters"
-                        value={value}
-                        onChangeText={(text) => onChange(text.toUpperCase())}
-                        onBlur={onBlur}
-                        editable={!isBusy}
-                        accessibilityLabel="Estado"
-                      />
-                    )}
-                  />
-                  {errors.state?.message ? (
-                    <Text className="mt-1 font-golos text-sm text-error">
-                      {errors.state.message}
-                    </Text>
-                  ) : null}
                 </View>
               </View>
-
-              {/* Identificador (Casa, Trabalho, etc.) */}
-              <View>
-                <Text className="mb-2 font-golos-semibold text-sm text-white/80">
-                  Identificador do endereço *
+              {cepNotice ? (
+                <Text className="mt-1 font-golos text-xs text-green-400">
+                  {cepNotice}
                 </Text>
-                <Controller
-                  control={control}
-                  name="label"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                      placeholder="Ex: Casa, Trabalho"
-                      value={value}
-                      onChangeText={onChange}
-                      onBlur={onBlur}
-                      editable={!isBusy}
-                      accessibilityLabel="Identificador"
-                    />
-                  )}
-                />
-                {errors.label?.message ? (
-                  <Text className="mt-1 font-golos text-sm text-error">
-                    {errors.label.message}
-                  </Text>
-                ) : null}
-              </View>
-
-              {/* Save Button */}
-              <Pressable
-                onPress={handleSubmit(onSubmit)}
-                disabled={isBusy}
-                accessibilityRole="button"
-                accessibilityLabel="Salvar endereço"
-                className="mt-6 min-h-[50px] flex-row items-center justify-center gap-2 rounded-[11px] bg-primary px-5 active:opacity-85 disabled:bg-[#4D474E]"
-              >
-                <Text className="font-sans text-xl text-white">
-                  {isBusy ? "Salvando..." : "Salvar endereço"}
+              ) : null}
+              {errors.zipCode?.message ? (
+                <Text className="mt-1 font-golos text-sm text-error">
+                  {errors.zipCode.message}
                 </Text>
-                {isBusy ? (
-                  <ActivityIndicator size="small" color="#FFFFFF" />
-                ) : (
-                  <Ionicons name="checkmark" size={24} color="#FFFFFF" />
-                )}
-              </Pressable>
+              ) : null}
             </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
+
+            {/* Logradouro / Rua */}
+            <View>
+              <Text className="mb-2 font-golos-semibold text-sm text-white/80">
+                Logradouro / Rua *
+              </Text>
+              <Controller
+                control={control}
+                name="street"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    placeholder="Ex: Av. Paulista, Rua dos Discos"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    editable={!isBusy}
+                    accessibilityLabel="Logradouro"
+                  />
+                )}
+              />
+              {errors.street?.message ? (
+                <Text className="mt-1 font-golos text-sm text-error">
+                  {errors.street.message}
+                </Text>
+              ) : null}
+            </View>
+
+            {/* Número e Complemento */}
+            <View className="flex-row gap-3">
+              <View className="flex-1">
+                <Text className="mb-2 font-golos-semibold text-sm text-white/80">
+                  Número *
+                </Text>
+                <Controller
+                  control={control}
+                  name="number"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      placeholder="123"
+                      keyboardType="default"
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      editable={!isBusy}
+                      accessibilityLabel="Número"
+                    />
+                  )}
+                />
+                {errors.number?.message ? (
+                  <Text className="mt-1 font-golos text-sm text-error">
+                    {errors.number.message}
+                  </Text>
+                ) : null}
+              </View>
+
+              <View className="flex-1">
+                <Text className="mb-2 font-golos-semibold text-sm text-white/80">
+                  Complemento
+                </Text>
+                <Controller
+                  control={control}
+                  name="complement"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      placeholder="Apto, Bloco (opcional)"
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      editable={!isBusy}
+                      accessibilityLabel="Complemento"
+                    />
+                  )}
+                />
+              </View>
+            </View>
+
+            {/* Bairro */}
+            <View>
+              <Text className="mb-2 font-golos-semibold text-sm text-white/80">
+                Bairro
+              </Text>
+              <Controller
+                control={control}
+                name="neighborhood"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    placeholder="Ex: Bela Vista, República"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    editable={!isBusy}
+                    accessibilityLabel="Bairro"
+                  />
+                )}
+              />
+            </View>
+
+            {/* Cidade e Estado */}
+            <View className="flex-row gap-3">
+              <View className="flex-[2]">
+                <Text className="mb-2 font-golos-semibold text-sm text-white/80">
+                  Cidade *
+                </Text>
+                <Controller
+                  control={control}
+                  name="city"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      placeholder="São Paulo"
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      editable={!isBusy}
+                      accessibilityLabel="Cidade"
+                    />
+                  )}
+                />
+                {errors.city?.message ? (
+                  <Text className="mt-1 font-golos text-sm text-error">
+                    {errors.city.message}
+                  </Text>
+                ) : null}
+              </View>
+
+              <View className="flex-1">
+                <Text className="mb-2 font-golos-semibold text-sm text-white/80">
+                  UF *
+                </Text>
+                <Controller
+                  control={control}
+                  name="state"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      placeholder="SP"
+                      maxLength={2}
+                      autoCapitalize="characters"
+                      value={value}
+                      onChangeText={(text) => onChange(text.toUpperCase())}
+                      onBlur={onBlur}
+                      editable={!isBusy}
+                      accessibilityLabel="Estado"
+                    />
+                  )}
+                />
+                {errors.state?.message ? (
+                  <Text className="mt-1 font-golos text-sm text-error">
+                    {errors.state.message}
+                  </Text>
+                ) : null}
+              </View>
+            </View>
+
+            {/* Identificador (Casa, Trabalho, etc.) */}
+            <View>
+              <Text className="mb-2 font-golos-semibold text-sm text-white/80">
+                Identificador do endereço *
+              </Text>
+              <Controller
+                control={control}
+                name="label"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    placeholder="Ex: Casa, Trabalho"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    editable={!isBusy}
+                    accessibilityLabel="Identificador"
+                  />
+                )}
+              />
+              {errors.label?.message ? (
+                <Text className="mt-1 font-golos text-sm text-error">
+                  {errors.label.message}
+                </Text>
+              ) : null}
+            </View>
+
+            {/* Save Button */}
+            <Pressable
+              onPress={handleSubmit(onSubmit)}
+              disabled={isBusy}
+              accessibilityRole="button"
+              accessibilityLabel="Salvar endereço"
+              className="mt-6 min-h-[50px] flex-row items-center justify-center gap-2 rounded-[11px] bg-primary px-5 active:opacity-85 disabled:bg-[#4D474E]"
+            >
+              <Text className="font-sans text-xl text-white">
+                {isBusy ? "Salvando..." : "Salvar endereço"}
+              </Text>
+              {isBusy ? (
+                <ActivityIndicator size="small" color="#FFFFFF" />
+              ) : (
+                <Ionicons name="checkmark" size={24} color="#FFFFFF" />
+              )}
+            </Pressable>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }

@@ -14,7 +14,6 @@ const NO_HEADER_ROUTES = new Set([
   "/search",
   "/cart",
   "/checkout",
-  "/address",
   "/order-complete",
 ]);
 
@@ -30,7 +29,11 @@ function AuthenticatedContent() {
     if (pathname.startsWith("/help")) {
       openHelp();
     }
-    router.back();
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace("/home");
+    }
   };
 
   return (
