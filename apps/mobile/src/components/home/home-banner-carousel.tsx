@@ -56,7 +56,7 @@ export const HomeBannerCarousel = () => {
                 <Image
                   source={item.image}
                   style={[
-                    StyleSheet.absoluteFillObject,
+                    StyleSheet.absoluteFill,
                     { width: cardWidth, height: cardHeight },
                   ]}
                   resizeMode="cover"
@@ -67,13 +67,13 @@ export const HomeBannerCarousel = () => {
                   colors={["rgba(0,0,0,0.10)", "rgba(0,0,0,0.85)"]}
                   start={{ x: 0, y: 0.05 }}
                   end={{ x: 0, y: 1 }}
-                  style={StyleSheet.absoluteFillObject}
+                  style={StyleSheet.absoluteFill}
                   pointerEvents="none"
                 />
 
                 <View
                   className="justify-end p-4"
-                  style={StyleSheet.absoluteFillObject}
+                  style={StyleSheet.absoluteFill}
                   pointerEvents="box-none"
                 >
                   <View>

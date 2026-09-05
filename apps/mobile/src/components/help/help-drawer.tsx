@@ -6,45 +6,24 @@ import BottomSheet, {
   BottomSheetTextInput,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
+import { useRouter } from "expo-router";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { getAllHelpTopics } from "../../../data/help-content";
 
 export type HelpDrawerProps = {
   isOpen?: boolean;
   onClose: () => void;
 };
 
-type HelpTopic = {
-  id: string;
-  label: string;
-  icon: keyof typeof Ionicons.glyphMap;
-};
-
 export const HelpDrawer = ({ isOpen, onClose }: HelpDrawerProps) => {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const snapPoints = useMemo(() => ["75%"], []);
-
-  const topics = useMemo<HelpTopic[]>(
-    () => [
-      {
-        id: "returns",
-        label: "Política de troca e devolução",
-        icon: "swap-horizontal",
-      },
-      { id: "payments", label: "Formas de pagamento", icon: "card-outline" },
-      { id: "delivery", label: "Tipos de entrega", icon: "bicycle-outline" },
-      {
-        id: "security",
-        label: "Segurança e privacidade",
-        icon: "shield-checkmark-outline",
-      },
-      { id: "other", label: "Outras dúvidas", icon: "help-circle-outline" },
-    ],
-    [],
-  );
+  const topics = useMemo(() => getAllHelpTopics(), []);
 
   const [query, setQuery] = useState("");
   const displayedTopics = useMemo(() => {
@@ -77,12 +56,16 @@ export const HelpDrawer = ({ isOpen, onClose }: HelpDrawerProps) => {
     [],
   );
 
-  const handleTopicPress = () => {
+  const handleTopicPress = (topicId: string) => {
     bottomSheetRef.current?.close();
+    onClose();
+    router.push(`/(authenticated)/help/${topicId}` as never);
   };
 
   const handleSendPress = () => {
     bottomSheetRef.current?.close();
+    onClose();
+    router.push("/(authenticated)/help/other" as never);
   };
 
   if (!isOpen) return null;
@@ -160,7 +143,7 @@ export const HelpDrawer = ({ isOpen, onClose }: HelpDrawerProps) => {
           {displayedTopics.map((topic, index) => (
             <View key={topic.id}>
               <Pressable
-                onPress={handleTopicPress}
+                onPress={() => handleTopicPress(topic.id)}
                 accessibilityRole="button"
                 accessibilityLabel={topic.label}
                 className="flex-row items-center gap-3 py-4"

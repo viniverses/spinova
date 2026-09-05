@@ -8,6 +8,7 @@ import { HomeHeader } from "@/components/home/home-header";
 import { AppTabs } from "@/components/navigation/app-tabs";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { useSession } from "@/hooks/use-auth";
+import { HelpProvider, useHelp } from "@/providers/help-provider";
 
 const NO_HEADER_ROUTES = new Set([
   "/search",
@@ -17,11 +18,44 @@ const NO_HEADER_ROUTES = new Set([
   "/order-complete",
 ]);
 
-export default function AuthenticatedLayout() {
-  const { data, isPending } = useSession();
-  const [isHelpOpen, setIsHelpOpen] = useState(false);
+function AuthenticatedContent() {
+  const { isHelpOpen, closeHelp, openHelp } = useHelp();
   const pathname = usePathname();
   const router = useRouter();
+
+  const hideHeader = NO_HEADER_ROUTES.has(pathname);
+  const showBackButton = pathname !== "/home";
+
+  const handleBackPress = () => {
+    if (pathname.startsWith("/help")) {
+      openHelp();
+    }
+    router.back();
+  };
+
+  return (
+    <View className="flex-1 bg-black">
+      <StatusBar style="light" />
+      {!hideHeader ? (
+        <SafeAreaView className="bg-black" edges={["top", "left", "right"]}>
+          <HomeHeader
+            leadingVariant={showBackButton ? "back" : "brand"}
+            onPressLogo={showBackButton ? handleBackPress : undefined}
+            onPressSearch={() => router.push("/search" as never)}
+            onPressHelp={openHelp}
+          />
+        </SafeAreaView>
+      ) : null}
+      <View className="flex-1">
+        <AppTabs />
+      </View>
+      <HelpDrawer isOpen={isHelpOpen} onClose={closeHelp} />
+    </View>
+  );
+}
+
+export default function AuthenticatedLayout() {
+  const { data, isPending } = useSession();
 
   if (isPending) {
     return <LoadingScreen />;
@@ -31,26 +65,9 @@ export default function AuthenticatedLayout() {
     return <Redirect href="/login" />;
   }
 
-  const hideHeader = NO_HEADER_ROUTES.has(pathname);
-  const showBackButton = pathname !== "/home";
-
   return (
-    <View className="flex-1 bg-black">
-      <StatusBar style="light" />
-      {!hideHeader ? (
-        <SafeAreaView className="bg-black" edges={["top", "left", "right"]}>
-          <HomeHeader
-            leadingVariant={showBackButton ? "back" : "brand"}
-            onPressLogo={showBackButton ? () => router.back() : undefined}
-            onPressSearch={() => router.push("/search" as never)}
-            onPressHelp={() => setIsHelpOpen(true)}
-          />
-        </SafeAreaView>
-      ) : null}
-      <View className="flex-1">
-        <AppTabs />
-      </View>
-      <HelpDrawer isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
-    </View>
+    <HelpProvider>
+      <AuthenticatedContent />
+    </HelpProvider>
   );
 }

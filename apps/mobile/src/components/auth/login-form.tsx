@@ -51,17 +51,8 @@ export const LoginForm = () => {
         }
 
         // Aguarda a sessão ser atualizada completamente
-        const result = await refetchSession();
-
-        // Só navega se a sessão foi carregada com sucesso
-        if (result.data?.user) {
-          router.replace("/home");
-        } else {
-          setIsLoggingIn(false);
-          setError("root", {
-            message: "Falha ao carregar sessão. Tente novamente.",
-          });
-        }
+        await refetchSession();
+        router.replace("/home");
       } catch {
         setIsLoggingIn(false);
         setError("root", { message: "Algo deu errado. Tente novamente." });

@@ -12,10 +12,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { HelpDrawer } from "@/components/help/help-drawer";
 import { ProductGrid } from "@/components/product/product-grid";
 import { useInfiniteProducts } from "@/hooks/use-infinite-products";
 import { colors } from "@/lib/theme";
+import { useHelp } from "@/providers/help-provider";
 
 const POPULAR_SUGGESTIONS = [
   "SZA",
@@ -35,9 +35,9 @@ const DEBOUNCE_MS = 300;
 
 export default function SearchScreen() {
   const router = useRouter();
+  const { openHelp } = useHelp();
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [isHelpOpen, setIsHelpOpen] = useState(false);
   const inputRef = useRef<TextInput | null>(null);
 
   useEffect(() => {
@@ -90,17 +90,17 @@ export default function SearchScreen() {
 
       {/* Dedicated Search Header */}
       <SafeAreaView className="bg-black" edges={["top", "left", "right"]}>
-        <View className="flex-row items-center gap-2 px-5 pb-3 pt-3">
+        <View className="flex-row items-center gap-3 px-4 pb-3 pt-1">
           <Pressable
             onPress={() => router.back()}
             accessibilityRole="button"
             accessibilityLabel="Voltar"
-            className="h-[52px] w-[52px] items-center justify-center rounded-xl bg-[#2C2C2E] active:opacity-90"
+            className="h-12 w-12 items-center justify-center rounded-2xl bg-[#2C2C2E] active:opacity-90"
           >
             <Ionicons name="chevron-back" size={22} color="#D4D4D4" />
           </Pressable>
 
-          <View className="h-[52px] flex-1 flex-row items-center rounded-xl bg-[#2C2C2E] px-3.5">
+          <View className="h-12 flex-1 flex-row items-center rounded-2xl bg-[#2C2C2E] px-3.5">
             <Ionicons name="search" size={20} color="#A3A3A3" />
             <TextInput
               ref={inputRef}
@@ -133,13 +133,13 @@ export default function SearchScreen() {
           </View>
 
           <Pressable
-            onPress={() => setIsHelpOpen(true)}
+            onPress={openHelp}
             accessibilityRole="button"
             accessibilityLabel="Ajuda"
-            className="h-[52px] w-[52px] items-center justify-center rounded-xl bg-[#2C2C2E] active:opacity-90"
+            className="h-12 w-12 items-center justify-center rounded-2xl bg-[#2C2C2E] active:opacity-90"
           >
-            <View className="h-6 w-6 items-center justify-center rounded-full bg-[#D4D4D4]">
-              <Ionicons name="help" size={16} color="#2C2C2E" />
+            <View className="h-8 w-8 items-center justify-center rounded-full bg-white/10">
+              <Ionicons name="help" size={20} color="#D4D4D4" />
             </View>
           </Pressable>
         </View>
@@ -219,8 +219,6 @@ export default function SearchScreen() {
           />
         </View>
       )}
-
-      <HelpDrawer isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
     </View>
   );
 }

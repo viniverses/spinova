@@ -18,21 +18,13 @@ export const HomeHeader = ({
   const isBackHeader = leadingVariant === "back";
 
   return (
-    <View
-      className={`flex-row items-center ${
-        isBackHeader ? "gap-2 px-5 pb-3 pt-3" : "gap-3 px-4 pb-3 pt-1"
-      }`}
-    >
+    <View className="flex-row items-center gap-3 px-4 pb-3 pt-1">
       <Pressable
         onPress={onPressLogo}
         accessibilityRole="button"
-        accessibilityLabel={
-          isBackHeader ? "Voltar" : "Spinova, menu"
-        }
-        className={`items-center justify-center rounded-xl overflow-hidden active:opacity-90 ${
-          isBackHeader
-            ? "h-[52px] w-[52px] bg-[#2C2C2E]"
-            : "h-12 w-12 bg-primary"
+        accessibilityLabel={isBackHeader ? "Voltar" : "Spinova, menu"}
+        className={`h-12 w-12 items-center justify-center rounded-2xl overflow-hidden active:opacity-90 ${
+          isBackHeader ? "bg-[#2C2C2E]" : "bg-primary"
         }`}
       >
         {isBackHeader ? (
@@ -51,15 +43,9 @@ export const HomeHeader = ({
         onPress={onPressSearch}
         accessibilityRole="button"
         accessibilityLabel="Buscar artista ou álbum"
-        className={`flex-1 flex-row items-center bg-[#2C2C2E] px-3.5 active:opacity-90 ${
-          isBackHeader ? "h-[52px] rounded-xl" : "h-12 rounded-2xl"
-        }`}
+        className="h-12 flex-1 flex-row items-center rounded-2xl bg-[#2C2C2E] px-3.5 active:opacity-90"
       >
-        <Ionicons
-          name="search"
-          size={isBackHeader ? 22 : 20}
-          color={isBackHeader ? "#C7C7CC" : "#A3A3A3"}
-        />
+        <Ionicons name="search" size={20} color="#A3A3A3" />
         <Text
           className="flex-1 px-2.5 font-golos text-sm text-white/40"
           numberOfLines={1}
@@ -72,22 +58,10 @@ export const HomeHeader = ({
         onPress={onPressHelp}
         accessibilityRole="button"
         accessibilityLabel="Ajuda"
-        className={`items-center justify-center bg-[#2C2C2E] active:opacity-90 ${
-          isBackHeader
-            ? "h-[52px] w-[52px] rounded-xl"
-            : "h-12 w-12 rounded-2xl"
-        }`}
+        className="h-12 w-12 items-center justify-center rounded-2xl bg-[#2C2C2E] active:opacity-90"
       >
-        <View
-          className={`items-center justify-center rounded-full ${
-            isBackHeader ? "h-6 w-6 bg-[#D4D4D4]" : "h-8 w-8 bg-white/10"
-          }`}
-        >
-          <Ionicons
-            name="help"
-            size={isBackHeader ? 16 : 20}
-            color={isBackHeader ? "#2C2C2E" : "#D4D4D4"}
-          />
+        <View className="h-8 w-8 items-center justify-center rounded-full bg-white/10">
+          <Ionicons name="help" size={20} color="#D4D4D4" />
         </View>
       </Pressable>
     </View>
