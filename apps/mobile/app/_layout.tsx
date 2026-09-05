@@ -1,3 +1,4 @@
+import "react-native-gesture-handler";
 import "../src/global.css";
 
 import {
@@ -10,6 +11,8 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useRef } from "react";
 import { View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { LoadingScreen } from "../src/components/ui/loading-screen";
 import { useSession } from "../src/hooks/use-auth";
 import { QueryProvider } from "../src/providers/query-provider";
@@ -38,18 +41,22 @@ export default function RootLayout() {
   }
 
   return (
-    <QueryProvider>
-      <SafeAreaProvider>
-        <View className="flex-1 font-sans">
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              animation: "slide_from_right",
-              contentStyle: { backgroundColor: "#000000" },
-            }}
-          />
-        </View>
-      </SafeAreaProvider>
-    </QueryProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryProvider>
+        <SafeAreaProvider>
+          <BottomSheetModalProvider>
+            <View className="flex-1 font-sans">
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                  animation: "slide_from_right",
+                  contentStyle: { backgroundColor: "#000000" },
+                }}
+              />
+            </View>
+          </BottomSheetModalProvider>
+        </SafeAreaProvider>
+      </QueryProvider>
+    </GestureHandlerRootView>
   );
 }
