@@ -1,49 +1,26 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useQueryClient } from "@tanstack/react-query";
-import type { ComponentProps } from "react";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { authClient } from "@/lib/auth-client";
 import { useSession } from "@/hooks/use-auth";
 import { colors } from "@/lib/theme";
+import { ProfileActionsMenu } from "@/components/profile/profile-actions-menu";
 
 const SCROLL_BOTTOM_PADDING = 112;
-
-type ProfileAction = {
-  id: string;
-  label: string;
-  icon: ComponentProps<typeof Ionicons>["name"];
-};
 
 export default function ProfileScreen() {
   const router = useRouter();
   const { data: session } = useSession();
   const queryClient = useQueryClient();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-
-  const profileActions: ProfileAction[] = [
-    { id: "orders", label: "Seus pedidos", icon: "checkmark-circle-outline" },
-    { id: "address", label: "Endereço de entrega", icon: "location-outline" },
-    { id: "account", label: "Sua conta", icon: "person-outline" },
-    { id: "wishlist", label: "Lista de desejos", icon: "heart-outline" },
-    { id: "coupons", label: "Cupons", icon: "ticket-outline" },
-    { id: "giftcards", label: "Vale-presente", icon: "gift-outline" },
-    { id: "support", label: "Suporte", icon: "chatbubble-ellipses-outline" },
-  ];
-
-  const handleActionPress = (id: string) => {
-    if (id === "orders") {
-      router.push("/orders" as never);
-    } else if (id === "wishlist") {
-      router.push("/wishlist" as never);
-    } else if (id === "address") {
-      router.push({
-        pathname: "/address",
-        params: { returnTo: "/profile" },
-      } as never);
-    }
-  };
 
   const handleLogoutPress = async () => {
     if (isLoggingOut) return;
@@ -86,29 +63,7 @@ export default function ProfileScreen() {
             </View>
           </View>
 
-          <View className="mt-4">
-            {profileActions.map((action, index) => (
-              <View key={action.id}>
-                <Pressable
-                  onPress={() => handleActionPress(action.id)}
-                  accessibilityRole="button"
-                  accessibilityLabel={action.label}
-                  className="flex-row items-center gap-3 py-4 px-1"
-                >
-                  <View className="h-7 w-7 items-center justify-center">
-                    <Ionicons name={action.icon} size={20} color="#FFFFFF" />
-                  </View>
-                  <Text className="flex-1 font-sans text-lg font-bold text-white">
-                    {action.label}
-                  </Text>
-                </Pressable>
-
-                {index < profileActions.length - 1 ? (
-                  <View className="h-px w-full bg-white/10" />
-                ) : null}
-              </View>
-            ))}
-          </View>
+          <ProfileActionsMenu />
 
           <Pressable
             onPress={handleLogoutPress}
