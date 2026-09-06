@@ -7,6 +7,8 @@ export {
   gt,
   gte,
   ilike,
+  inArray,
+  notInArray,
   isNotNull,
   isNull,
   lte,
