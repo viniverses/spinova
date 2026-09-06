@@ -8,6 +8,13 @@
       "when": 1788279683532,
       "tag": "0000_illegal_squirrel_girl",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788691061983,
+      "tag": "0001_free_inertia",
+      "breakpoints": true
     }
   ]
 }

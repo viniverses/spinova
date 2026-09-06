@@ -1,4 +1,5 @@
 import {
+  index,
   pgTable,
   text,
   timestamp,
@@ -19,7 +20,11 @@ export const artists = pgTable(
       .defaultNow()
       .notNull(),
   },
-  (table) => [uniqueIndex("artists_slug_uidx").on(table.slug)],
+  (table) => [
+    uniqueIndex("artists_slug_uidx").on(table.slug),
+    index("artists_name_idx").on(table.name),
+    index("artists_name_trgm_idx").using("gin", table.name.op("gin_trgm_ops")),
+  ],
 );
 
 export type Artist = typeof artists.$inferSelect;
