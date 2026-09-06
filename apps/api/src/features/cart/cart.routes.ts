@@ -9,7 +9,6 @@ import {
 } from "./cart.repository.ts";
 import {
   CartItemParamsSchema,
-  CartItemResponseSchema,
   CartResponseSchema,
   ConflictResponseSchema,
   InternalServerErrorResponseSchema,
@@ -18,27 +17,6 @@ import {
   UpdateCartItemBodySchema,
   ValidationErrorResponseSchema,
 } from "./cart.schemas.ts";
-
-const resolveMutation = (
-  result: Awaited<ReturnType<typeof addCartItem>>,
-  productId: string,
-) => {
-  if (result.status === "product-not-found") {
-    throw new NotFoundError({
-      code: "PRODUCT_NOT_FOUND",
-      message: "Product not found.",
-      details: { productId },
-    });
-  }
-  if (result.status === "out-of-stock") {
-    throw new ConflictError({
-      code: "INSUFFICIENT_STOCK",
-      message: "The requested quantity is not available.",
-      details: { productId },
-    });
-  }
-  return { data: result.item };
-};
 
 export const cartRoutes = new Elysia({
   name: "cart-routes",
@@ -65,16 +43,31 @@ export const cartRoutes = new Elysia({
   )
   .post(
     "/cart/items/:productId",
-    async ({ user, params }) =>
-      resolveMutation(
-        await addCartItem(user.id, params.productId),
-        params.productId,
-      ),
+    async ({ user, params }) => {
+      const result = await addCartItem(user.id, params.productId);
+
+      if (result.status === "product-not-found") {
+        throw new NotFoundError({
+          code: "PRODUCT_NOT_FOUND",
+          message: "Product not found.",
+          details: { productId: params.productId },
+        });
+      }
+      if (result.status === "out-of-stock") {
+        throw new ConflictError({
+          code: "INSUFFICIENT_STOCK",
+          message: "The requested quantity is not available.",
+          details: { productId: params.productId },
+        });
+      }
+
+      return { data: await getCartByUserId(user.id) };
+    },
     {
       auth: true,
       params: CartItemParamsSchema,
       response: {
-        200: CartItemResponseSchema,
+        200: CartResponseSchema,
         401: UnauthorizedResponseSchema,
         404: NotFoundResponseSchema,
         409: ConflictResponseSchema,

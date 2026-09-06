@@ -20,8 +20,8 @@ export const getCart = async (): Promise<Cart> => {
   return data.data;
 };
 
-export const addCartItem = async (productId: string): Promise<CartItem> => {
-  const { data } = await api.post<{ data: CartItem }>(
+export const addCartItem = async (productId: string): Promise<Cart> => {
+  const { data } = await api.post<{ data: Cart }>(
     `/cart/items/${encodeURIComponent(productId)}`,
   );
   return data.data;

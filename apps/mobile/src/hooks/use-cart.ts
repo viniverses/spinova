@@ -44,28 +44,15 @@ export const useAddToCart = () => {
 
   return useMutation({
     mutationFn: async (productId: string) => {
-      const [savedItem] = await Promise.all([
+      const [cart] = await Promise.all([
         addCartItem(productId),
         wait(ADD_TO_CART_FEEDBACK_MS),
       ]);
 
-      return savedItem;
+      return cart;
     },
-    onSuccess: (savedItem) => {
-      queryClient.setQueryData<Cart>(cartQueryKey, (current) => {
-        if (!current) return current;
-
-        const existing = current.items.find(
-          (item) => item.product.id === savedItem.product.id,
-        );
-        const items = existing
-          ? current.items.map((item) =>
-              item.product.id === savedItem.product.id ? savedItem : item,
-            )
-          : [...current.items, savedItem];
-
-        return summarize({ ...current, id: current.id, items });
-      });
+    onSuccess: (cart) => {
+      queryClient.setQueryData<Cart>(cartQueryKey, cart);
     },
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: cartQueryKey });
