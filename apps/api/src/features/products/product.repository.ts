@@ -53,18 +53,6 @@ const productSales = db
   .groupBy(orderItems.productId)
   .as("product_sales");
 
-const productRatings = db
-  .select({
-    productId: reviews.productId,
-    average: sql<number>`avg(${reviews.rating})::double precision`.as(
-      "rating_average",
-    ),
-    count: sql<number>`count(${reviews.id})::integer`.as("rating_count"),
-  })
-  .from(reviews)
-  .groupBy(reviews.productId)
-  .as("product_ratings");
-
 const buildConditions = (filters: ProductListFilters) => {
   const conditions: SQL[] = [];
 
@@ -197,9 +185,6 @@ const productCatalogSelection = {
 const productDetailSelection = {
   ...productCatalogSelection,
   description: albums.description,
-  ratingAverage: productRatings.average,
-  ratingCount: productRatings.count,
-  unitsSold: productSales.unitsSold,
   createdAt: products.createdAt,
 };
 
@@ -251,21 +236,20 @@ const mapProductCatalogItem = (row: ProductCatalogRow) => ({
 
 const mapProductDetail = (
   row: ProductCatalogRow & {
-    ratingAverage: number | null;
-    ratingCount: number | null;
-    unitsSold: number | null;
     createdAt: Date;
   },
+  rating: { average: number | null; count: number },
+  unitsSold: number,
 ) => ({
   ...mapProductCatalogItem(row),
   rating: {
     average:
-      row.ratingAverage === null
+      rating.average === null
         ? null
-        : Math.round(Number(row.ratingAverage) * 10) / 10,
-    count: Number(row.ratingCount ?? 0),
+        : Math.round(Number(rating.average) * 10) / 10,
+    count: Number(rating.count ?? 0),
   },
-  unitsSold: Number(row.unitsSold ?? 0),
+  unitsSold: Number(unitsSold ?? 0),
   createdAt: row.createdAt.toISOString(),
 });
 
@@ -334,45 +318,70 @@ export const findProductById = async (id: string) => {
       .innerJoin(albums, eq(albums.id, products.albumId))
       .innerJoin(artists, eq(artists.id, albums.artistId))
       .leftJoin(primaryImage, eq(primaryImage.productId, products.id))
-      .leftJoin(productSales, eq(productSales.productId, products.id))
-      .leftJoin(productRatings, eq(productRatings.productId, products.id))
       .where(eq(products.id, id))
       .limit(1);
 
     const row = rows[0];
     if (!row) return null;
 
-    const [images, tags, productCategoryRows] = await Promise.all([
-      db
-        .select({
-          url: productImages.url,
-          position: productImages.position,
-          altText: productImages.altText,
-        })
-        .from(productImages)
-        .where(eq(productImages.productId, id))
-        .orderBy(asc(productImages.position)),
-      db
-        .select({ tag: productTags.tag })
-        .from(productTags)
-        .where(eq(productTags.productId, id))
-        .orderBy(asc(productTags.tag)),
-      db
-        .select({
-          id: categories.id,
-          name: categories.name,
-          slug: categories.slug,
-          type: categories.type,
-        })
-        .from(productCategories)
-        .innerJoin(categories, eq(categories.id, productCategories.categoryId))
-        .where(eq(productCategories.productId, id))
-        .orderBy(asc(categories.name)),
-    ]);
+    const [images, tags, productCategoryRows, salesRows, ratingRows] =
+      await Promise.all([
+        db
+          .select({
+            url: productImages.url,
+            position: productImages.position,
+            altText: productImages.altText,
+          })
+          .from(productImages)
+          .where(eq(productImages.productId, id))
+          .orderBy(asc(productImages.position)),
+        db
+          .select({ tag: productTags.tag })
+          .from(productTags)
+          .where(eq(productTags.productId, id))
+          .orderBy(asc(productTags.tag)),
+        db
+          .select({
+            id: categories.id,
+            name: categories.name,
+            slug: categories.slug,
+            type: categories.type,
+          })
+          .from(productCategories)
+          .innerJoin(
+            categories,
+            eq(categories.id, productCategories.categoryId),
+          )
+          .where(eq(productCategories.productId, id))
+          .orderBy(asc(categories.name)),
+        db
+          .select({
+            unitsSold: sql<number>`coalesce(sum(${orderItems.quantity}), 0)::integer`,
+          })
+          .from(orderItems)
+          .where(eq(orderItems.productId, id)),
+        db
+          .select({
+            average: sql<number | null>`avg(${reviews.rating})::double precision`,
+            count: sql<number>`count(${reviews.id})::integer`,
+          })
+          .from(reviews)
+          .where(eq(reviews.productId, id)),
+      ]);
+
+    const sales = salesRows[0];
+    const rating = ratingRows[0];
 
     return {
       data: {
-        ...mapProductDetail(row),
+        ...mapProductDetail(
+          row,
+          {
+            average: rating?.average ?? null,
+            count: rating?.count ?? 0,
+          },
+          sales?.unitsSold ?? 0,
+        ),
         description: row.description,
         images,
         tags: tags.map(({ tag }) => tag),
