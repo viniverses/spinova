@@ -15,12 +15,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useCart } from "@/hooks/use-cart";
 import { useDefaultAddress } from "@/hooks/use-addresses";
 import { useCompleteCheckout } from "@/hooks/use-orders";
+import { formatCurrency } from "@/utils";
 
 const SHIPPING = 15;
 const CONTENT_BOTTOM_PADDING = 24;
-
-const formatCurrency = (value: number) =>
-  `R$${value.toFixed(2).replace(".", ",")}`;
 
 type CheckoutDetailProps = {
   title: string;
@@ -147,7 +145,10 @@ export default function CheckoutScreen() {
 
   return (
     <View className="flex-1 bg-[#151315]">
-      <SafeAreaView className="flex-1" edges={["top", "bottom", "left", "right"]}>
+      <SafeAreaView
+        className="flex-1"
+        edges={["top", "bottom", "left", "right"]}
+      >
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{

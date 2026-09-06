@@ -15,9 +15,7 @@ import { ProductCard } from "@/components/product/product-card";
 import { useAddToCart, useCartItemQuantity } from "@/hooks/use-cart";
 import { useProduct, useProducts } from "@/hooks/use-products";
 import { colors } from "@/lib/theme";
-
-const formatPrice = (value: string) =>
-  `R$${Number(value).toFixed(2).replace(".", ",")}`;
+import { formatCurrency } from "@/utils";
 
 const editionLabels = {
   standard: "Padrão",
@@ -134,14 +132,14 @@ export default function ProductDetailScreen() {
 
             <View className="items-end pt-0.5">
               <Text className="font-golos-semibold text-base text-white">
-                {formatPrice(item.price)}
+                {formatCurrency(item.price)}
               </Text>
               <Text className="mt-1 font-golos text-xs text-white">
                 + Frete: Calcular
               </Text>
               <Text className="mt-0.5 font-golos-semibold text-xs text-white">
                 Total:{" "}
-                <Text className="font-golos">{formatPrice(item.price)}</Text>
+                <Text className="font-golos">{formatCurrency(item.price)}</Text>
               </Text>
             </View>
           </View>

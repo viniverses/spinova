@@ -7,6 +7,7 @@ import { Pressable, Text, View } from "react-native";
 import { useIsWishlisted, useToggleWishlist } from "@/hooks/use-wishlist";
 import { colors } from "@/lib/theme";
 import type { ProductCatalogItem } from "@/services/products";
+import { formatCurrency } from "@/utils";
 
 type ProductCardProduct = Pick<
   ProductCatalogItem,
@@ -20,9 +21,6 @@ type ProductCardProps = {
   isWishlistItem?: boolean;
   isWishlisted?: boolean;
 };
-
-const formatPrice = (value: string) =>
-  `R$ ${Number(value).toFixed(2).replace(".", ",")}`;
 
 /** Shared card for every product collection in the app. */
 export const ProductCard = memo(
@@ -107,7 +105,7 @@ export const ProductCard = memo(
 
               <View className="mt-1">
                 <Text className="font-golos-semibold text-base text-white">
-                  {formatPrice(product.price)}
+                  {formatCurrency(product.price)}
                 </Text>
               </View>
             </View>

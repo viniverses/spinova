@@ -15,12 +15,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useCart, useUpdateCartItemQuantity } from "@/hooks/use-cart";
 import { colors } from "@/lib/theme";
+import { formatCurrency } from "@/utils";
 
 const SHIPPING = 15;
 const TAB_BAR_CLEARANCE = 118;
-
-const formatCurrency = (value: number) =>
-  `R$${value.toFixed(2).replace(".", ",")}`;
 
 type QuantityControlProps = {
   title: string;
