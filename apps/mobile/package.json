@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "scripts": {
+    "check-types": "tsc --noEmit",
     "env:load": "dotenv -e ../../.env --",
     "dev": "pnpm env:load expo start --clear",
     "dev:tunnel": "pnpm env:load expo start --clear --tunnel",
