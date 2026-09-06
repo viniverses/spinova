@@ -1,13 +1,26 @@
-import { BadRequestError, ConflictError } from "../../errors/index.ts";
+import {
+  BadRequestError,
+  ConflictError,
+  NotFoundError,
+} from "../../errors/index.ts";
 import { betterAuthPlugin } from "../../plugins/better-auth.ts";
 import { Elysia } from "elysia";
 
-import { createOrderFromCart } from "./order.repository.ts";
+import {
+  createOrderFromCart,
+  findOrderById,
+  listOrders,
+} from "./order.repository.ts";
 import {
   CheckoutBadRequestResponseSchema,
   CheckoutConflictResponseSchema,
   CompletedOrderResponseSchema,
   InternalServerErrorResponseSchema,
+  NotFoundResponseSchema,
+  OrderDetailResponseSchema,
+  OrderListQuerySchema,
+  OrderListResponseSchema,
+  OrderParamsSchema,
   UnauthorizedResponseSchema,
 } from "./order.schemas.ts";
 
@@ -60,6 +73,59 @@ export const orderRoutes = new Elysia({
         summary: "Checkout cart",
         description:
           "Creates an order from the authenticated user's cart and clears it atomically.",
+        tags: ["Orders"],
+      },
+    },
+  )
+  .get(
+    "/orders",
+    async ({ user, query }) => {
+      const page = query.page ?? 1;
+      const pageSize = query.pageSize ?? 20;
+      return await listOrders(user.id, page, pageSize);
+    },
+    {
+      auth: true,
+      query: OrderListQuerySchema,
+      response: {
+        200: OrderListResponseSchema,
+        401: UnauthorizedResponseSchema,
+        500: InternalServerErrorResponseSchema,
+      },
+      detail: {
+        operationId: "listOrders",
+        summary: "List orders",
+        description: "Returns paginated orders for the authenticated user.",
+        tags: ["Orders"],
+      },
+    },
+  )
+  .get(
+    "/orders/:id",
+    async ({ user, params }) => {
+      const result = await findOrderById(user.id, params.id);
+      if (!result) {
+        throw new NotFoundError({
+          code: "ORDER_NOT_FOUND",
+          message: "Order not found.",
+          details: { orderId: params.id },
+        });
+      }
+      return result;
+    },
+    {
+      auth: true,
+      params: OrderParamsSchema,
+      response: {
+        200: OrderDetailResponseSchema,
+        401: UnauthorizedResponseSchema,
+        404: NotFoundResponseSchema,
+        500: InternalServerErrorResponseSchema,
+      },
+      detail: {
+        operationId: "getOrderById",
+        summary: "Get order by ID",
+        description: "Returns order details by ID for the authenticated user.",
         tags: ["Orders"],
       },
     },

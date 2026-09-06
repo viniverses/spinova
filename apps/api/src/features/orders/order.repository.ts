@@ -1,15 +1,18 @@
 import { RepositoryError } from "../../errors/index.ts";
 import {
   addresses,
+  albums,
+  artists,
   cartItems,
   carts,
   db,
   inventoryMovements,
   orderItems,
   orders,
+  productImages,
   products,
 } from "@spinova/database";
-import { and, asc, desc, eq, gte, sql } from "@spinova/database/query";
+import { and, asc, count, desc, eq, gte, inArray, sql } from "@spinova/database/query";
 
 import { calculateOrderTotal } from "./order.pricing.ts";
 
@@ -134,5 +137,238 @@ export const createOrderFromCart = async (userId: string) => {
   } catch (error) {
     if (error instanceof CheckoutAbort) return error.result;
     throw new RepositoryError("checkout", "orders", error);
+  }
+};
+
+const primaryProductImage = db
+  .select({
+    productId: productImages.productId,
+    url: productImages.url,
+    altText: productImages.altText,
+  })
+  .from(productImages)
+  .where(eq(productImages.position, 0))
+  .as("order_item_primary_image");
+
+export const listOrders = async (
+  userId: string,
+  page = 1,
+  pageSize = 20,
+) => {
+  try {
+    const offset = (page - 1) * pageSize;
+
+    const [countRows, orderRows] = await Promise.all([
+      db
+        .select({ total: count() })
+        .from(orders)
+        .where(eq(orders.userId, userId)),
+      db
+        .select({
+          id: orders.id,
+          status: orders.status,
+          total: orders.total,
+          createdAt: orders.createdAt,
+          address: {
+            id: addresses.id,
+            label: addresses.label,
+            street: addresses.street,
+            number: addresses.number,
+            complement: addresses.complement,
+            neighborhood: addresses.neighborhood,
+            city: addresses.city,
+            state: addresses.state,
+            zipCode: addresses.zipCode,
+            country: addresses.country,
+          },
+        })
+        .from(orders)
+        .innerJoin(addresses, eq(addresses.id, orders.addressId))
+        .where(eq(orders.userId, userId))
+        .orderBy(desc(orders.createdAt))
+        .limit(pageSize)
+        .offset(offset),
+    ]);
+
+    const totalItems = Number(countRows[0]?.total ?? 0);
+    const totalPages = Math.ceil(totalItems / pageSize);
+
+    if (orderRows.length === 0) {
+      return {
+        data: [],
+        pagination: {
+          page,
+          pageSize,
+          totalItems,
+          totalPages,
+        },
+      };
+    }
+
+    const orderIds = orderRows.map((o) => o.id);
+
+    const itemRows = await db
+      .select({
+        id: orderItems.id,
+        orderId: orderItems.orderId,
+        productId: orderItems.productId,
+        quantity: orderItems.quantity,
+        unitPrice: orderItems.unitPrice,
+        productTitle: albums.title,
+        productFormat: products.format,
+        artistName: artists.name,
+        imageUrl: primaryProductImage.url,
+        imageAltText: primaryProductImage.altText,
+      })
+      .from(orderItems)
+      .innerJoin(products, eq(products.id, orderItems.productId))
+      .innerJoin(albums, eq(albums.id, products.albumId))
+      .innerJoin(artists, eq(artists.id, albums.artistId))
+      .leftJoin(
+        primaryProductImage,
+        eq(primaryProductImage.productId, products.id),
+      )
+      .where(inArray(orderItems.orderId, orderIds))
+      .orderBy(asc(orderItems.id));
+
+    const itemsByOrderId = new Map<string, typeof itemRows>();
+    for (const item of itemRows) {
+      const existing = itemsByOrderId.get(item.orderId) ?? [];
+      existing.push(item);
+      itemsByOrderId.set(item.orderId, existing);
+    }
+
+    const data = orderRows.map((order) => {
+      const items = (itemsByOrderId.get(order.id) ?? []).map((item) => ({
+        id: item.id,
+        productId: item.productId,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        product: {
+          id: item.productId,
+          title: item.productTitle,
+          artist: {
+            name: item.artistName,
+          },
+          format: item.productFormat,
+          image: item.imageUrl
+            ? { url: item.imageUrl, altText: item.imageAltText }
+            : null,
+        },
+      }));
+
+      const itemsCount = items.reduce((acc, it) => acc + it.quantity, 0);
+
+      return {
+        id: order.id,
+        status: order.status,
+        total: order.total,
+        currency: "BRL" as const,
+        createdAt: order.createdAt.toISOString(),
+        itemsCount,
+        items,
+        address: order.address,
+      };
+    });
+
+    return {
+      data,
+      pagination: {
+        page,
+        pageSize,
+        totalItems,
+        totalPages,
+      },
+    };
+  } catch (error) {
+    throw new RepositoryError("list", "orders", error);
+  }
+};
+
+export const findOrderById = async (userId: string, orderId: string) => {
+  try {
+    const [order] = await db
+      .select({
+        id: orders.id,
+        status: orders.status,
+        total: orders.total,
+        createdAt: orders.createdAt,
+        address: {
+          id: addresses.id,
+          label: addresses.label,
+          street: addresses.street,
+          number: addresses.number,
+          complement: addresses.complement,
+          neighborhood: addresses.neighborhood,
+          city: addresses.city,
+          state: addresses.state,
+          zipCode: addresses.zipCode,
+          country: addresses.country,
+        },
+      })
+      .from(orders)
+      .innerJoin(addresses, eq(addresses.id, orders.addressId))
+      .where(and(eq(orders.id, orderId), eq(orders.userId, userId)))
+      .limit(1);
+
+    if (!order) return null;
+
+    const itemRows = await db
+      .select({
+        id: orderItems.id,
+        productId: orderItems.productId,
+        quantity: orderItems.quantity,
+        unitPrice: orderItems.unitPrice,
+        productTitle: albums.title,
+        productFormat: products.format,
+        artistName: artists.name,
+        imageUrl: primaryProductImage.url,
+        imageAltText: primaryProductImage.altText,
+      })
+      .from(orderItems)
+      .innerJoin(products, eq(products.id, orderItems.productId))
+      .innerJoin(albums, eq(albums.id, products.albumId))
+      .innerJoin(artists, eq(artists.id, albums.artistId))
+      .leftJoin(
+        primaryProductImage,
+        eq(primaryProductImage.productId, products.id),
+      )
+      .where(eq(orderItems.orderId, orderId))
+      .orderBy(asc(orderItems.id));
+
+    const items = itemRows.map((item) => ({
+      id: item.id,
+      productId: item.productId,
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
+      product: {
+        id: item.productId,
+        title: item.productTitle,
+        artist: {
+          name: item.artistName,
+        },
+        format: item.productFormat,
+        image: item.imageUrl
+          ? { url: item.imageUrl, altText: item.imageAltText }
+          : null,
+      },
+    }));
+
+    const itemsCount = items.reduce((acc, it) => acc + it.quantity, 0);
+
+    return {
+      data: {
+        id: order.id,
+        status: order.status,
+        total: order.total,
+        currency: "BRL" as const,
+        createdAt: order.createdAt.toISOString(),
+        itemsCount,
+        items,
+        address: order.address,
+      },
+    };
+  } catch (error) {
+    throw new RepositoryError("find", "orders", error);
   }
 };
