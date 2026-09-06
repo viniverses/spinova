@@ -20,11 +20,23 @@ export const useWishlist = () =>
     queryFn: getWishlist,
   });
 
-export const useIsWishlisted = (productId: string) =>
+export const useWishlistIds = (options?: { enabled?: boolean }) =>
+  useQuery({
+    queryKey: wishlistQueryKey,
+    queryFn: getWishlist,
+    select: (items) => new Set(items.map((item) => item.product.id)),
+    enabled: options?.enabled ?? true,
+  });
+
+export const useIsWishlisted = (
+  productId: string,
+  options?: { enabled?: boolean },
+) =>
   useQuery({
     queryKey: wishlistQueryKey,
     queryFn: getWishlist,
     select: (items) => items.some((item) => item.product.id === productId),
+    enabled: options?.enabled ?? true,
   });
 
 /**

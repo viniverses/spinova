@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import {
   ActivityIndicator,
@@ -9,6 +10,7 @@ import {
   View,
 } from "react-native";
 import type { ProductCatalogItem } from "@/services/products";
+import { useWishlistIds } from "@/hooks/use-wishlist";
 import { colors } from "@/lib/theme";
 import { ProductCard } from "./product-card";
 
@@ -48,6 +50,21 @@ export const ProductGrid = ({
   const { width } = useWindowDimensions();
   const cardWidth =
     (width - H_PADDING * 2 - COLUMN_GAP * (NUM_COLUMNS - 1)) / NUM_COLUMNS;
+
+  const { data: wishlistIds } = useWishlistIds({ enabled: showFavorite });
+
+  const renderItem = useCallback(
+    ({ item }: { item: ProductCatalogItem }) => (
+      <ProductCard
+        product={item}
+        width={cardWidth}
+        showFavorite={showFavorite}
+        isWishlisted={wishlistIds ? wishlistIds.has(item.id) : undefined}
+      />
+    ),
+    [cardWidth, showFavorite, wishlistIds],
+  );
+
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center">
@@ -87,6 +104,10 @@ export const ProductGrid = ({
       keyExtractor={(item) => item.id}
       numColumns={NUM_COLUMNS}
       showsVerticalScrollIndicator={false}
+      removeClippedSubviews={true}
+      maxToRenderPerBatch={8}
+      windowSize={5}
+      initialNumToRender={8}
       contentContainerStyle={{
         paddingHorizontal: H_PADDING,
         paddingBottom: 112,
@@ -126,13 +147,7 @@ export const ProductGrid = ({
           />
         ) : undefined
       }
-      renderItem={({ item }) => (
-        <ProductCard
-          product={item}
-          width={cardWidth}
-          showFavorite={showFavorite}
-        />
-      )}
+      renderItem={renderItem}
     />
   );
 };
