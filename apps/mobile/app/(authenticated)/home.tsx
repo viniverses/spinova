@@ -1,8 +1,10 @@
+import { useCallback } from "react";
 import { StatusBar } from "expo-status-bar";
 import { colors } from "@/lib/theme";
 import {
   ActivityIndicator,
   Pressable,
+  RefreshControl,
   ScrollView,
   Text,
   View,
@@ -24,6 +26,12 @@ export default function HomeScreen() {
     pageSize: 10,
   });
 
+  const isRefreshing = releases.isRefetching || recommendations.isRefetching;
+
+  const handleRefresh = useCallback(async () => {
+    await Promise.all([releases.refetch(), recommendations.refetch()]);
+  }, [releases, recommendations]);
+
   return (
     <View className="flex-1 bg-black">
       <StatusBar style="light" />
@@ -35,6 +43,14 @@ export default function HomeScreen() {
           paddingBottom: SCROLL_BOTTOM_PADDING,
         }}
         keyboardShouldPersistTaps="handled"
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={handleRefresh}
+            tintColor={colors.primary.DEFAULT}
+            colors={[colors.primary.DEFAULT]}
+          />
+        }
       >
         <HomeBannerCarousel />
 
