@@ -38,14 +38,16 @@ export const LoginForm = () => {
 
       try {
         const { error } = await authClient.signIn.email({
-          email: values.email.trim(),
+          email: values.email.trim().toLowerCase(),
           password: values.password,
         });
 
         if (error) {
           setIsLoggingIn(false);
           setError("root", {
-            message: error.message || "Não foi possível entrar.",
+            message:
+              error.message ||
+              "E-mail ou senha incorretos. Verifique seus dados e tente novamente.",
           });
           return;
         }
@@ -55,7 +57,9 @@ export const LoginForm = () => {
         router.replace("/home");
       } catch {
         setIsLoggingIn(false);
-        setError("root", { message: "Algo deu errado. Tente novamente." });
+        setError("root", {
+          message: "Não foi possível conectar ao servidor. Tente novamente.",
+        });
       }
     },
     [refetchSession, setError, clearErrors, router],
@@ -66,7 +70,7 @@ export const LoginForm = () => {
   return (
     <>
       <Text className="mb-2 text-center font-syne-bold text-3xl text-white">
-        Bem vindo!
+        Bem-vindo!
       </Text>
       <Text className="mb-6 text-center font-golos text-base leading-6 text-white/70">
         Entre e descubra novos sons.
