@@ -8,7 +8,7 @@
     "env:load": "dotenv -e ../../.env --",
     "dev": "pnpm env:load tsx watch src/local.ts",
     "build": "tsup",
-    "start": "node local.js"
+    "start": "node dist/local.js"
   },
   "dependencies": {
     "@elysia/node": "^1.4.6",
