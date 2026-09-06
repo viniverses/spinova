@@ -61,6 +61,7 @@ export const AppTabs = () => (
     <Tabs.Screen name="checkout" options={{ href: null }} />
     <Tabs.Screen name="address" options={{ href: null }} />
     <Tabs.Screen name="order-complete" options={{ href: null }} />
+    <Tabs.Screen name="orders" options={{ href: null }} />
     <Tabs.Screen name="help/[id]" options={{ href: null }} />
   </Tabs>
 );

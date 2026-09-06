@@ -33,7 +33,9 @@ export default function ProfileScreen() {
   ];
 
   const handleActionPress = (id: string) => {
-    if (id === "wishlist") {
+    if (id === "orders") {
+      router.push("/orders" as never);
+    } else if (id === "wishlist") {
       router.push("/wishlist" as never);
     } else if (id === "address") {
       router.push({
