@@ -23,7 +23,7 @@ export const ProfileActionsMenu = () => {
         id: "orders",
         label: "Seus pedidos",
         icon: "checkmark-circle-outline",
-        onPress: () => router.push("/orders" as never),
+        onPress: () => router.push("/orders"),
       },
       {
         id: "address",
@@ -33,7 +33,7 @@ export const ProfileActionsMenu = () => {
           router.push({
             pathname: "/address",
             params: { returnTo: "/profile" },
-          } as never),
+          }),
       },
       {
         id: "account",
@@ -49,7 +49,7 @@ export const ProfileActionsMenu = () => {
         id: "wishlist",
         label: "Lista de desejos",
         icon: "heart-outline",
-        onPress: () => router.push("/wishlist" as never),
+        onPress: () => router.push("/wishlist"),
       },
       {
         id: "coupons",

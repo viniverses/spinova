@@ -96,7 +96,7 @@ export default function CartScreen() {
   const total = cart.data?.total ?? "0.00";
 
   const handleCheckout = () => {
-    router.push("/checkout" as never);
+    router.push("/checkout");
   };
 
   const confirmRemoval = () => {
@@ -200,7 +200,10 @@ export default function CartScreen() {
                     >
                       <Pressable
                         onPress={() =>
-                          router.push(`/product/${item.product.id}` as never)
+                          router.push({
+                            pathname: "/product/[id]",
+                            params: { id: item.product.id },
+                          })
                         }
                         accessibilityRole="button"
                         accessibilityLabel={`Abrir ${item.product.title}, de ${item.product.artist.name}`}

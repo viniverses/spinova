@@ -78,7 +78,7 @@ export default function CategoriesScreen() {
   const filterWidth = (contentWidth - GRID_GAP * 2) / 3;
 
   const openCollection = (id: string) => {
-    router.push(`/collection/${id}` as never);
+    router.push({ pathname: "/collection/[id]", params: { id } });
   };
 
   return (

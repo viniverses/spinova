@@ -44,7 +44,7 @@ function AuthenticatedContent() {
           <HomeHeader
             leadingVariant={showBackButton ? "back" : "brand"}
             onPressLogo={showBackButton ? handleBackPress : undefined}
-            onPressSearch={() => router.push("/search" as never)}
+            onPressSearch={() => router.push("/search")}
             onPressHelp={openHelp}
           />
         </SafeAreaView>

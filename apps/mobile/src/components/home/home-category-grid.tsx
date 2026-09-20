@@ -38,11 +38,11 @@ export const HomeCategoryGrid = ({
   const handlePress = (id: string) => {
     onPressCategory?.(id);
     if (id === "more") {
-      router.push("/lists" as never);
+      router.push("/lists");
       return;
     }
     if (NAVIGABLE_IDS.has(id)) {
-      router.push(`/collection/${id}` as never);
+      router.push({ pathname: "/collection/[id]", params: { id } });
     }
   };
 

@@ -59,13 +59,13 @@ export const HelpDrawer = ({ isOpen, onClose }: HelpDrawerProps) => {
   const handleTopicPress = (topicId: string) => {
     bottomSheetRef.current?.close();
     onClose();
-    router.push(`/(authenticated)/help/${topicId}` as never);
+    router.push({ pathname: "/help/[id]", params: { id: topicId } });
   };
 
   const handleSendPress = () => {
     bottomSheetRef.current?.close();
     onClose();
-    router.push("/(authenticated)/help/other" as never);
+    router.push({ pathname: "/help/[id]", params: { id: "other" } });
   };
 
   if (!isOpen) return null;
@@ -174,11 +174,7 @@ export const HelpDrawer = ({ isOpen, onClose }: HelpDrawerProps) => {
               Converse com a gente!
             </Text>
             <View className="h-6 w-6 items-center justify-center rounded-full bg-black/15">
-              <Ionicons
-                name="chatbubble-ellipses"
-                size={18}
-                color="#FFFFFF"
-              />
+              <Ionicons name="chatbubble-ellipses" size={18} color="#FFFFFF" />
             </View>
           </View>
         </Pressable>
@@ -186,7 +182,3 @@ export const HelpDrawer = ({ isOpen, onClose }: HelpDrawerProps) => {
     </BottomSheet>
   );
 };
-
-
-
-

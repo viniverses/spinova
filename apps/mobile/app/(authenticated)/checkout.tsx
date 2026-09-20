@@ -106,7 +106,7 @@ export default function CheckoutScreen() {
               router.push({
                 pathname: "/address",
                 params: { returnTo: "/checkout" },
-              } as never),
+              }),
           },
         ],
       );
@@ -118,7 +118,7 @@ export default function CheckoutScreen() {
         router.replace({
           pathname: "/order-complete",
           params: { total: formatCurrency(Number(order.total)) },
-        } as never);
+        });
       },
       onError: (error: unknown) => {
         const message =
@@ -188,12 +188,12 @@ export default function CheckoutScreen() {
                   router.push({
                     pathname: "/address",
                     params: { id: address.id, returnTo: "/checkout" },
-                  } as never);
+                  });
                 } else {
                   router.push({
                     pathname: "/address",
                     params: { returnTo: "/checkout" },
-                  } as never);
+                  });
                 }
               }}
             />
@@ -239,7 +239,7 @@ export default function CheckoutScreen() {
                 router.push({
                   pathname: "/address",
                   params: { returnTo: "/checkout" },
-                } as never)
+                })
               }
               className="mt-6 rounded-xl border border-primary/30 bg-primary/10 p-3.5"
             >
