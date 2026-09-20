@@ -17,7 +17,6 @@ import { useDefaultAddress } from "@/hooks/use-addresses";
 import { useCompleteCheckout } from "@/hooks/use-orders";
 import { formatCurrency } from "@/utils";
 
-const SHIPPING = 15;
 const CONTENT_BOTTOM_PADDING = 24;
 
 type CheckoutDetailProps = {
@@ -86,8 +85,9 @@ export default function CheckoutScreen() {
 
   const address = defaultAddress.data;
   const hasAddress = Boolean(address);
-  const subtotal = Number(cart.data?.subtotal ?? 0);
-  const total = subtotal + SHIPPING;
+  const subtotal = cart.data?.subtotal ?? "0.00";
+  const shipping = cart.data?.shipping ?? "0.00";
+  const total = cart.data?.total ?? "0.00";
 
   const showEditNotice = (section: string) => {
     Alert.alert(`Editar ${section}`, "Não disponível");
@@ -220,7 +220,7 @@ export default function CheckoutScreen() {
                 Frete
               </Text>
               <Text className="font-golos text-[17px] text-[#F2F0F2]">
-                {formatCurrency(SHIPPING)}
+                {formatCurrency(shipping)}
               </Text>
             </View>
             <View className="flex-row items-center justify-between">

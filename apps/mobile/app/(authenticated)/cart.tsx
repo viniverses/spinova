@@ -17,7 +17,6 @@ import { useCart, useUpdateCartItemQuantity } from "@/hooks/use-cart";
 import { colors } from "@/lib/theme";
 import { formatCurrency } from "@/utils";
 
-const SHIPPING = 15;
 const TAB_BAR_CLEARANCE = 118;
 
 type QuantityControlProps = {
@@ -86,16 +85,15 @@ export default function CartScreen() {
   const compact = width < 370;
   const cart = useCart();
   const updateQuantity = useUpdateCartItemQuantity();
-  const [shippingCalculated, setShippingCalculated] = useState(false);
   const [pendingRemoval, setPendingRemoval] = useState<{
     productId: string;
     title: string;
   } | null>(null);
 
   const items = cart.data?.items ?? [];
-  const subtotal = Number(cart.data?.subtotal ?? 0);
-  const shipping = shippingCalculated && items.length > 0 ? SHIPPING : 0;
-  const total = subtotal + shipping;
+  const subtotal = cart.data?.subtotal ?? "0.00";
+  const shipping = cart.data?.shipping ?? "0.00";
+  const total = cart.data?.total ?? "0.00";
 
   const handleCheckout = () => {
     router.push("/checkout" as never);
@@ -326,18 +324,9 @@ export default function CartScreen() {
                   <Text className="font-golos text-[17px] text-[#F2F0F2]">
                     Frete
                   </Text>
-                  <Pressable
-                    onPress={() => setShippingCalculated(true)}
-                    accessibilityRole="button"
-                    accessibilityLabel="Calcular frete"
-                    className="active:opacity-70"
-                  >
-                    <Text className="font-golos text-[17px] text-[#F2F0F2] underline">
-                      {shippingCalculated
-                        ? formatCurrency(SHIPPING)
-                        : "Calcular"}
-                    </Text>
-                  </Pressable>
+                  <Text className="font-golos text-[17px] text-[#F2F0F2]">
+                    {formatCurrency(shipping)}
+                  </Text>
                 </View>
 
                 <View className="flex-row items-center justify-between">

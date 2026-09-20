@@ -10,6 +10,8 @@ import {
 } from "@spinova/database";
 import { and, asc, eq, sql } from "@spinova/database/query";
 
+import { calculateOrderPricing } from "../../domain/order-pricing.ts";
+
 const cartItemSelection = {
   id: cartItems.id,
   quantity: cartItems.quantity,
@@ -82,15 +84,12 @@ const mapCartItem = (row: CartItemRow) => ({
 });
 
 const summarizeCart = (id: string | null, rows: CartItemRow[]) => {
-  const subtotalInCents = rows.reduce(
-    (sum, row) => sum + Math.round(Number(row.price) * 100) * row.quantity,
-    0,
-  );
+  const pricing = calculateOrderPricing(rows);
 
   return {
     id,
     items: rows.map(mapCartItem),
-    subtotal: (subtotalInCents / 100).toFixed(2),
+    ...pricing,
     totalQuantity: rows.reduce((sum, row) => sum + row.quantity, 0),
     currency: "BRL" as const,
   };

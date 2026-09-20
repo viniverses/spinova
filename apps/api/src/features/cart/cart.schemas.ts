@@ -19,6 +19,8 @@ export const CartSchema = Type.Object({
   id: Type.Union([Type.String(), Type.Null()]),
   items: Type.Array(CartItemSchema),
   subtotal: MoneySchema,
+  shipping: MoneySchema,
+  total: MoneySchema,
   totalQuantity: Type.Integer({ minimum: 0 }),
   currency: Type.Literal("BRL"),
 });

@@ -14,7 +14,7 @@ import {
 } from "@spinova/database";
 import { and, asc, count, desc, eq, gte, inArray, sql } from "@spinova/database/query";
 
-import { calculateOrderTotal } from "./order.pricing.ts";
+import { calculateOrderPricing } from "../../domain/order-pricing.ts";
 
 type CheckoutFailure =
   | { status: "cart-empty" }
@@ -68,7 +68,7 @@ export const createOrderFromCart = async (userId: string) => {
         throw new CheckoutAbort({ status: "address-not-found" });
       }
 
-      const total = calculateOrderTotal(items);
+      const { total } = calculateOrderPricing(items);
       const [order] = await transaction
         .insert(orders)
         .values({ userId, addressId: address.id, total })
