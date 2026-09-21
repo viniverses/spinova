@@ -9,8 +9,8 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-import { products } from "./products.ts";
-import { inventoryMovementType } from "./store-enums.ts";
+import { products } from "../catalog/products.ts";
+import { inventoryMovementType } from "./enums.ts";
 
 export const inventoryMovements = pgTable(
   "inventory_movements",

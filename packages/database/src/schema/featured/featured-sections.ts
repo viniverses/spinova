@@ -11,7 +11,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-import { featuredSectionType } from "./store-enums.ts";
+import { featuredSectionType } from "./enums.ts";
 
 export const featuredSections = pgTable(
   "featured_sections",

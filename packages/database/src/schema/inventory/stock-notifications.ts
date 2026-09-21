@@ -9,8 +9,8 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-import { products } from "./products.ts";
-import { user } from "./user.ts";
+import { products } from "../catalog/products.ts";
+import { user } from "../auth/user.ts";
 
 export const stockNotifications = pgTable(
   "stock_notifications",

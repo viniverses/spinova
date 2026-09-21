@@ -11,7 +11,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { products } from "./products.ts";
-import { user } from "./user.ts";
+import { user } from "../auth/user.ts";
 
 export const reviews = pgTable(
   "reviews",

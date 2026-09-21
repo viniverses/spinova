@@ -9,7 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { featuredSections } from "./featured-sections.ts";
-import { products } from "./products.ts";
+import { products } from "../catalog/products.ts";
 
 export const featuredItems = pgTable(
   "featured_items",

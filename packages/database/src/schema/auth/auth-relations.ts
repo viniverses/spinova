@@ -1,14 +1,14 @@
 import { relations } from "drizzle-orm";
 
 import { account } from "./account.ts";
-import { addresses } from "./addresses.ts";
-import { carts } from "./carts.ts";
-import { orders } from "./orders.ts";
-import { reviews } from "./reviews.ts";
+import { addresses } from "../address/addresses.ts";
+import { carts } from "../cart/carts.ts";
+import { orders } from "../order/orders.ts";
+import { reviews } from "../catalog/reviews.ts";
 import { session } from "./session.ts";
-import { stockNotifications } from "./stock-notifications.ts";
+import { stockNotifications } from "../inventory/stock-notifications.ts";
 import { user } from "./user.ts";
-import { wishlists } from "./wishlists.ts";
+import { wishlists } from "../wishlist/wishlists.ts";
 
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),

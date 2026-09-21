@@ -1,6 +1,6 @@
 import { pgTable, text, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 
-import { categoryType } from "./store-enums.ts";
+import { categoryType } from "./enums.ts";
 
 export const categories = pgTable(
   "categories",

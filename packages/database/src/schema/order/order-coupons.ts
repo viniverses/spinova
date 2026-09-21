@@ -1,6 +1,6 @@
 import { index, pgTable, primaryKey, uuid } from "drizzle-orm/pg-core";
 
-import { coupons } from "./coupons.ts";
+import { coupons } from "../promotion/coupons.ts";
 import { orders } from "./orders.ts";
 
 export const orderCoupons = pgTable(

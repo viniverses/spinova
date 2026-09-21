@@ -9,9 +9,9 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-import { addresses } from "./addresses.ts";
-import { orderStatus } from "./store-enums.ts";
-import { user } from "./user.ts";
+import { addresses } from "../address/addresses.ts";
+import { orderStatus } from "./enums.ts";
+import { user } from "../auth/user.ts";
 
 export const orders = pgTable(
   "orders",

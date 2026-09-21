@@ -11,7 +11,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-import { discountType } from "./store-enums.ts";
+import { discountType } from "./enums.ts";
 
 export const coupons = pgTable(
   "coupons",

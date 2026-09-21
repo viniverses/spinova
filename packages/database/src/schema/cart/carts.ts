@@ -6,7 +6,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-import { user } from "./user.ts";
+import { user } from "../auth/user.ts";
 
 export const carts = pgTable(
   "carts",

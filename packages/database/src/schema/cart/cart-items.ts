@@ -9,7 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { carts } from "./carts.ts";
-import { products } from "./products.ts";
+import { products } from "../catalog/products.ts";
 
 export const cartItems = pgTable(
   "cart_items",

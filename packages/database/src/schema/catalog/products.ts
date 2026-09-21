@@ -14,7 +14,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { albums } from "./albums.ts";
-import { productEdition, productFormat } from "./store-enums.ts";
+import { productEdition, productFormat } from "./enums.ts";
 
 export const products = pgTable(
   "products",

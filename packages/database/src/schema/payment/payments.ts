@@ -10,8 +10,8 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-import { orders } from "./orders.ts";
-import { paymentMethod, paymentStatus } from "./store-enums.ts";
+import { orders } from "../order/orders.ts";
+import { paymentMethod, paymentStatus } from "./enums.ts";
 
 export const payments = pgTable(
   "payments",

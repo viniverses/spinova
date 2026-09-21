@@ -1,27 +1,27 @@
 import { relations } from "drizzle-orm";
 
-import { addresses } from "./addresses.ts";
-import { albums } from "./albums.ts";
-import { artists } from "./artists.ts";
-import { cartItems } from "./cart-items.ts";
-import { carts } from "./carts.ts";
-import { categories } from "./categories.ts";
-import { coupons } from "./coupons.ts";
-import { featuredItems } from "./featured-items.ts";
-import { featuredSections } from "./featured-sections.ts";
-import { inventoryMovements } from "./inventory-movements.ts";
-import { orderCoupons } from "./order-coupons.ts";
-import { orderItems } from "./order-items.ts";
-import { orders } from "./orders.ts";
-import { payments } from "./payments.ts";
-import { productCategories } from "./product-categories.ts";
-import { productImages } from "./product-images.ts";
-import { productTags } from "./product-tags.ts";
-import { products } from "./products.ts";
-import { reviews } from "./reviews.ts";
-import { stockNotifications } from "./stock-notifications.ts";
-import { user } from "./user.ts";
-import { wishlists } from "./wishlists.ts";
+import { addresses } from "./address/addresses.ts";
+import { albums } from "./catalog/albums.ts";
+import { artists } from "./catalog/artists.ts";
+import { cartItems } from "./cart/cart-items.ts";
+import { carts } from "./cart/carts.ts";
+import { categories } from "./catalog/categories.ts";
+import { coupons } from "./promotion/coupons.ts";
+import { featuredItems } from "./featured/featured-items.ts";
+import { featuredSections } from "./featured/featured-sections.ts";
+import { inventoryMovements } from "./inventory/inventory-movements.ts";
+import { orderCoupons } from "./order/order-coupons.ts";
+import { orderItems } from "./order/order-items.ts";
+import { orders } from "./order/orders.ts";
+import { payments } from "./payment/payments.ts";
+import { productCategories } from "./catalog/product-categories.ts";
+import { productImages } from "./catalog/product-images.ts";
+import { productTags } from "./catalog/product-tags.ts";
+import { products } from "./catalog/products.ts";
+import { reviews } from "./catalog/reviews.ts";
+import { stockNotifications } from "./inventory/stock-notifications.ts";
+import { user } from "./auth/user.ts";
+import { wishlists } from "./wishlist/wishlists.ts";
 
 export const artistRelations = relations(artists, ({ many }) => ({
   albums: many(albums),
