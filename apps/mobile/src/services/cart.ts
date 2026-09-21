@@ -11,6 +11,8 @@ export type Cart = {
   id: string | null;
   items: CartItem[];
   subtotal: string;
+  shipping: string;
+  total: string;
   totalQuantity: number;
   currency: "BRL";
 };

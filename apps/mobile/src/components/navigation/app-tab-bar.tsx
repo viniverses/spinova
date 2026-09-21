@@ -94,7 +94,7 @@ export const AppTabBar = ({
       </View>
 
       <Pressable
-        onPress={() => router.push("/cart" as never)}
+        onPress={() => router.push("/cart")}
         accessibilityRole="button"
         accessibilityLabel="Carrinho"
         className="absolute h-[68px] w-[68px] items-center justify-center rounded-full bg-primary active:opacity-90"

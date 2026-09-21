@@ -110,7 +110,10 @@ function OrderCardItem({ item }: { item: OrderItem }) {
   const router = useRouter();
 
   const handleProductPress = () => {
-    router.push(`/product/${item.productId}` as never);
+    router.push({
+      pathname: "/product/[id]",
+      params: { id: item.productId },
+    });
   };
 
   return (

@@ -49,7 +49,7 @@ export const ProductCard = memo(
     };
 
     const handlePress = () => {
-      router.push(`/product/${product.id}` as never);
+      router.push({ pathname: "/product/[id]", params: { id: product.id } });
     };
 
     const favoriteLabel = isFavorite

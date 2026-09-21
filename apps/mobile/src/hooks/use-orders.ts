@@ -43,6 +43,8 @@ export const useCompleteCheckout = () => {
               ...current,
               items: [],
               subtotal: "0.00",
+              shipping: "0.00",
+              total: "0.00",
               totalQuantity: 0,
             }
           : current,

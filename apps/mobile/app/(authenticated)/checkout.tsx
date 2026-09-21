@@ -17,7 +17,6 @@ import { useDefaultAddress } from "@/hooks/use-addresses";
 import { useCompleteCheckout } from "@/hooks/use-orders";
 import { formatCurrency } from "@/utils";
 
-const SHIPPING = 15;
 const CONTENT_BOTTOM_PADDING = 24;
 
 type CheckoutDetailProps = {
@@ -86,8 +85,9 @@ export default function CheckoutScreen() {
 
   const address = defaultAddress.data;
   const hasAddress = Boolean(address);
-  const subtotal = Number(cart.data?.subtotal ?? 0);
-  const total = subtotal + SHIPPING;
+  const subtotal = cart.data?.subtotal ?? "0.00";
+  const shipping = cart.data?.shipping ?? "0.00";
+  const total = cart.data?.total ?? "0.00";
 
   const showEditNotice = (section: string) => {
     Alert.alert(`Editar ${section}`, "Não disponível");
@@ -106,7 +106,7 @@ export default function CheckoutScreen() {
               router.push({
                 pathname: "/address",
                 params: { returnTo: "/checkout" },
-              } as never),
+              }),
           },
         ],
       );
@@ -118,7 +118,7 @@ export default function CheckoutScreen() {
         router.replace({
           pathname: "/order-complete",
           params: { total: formatCurrency(Number(order.total)) },
-        } as never);
+        });
       },
       onError: (error: unknown) => {
         const message =
@@ -188,12 +188,12 @@ export default function CheckoutScreen() {
                   router.push({
                     pathname: "/address",
                     params: { id: address.id, returnTo: "/checkout" },
-                  } as never);
+                  });
                 } else {
                   router.push({
                     pathname: "/address",
                     params: { returnTo: "/checkout" },
-                  } as never);
+                  });
                 }
               }}
             />
@@ -220,7 +220,7 @@ export default function CheckoutScreen() {
                 Frete
               </Text>
               <Text className="font-golos text-[17px] text-[#F2F0F2]">
-                {formatCurrency(SHIPPING)}
+                {formatCurrency(shipping)}
               </Text>
             </View>
             <View className="flex-row items-center justify-between">
@@ -239,7 +239,7 @@ export default function CheckoutScreen() {
                 router.push({
                   pathname: "/address",
                   params: { returnTo: "/checkout" },
-                } as never)
+                })
               }
               className="mt-6 rounded-xl border border-primary/30 bg-primary/10 p-3.5"
             >

@@ -26,12 +26,13 @@ import { addressSchema, type AddressFormValues } from "@/schemas/address";
 import { formatCep } from "@/utils";
 
 const CONTENT_BOTTOM_PADDING = 116;
+type AddressReturnTo = "/checkout" | "/profile";
 
 export default function AddressScreen() {
   const router = useRouter();
   const { id, returnTo } = useLocalSearchParams<{
     id?: string;
-    returnTo?: string;
+    returnTo?: AddressReturnTo;
   }>();
   const isEditing = Boolean(id);
 
@@ -138,11 +139,11 @@ export default function AddressScreen() {
 
   const handleNavigateBack = useCallback(() => {
     if (returnTo) {
-      router.replace(returnTo as never);
+      router.replace(returnTo);
     } else if (router.canGoBack()) {
       router.back();
     } else {
-      router.replace("/checkout" as never);
+      router.replace("/checkout");
     }
   }, [returnTo, router]);
 
