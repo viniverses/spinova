@@ -10,6 +10,7 @@ export const serverEnvSchema = z.object({
   API_VERSION: z.string().trim().min(1),
   BETTER_AUTH_SECRET: z.string().min(32),
   BETTER_AUTH_URL: z.url(),
+  WEB_APP_URL: z.url().optional(),
   DATABASE_URL: z.url(),
 });
 
