@@ -3,6 +3,7 @@ import {
   check,
   index,
   integer,
+  jsonb,
   numeric,
   pgTable,
   uuid,
@@ -23,6 +24,7 @@ export const orderItems = pgTable(
       .references(() => products.id, { onDelete: "restrict" }),
     quantity: integer("quantity").notNull(),
     unitPrice: numeric("unit_price", { precision: 10, scale: 2 }).notNull(),
+    productSnapshot: jsonb("product_snapshot"),
   },
   (table) => [
     index("order_items_order_id_idx").on(table.orderId),

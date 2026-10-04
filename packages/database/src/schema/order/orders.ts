@@ -4,6 +4,7 @@ import {
   index,
   numeric,
   pgTable,
+  jsonb,
   text,
   timestamp,
   uuid,
@@ -25,6 +26,7 @@ export const orders = pgTable(
     addressId: uuid("address_id")
       .notNull()
       .references(() => addresses.id, { onDelete: "restrict" }),
+    addressSnapshot: jsonb("address_snapshot"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
