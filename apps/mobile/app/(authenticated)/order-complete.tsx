@@ -20,7 +20,10 @@ import { PurchaseCompleteMark } from "@/components/checkout/purchase-complete-ma
 export default function OrderCompleteScreen() {
   const router = useRouter();
   const isFocused = useIsFocused();
-  const { total } = useLocalSearchParams<{ total?: string }>();
+  const { orderId, total } = useLocalSearchParams<{
+    orderId?: string;
+    total?: string;
+  }>();
   const displayTotal =
     typeof total === "string" && total.trim() ? total : "R$ 0,00";
 
@@ -46,6 +49,14 @@ export default function OrderCompleteScreen() {
 
   const returnHome = () => {
     router.replace("/home");
+  };
+
+  const viewOrder = () => {
+    if (orderId) {
+      router.replace({ pathname: "/order/[id]", params: { id: orderId } });
+    } else {
+      router.replace("/orders");
+    }
   };
 
   if (!isFocused) {
@@ -121,15 +132,26 @@ export default function OrderCompleteScreen() {
             className="w-full pt-3"
           >
             <Pressable
-              onPress={returnHome}
+              onPress={viewOrder}
               accessibilityRole="button"
-              accessibilityLabel="Voltar ao início"
+              accessibilityLabel="Visualizar pedido"
               className="min-h-14 w-full flex-row items-center justify-center gap-2 rounded-xl bg-primary px-5 active:opacity-85"
             >
               <Text className="font-sans text-xl text-white">
-                Voltar ao início
+                Visualizar pedido
               </Text>
               <Ionicons name="arrow-forward" size={23} color="#FFFFFF" />
+            </Pressable>
+
+            <Pressable
+              onPress={returnHome}
+              accessibilityRole="button"
+              accessibilityLabel="Voltar ao início"
+              className="mt-3 min-h-14 w-full items-center justify-center rounded-xl border border-white/25 px-5 active:bg-white/10"
+            >
+              <Text className="font-golos-semibold text-base text-white">
+                Voltar ao início
+              </Text>
             </Pressable>
           </Animated.View>
         </View>

@@ -171,6 +171,7 @@ function OrderCardItem({ item }: { item: OrderItem }) {
 }
 
 function OrderCard({ order }: { order: Order }) {
+  const router = useRouter();
   const orderCode = `#${order.id.slice(0, 8).toUpperCase()}`;
 
   return (
@@ -222,6 +223,20 @@ function OrderCard({ order }: { order: Order }) {
             {formatCurrency(order.total)}
           </Text>
         </View>
+
+        <Pressable
+          onPress={() =>
+            router.push({ pathname: "/order/[id]", params: { id: order.id } })
+          }
+          accessibilityRole="button"
+          accessibilityLabel={`Visualizar pedido ${orderCode}`}
+          className="mt-4 min-h-12 flex-row items-center justify-center gap-2 rounded-xl border border-white/20 active:bg-white/10"
+        >
+          <Text className="font-golos-semibold text-sm text-white">
+            Visualizar pedido
+          </Text>
+          <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
+        </Pressable>
       </View>
     </View>
   );

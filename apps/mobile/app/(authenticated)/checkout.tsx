@@ -117,7 +117,7 @@ export default function CheckoutScreen() {
       onSuccess: (order) => {
         router.replace({
           pathname: "/order-complete",
-          params: { total: formatCurrency(Number(order.total)) },
+          params: { orderId: order.id, total: formatCurrency(Number(order.total)) },
         });
       },
       onError: (error: unknown) => {
