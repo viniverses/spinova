@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import { cartQueryKey } from "@/hooks/use-cart";
 import { productKeys } from "@/hooks/use-products";
@@ -13,15 +18,20 @@ export const ordersQueryKey = ["orders"] as const;
 
 export const ordersKeys = {
   all: ordersQueryKey,
-  list: (page?: number, pageSize?: number) =>
-    [...ordersQueryKey, "list", { page, pageSize }] as const,
+  list: (pageSize: number) =>
+    [...ordersQueryKey, "list", { pageSize }] as const,
   detail: (id: string) => [...ordersQueryKey, "detail", id] as const,
 };
 
-export const useOrders = (page = 1, pageSize = 20) =>
-  useQuery({
-    queryKey: ordersKeys.list(page, pageSize),
-    queryFn: () => getOrders(page, pageSize),
+export const useOrders = (pageSize = 20) =>
+  useInfiniteQuery({
+    queryKey: ordersKeys.list(pageSize),
+    queryFn: ({ pageParam }) => getOrders(pageParam, pageSize),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      const { page, totalPages } = lastPage.pagination;
+      return page < totalPages ? page + 1 : undefined;
+    },
   });
 
 export const useOrder = (id: string) =>

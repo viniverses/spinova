@@ -244,8 +244,30 @@ function OrderCard({ order }: { order: Order }) {
 
 export default function OrdersScreen() {
   const router = useRouter();
-  const { data, isLoading, isError, refetch, isRefetching } = useOrders();
-  const orders = data?.data ?? [];
+  const {
+    data,
+    isLoading,
+    isError,
+    isFetchingNextPage,
+    isFetchNextPageError,
+    hasNextPage,
+    fetchNextPage,
+    refetch,
+    isRefetching,
+  } = useOrders();
+  const orders = data?.pages.flatMap((page) => page.data) ?? [];
+  const totalItems = data?.pages[0]?.pagination.totalItems ?? 0;
+
+  const handleEndReached = () => {
+    if (
+      hasNextPage &&
+      !isFetchingNextPage &&
+      !isFetchNextPageError &&
+      !isRefetching
+    ) {
+      void fetchNextPage();
+    }
+  };
 
   if (isLoading) {
     return (
@@ -259,7 +281,7 @@ export default function OrdersScreen() {
     );
   }
 
-  if (isError) {
+  if (isError && !data) {
     return (
       <View className="flex-1 items-center justify-center bg-black px-6">
         <StatusBar style="light" />
@@ -296,6 +318,8 @@ export default function OrdersScreen() {
         data={orders}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
+        onEndReached={handleEndReached}
+        onEndReachedThreshold={0.4}
         contentContainerStyle={{
           paddingHorizontal: 16,
           paddingTop: 8,
@@ -304,7 +328,7 @@ export default function OrdersScreen() {
         }}
         refreshControl={
           <RefreshControl
-            refreshing={isRefetching}
+            refreshing={isRefetching && !isFetchingNextPage}
             onRefresh={() => void refetch()}
             tintColor={colors.primary.DEFAULT}
             colors={[colors.primary.DEFAULT]}
@@ -316,9 +340,9 @@ export default function OrdersScreen() {
               Seus pedidos
             </Text>
             <Text className="mt-1 font-golos text-sm text-white/60">
-              {orders.length === 0
+              {totalItems === 0
                 ? "Nenhum pedido realizado até o momento"
-                : `${orders.length} ${orders.length === 1 ? "pedido realizado" : "pedidos realizados"}`}
+                : `${totalItems} ${totalItems === 1 ? "pedido realizado" : "pedidos realizados"}`}
             </Text>
           </View>
         }
@@ -345,6 +369,24 @@ export default function OrdersScreen() {
               </Text>
             </Pressable>
           </View>
+        }
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <View className="py-6">
+              <ActivityIndicator color={colors.primary.DEFAULT} />
+            </View>
+          ) : isFetchNextPageError ? (
+            <Pressable
+              onPress={() => void fetchNextPage()}
+              accessibilityRole="button"
+              accessibilityLabel="Tentar carregar mais pedidos novamente"
+              className="items-center py-6"
+            >
+              <Text className="font-golos-semibold text-sm text-white">
+                Não foi possível carregar mais pedidos. Tentar novamente
+              </Text>
+            </Pressable>
+          ) : null
         }
         renderItem={({ item }) => <OrderCard order={item} />}
       />
