@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   ActivityIndicator,
   Pressable,
@@ -20,21 +19,20 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { data: session } = useSession();
   const queryClient = useQueryClient();
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const handleLogoutPress = async () => {
-    if (isLoggingOut) return;
-    setIsLoggingOut(true);
-    try {
-      await authClient.signOut();
+  const logout = useMutation({
+    mutationFn: async () => {
+      const { error } = await authClient.signOut();
+      if (error) throw error;
+    },
+    onSuccess: () => {
       queryClient.clear();
-    } catch (error) {
-      console.error("Erro ao deslogar:", error);
-    } finally {
-      setIsLoggingOut(false);
       router.replace("/login");
-    }
-  };
+    },
+    onError: (error) => {
+      console.error("Erro ao deslogar:", error);
+    },
+  });
 
   return (
     <View className="flex-1 bg-black">
@@ -65,14 +63,25 @@ export default function ProfileScreen() {
 
           <ProfileActionsMenu />
 
+          {logout.isError ? (
+            <View
+              className="mt-6 rounded-xl border border-error/30 bg-error/10 px-4 py-3"
+              accessibilityLiveRegion="polite"
+            >
+              <Text className="font-golos text-sm leading-5 text-error">
+                Não foi possível sair da conta. Tente novamente.
+              </Text>
+            </View>
+          ) : null}
+
           <Pressable
-            onPress={handleLogoutPress}
-            disabled={isLoggingOut}
+            onPress={() => logout.mutate()}
+            disabled={logout.isPending}
             accessibilityRole="button"
             accessibilityLabel="Deslogar"
             className="mt-6 items-center justify-center rounded-2xl bg-primary py-4 active:opacity-90 disabled:opacity-50"
           >
-            {isLoggingOut ? (
+            {logout.isPending ? (
               <ActivityIndicator color="#FFFFFF" />
             ) : (
               <Text className="font-sans text-base font-bold text-white">
