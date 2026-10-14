@@ -11,7 +11,11 @@ export class DrizzleInventoryReservation implements InventoryReservation {
     items: readonly InventoryItem[],
   ): Promise<string | null> {
     assertInventoryItems(items);
-    for (const item of items) {
+    const itemsByProductId = [...items].sort((left, right) =>
+      left.productId.localeCompare(right.productId),
+    );
+
+    for (const item of itemsByProductId) {
       const [updatedProduct] = await this.tx
         .update(products)
         .set({
