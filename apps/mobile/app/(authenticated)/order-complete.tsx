@@ -84,7 +84,7 @@ export default function OrderCompleteScreen() {
                 style={{ textAlign: "center" }}
                 className="w-full text-center font-sans text-[36px] leading-[42px] text-white"
               >
-                Compra concluída
+                Pedido recebido
               </Text>
               <Text
                 style={{ textAlign: "center" }}
@@ -106,11 +106,7 @@ export default function OrderCompleteScreen() {
                 className="flex-row items-center border-y border-white/15 px-7 py-3"
               >
                 <View className="h-11 w-11 items-center justify-center rounded-full bg-[#211D1F]">
-                  <Ionicons
-                    name="receipt-outline"
-                    size={21}
-                    color="#E14842"
-                  />
+                  <Ionicons name="receipt-outline" size={21} color="#E14842" />
                 </View>
                 <View className="ml-3 justify-center">
                   <Text className="font-golos text-sm text-white/55">

@@ -84,7 +84,7 @@ export function PurchaseCompleteMark() {
   return (
     <Animated.View
       accessibilityRole="image"
-      accessibilityLabel="Compra concluída"
+      accessibilityLabel="Pedido recebido"
       style={{ width: MARK_SIZE, height: MARK_SIZE }}
     >
       <Animated.View style={discStyle}>

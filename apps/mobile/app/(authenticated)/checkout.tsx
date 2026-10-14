@@ -127,7 +127,7 @@ export default function CheckoutScreen() {
             ? error.response.data.error.message
             : "Confira seu carrinho e endereço de entrega, depois tente novamente.";
 
-        Alert.alert("Não foi possível concluir a compra", message);
+        Alert.alert("Não foi possível criar o pedido", message);
       },
     });
   };
@@ -174,7 +174,7 @@ export default function CheckoutScreen() {
             <CheckoutDetail
               title="Contato"
               icon="call"
-              lines={["(11) 1234-5678", "contato@spinova.com.br"]}
+              lines={["Telefone de demonstração", "E-mail de demonstração"]}
               onEdit={() => showEditNotice("contato")}
             />
 
@@ -201,7 +201,7 @@ export default function CheckoutScreen() {
             <CheckoutDetail
               title="Forma de Pagamento"
               icon="card"
-              lines={["Visa", "•••• 1659", "3x sem juros"]}
+              lines={["Cartão de demonstração", "Nenhuma cobrança será realizada"]}
               onEdit={() => showEditNotice("forma de pagamento")}
             />
           </View>
@@ -257,7 +257,7 @@ export default function CheckoutScreen() {
               !cart.data?.items.length
             }
             accessibilityRole="button"
-            accessibilityLabel={`Finalizar compra, total ${formatCurrency(total)}`}
+            accessibilityLabel={`Confirmar pedido, total ${formatCurrency(total)}`}
             accessibilityState={{
               disabled:
                 completeCheckout.isPending ||
@@ -274,8 +274,8 @@ export default function CheckoutScreen() {
               className="font-sans text-xl text-white"
             >
               {completeCheckout.isPending
-                ? "Finalizando compra"
-                : "Finalizar compra"}
+                ? "Criando pedido"
+                : "Confirmar pedido"}
             </Text>
             {completeCheckout.isPending ? (
               <ActivityIndicator size="small" color="#FFFFFF" />
