@@ -100,8 +100,8 @@ export const ProductListQuerySchema = Type.Object(
         minLength: 1,
         maxLength: 100,
         description:
-          "ID of an active curated section, such as home_releases or home_recommendations.",
-        examples: ["home_releases"],
+          "Slug of an active curated section, such as home-releases or home-recommendations.",
+        examples: ["home-releases"],
       }),
     ),
     collection: Type.Optional(
