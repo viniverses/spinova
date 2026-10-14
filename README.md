@@ -1,158 +1,107 @@
-# Turborepo starter
+# Spinova
 
-This Turborepo starter is maintained by the Turborepo core team.
+Spinova is an app for buying vinyl records. The project combines an iOS, Android, and web app, an e-commerce API, and shared packages in a pnpm and Turborepo monorepo.
 
-## Using this example
+The implemented flow includes browsing and searching the catalog, wishlists, a shopping cart, addresses, order creation, and order history. The payment screen uses a demo card: **no charge is made**.
 
-Run the following command:
+## Tech stack
 
-```sh
-npx create-turbo@latest
-```
+- **App:** Expo, React Native, Expo Router, NativeWind, and TanStack Query.
+- **API:** Elysia, Better Auth, and OpenAPI/Swagger documentation.
+- **Data:** PostgreSQL, Drizzle ORM, and Drizzle Kit.
+- **Monorepo:** pnpm, Turborepo, and TypeScript.
 
-## What's inside?
+## Project structure
 
-This Turborepo includes the following packages/apps:
+| Path                         | Purpose                                            |
+| ---------------------------- | -------------------------------------------------- |
+| `apps/mobile`                | Expo app, screens, components, and services.       |
+| `apps/api`                   | HTTP API, business logic, and data access.         |
+| `packages/auth`              | Shared Better Auth configuration.                  |
+| `packages/database`          | Schema, migrations, Drizzle client, and seed data. |
+| `packages/env`               | Environment variable validation.                   |
+| `packages/eslint-config`     | Shared lint configuration.                         |
+| `packages/typescript-config` | Shared TypeScript configuration.                   |
 
-### Apps and Packages
+## Prerequisites
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@spinova/eslint-config`: `eslint` configurations (includes `@next/eslint-plugin-next` and `eslint-config-prettier`)
-- `@spinova/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- Node.js **24 or later**.
+- pnpm **11.23.0** (the version declared in `package.json`).
+- A PostgreSQL instance accessible to the API.
+- An Expo environment compatible with the project version to run the app on a phone or emulator.
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+## Local setup
 
-### Utilities
+1. Install dependencies from the repository root:
 
-This Turborepo has some additional tools already setup for you:
+   ```sh
+   pnpm install
+   ```
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+2. Create a `.env` file in the repository root. The API, database, and app development scripts load it automatically. Adjust the URLs for your environment:
 
-### Build
+   ```dotenv
+   NODE_ENV=development
+   API_HOSTNAME=0.0.0.0
+   PORT=3000
+   API_VERSION=1.0.0
+   BETTER_AUTH_SECRET=replace-with-a-random-secret-of-at-least-32-characters
+   BETTER_AUTH_URL=http://localhost:3000
+   DATABASE_URL=postgresql://user:password@localhost:5432/spinova
+   WEB_APP_URL=http://localhost:8081
+   EXPO_PUBLIC_API_URL=http://YOUR_LOCAL_IP:3000
+   EXPO_PUBLIC_WEB_API_URL=http://localhost:3000
+   ```
 
-To build all apps and packages, run the following command:
+   `BETTER_AUTH_SECRET` must be at least 32 characters long. `API_VERSION`, `BETTER_AUTH_URL`, `DATABASE_URL`, and both `EXPO_PUBLIC_*` URLs are also required. `NODE_ENV`, `API_HOSTNAME`, and `PORT` have defaults; `WEB_APP_URL` is optional and adds an allowed origin to the API's CORS configuration.
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+   On a physical device, replace `YOUR_LOCAL_IP` with the IP address of the computer running the API. The phone and computer must be able to communicate over the network. The web app uses `EXPO_PUBLIC_WEB_API_URL`, while iOS and Android use `EXPO_PUBLIC_API_URL`. Set `BETTER_AUTH_URL` to an API URL accessible in the environment where you test authentication.
 
-```sh
-cd my-turborepo
-turbo build
-```
+3. Apply the database migrations:
 
-Without global `turbo`, use your package manager:
+   ```sh
+   pnpm --filter @spinova/database db:migrate
+   ```
 
-```sh
-cd my-turborepo
-npx turbo build
-pnpm exec turbo build
-pnpm exec turbo build
-```
+4. To populate the catalog with development data, run the seed:
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+   ```sh
+   pnpm --filter @spinova/database db:seed
+   ```
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+   The seed inserts and updates sample records. Run it against a development database.
 
-```sh
-turbo build --filter=docs
-```
+## Run locally
 
-Without global `turbo`:
-
-```sh
-npx turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo dev
-```
-
-Without global `turbo`, use your package manager:
+Start the API and app in separate terminals:
 
 ```sh
-cd my-turborepo
-npx turbo dev
-pnpm exec turbo dev
-pnpm exec turbo dev
+pnpm --filter @spinova/api dev
 ```
-
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
 
 ```sh
-turbo dev --filter=web
+pnpm --filter @spinova/mobile dev
 ```
 
-Without global `turbo`:
+The API uses port `3000` by default. With the values above, interactive API documentation is available at [http://localhost:3000/docs](http://localhost:3000/docs), and the root endpoint responds at [http://localhost:3000/](http://localhost:3000/). The app command opens Expo, where you can choose a target platform, including web.
 
-```sh
-npx turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+## Useful commands
 
-### Remote Caching
+Run these from the repository root:
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+| Command                                       | Purpose                                       |
+| --------------------------------------------- | --------------------------------------------- |
+| `pnpm build`                                  | Build projects that define a build task.      |
+| `pnpm check-types`                            | Type-check the projects.                      |
+| `pnpm test`                                   | Run the tests configured in the monorepo.     |
+| `pnpm --filter @spinova/api test:watch`       | Run API tests in watch mode.                  |
+| `pnpm --filter @spinova/database db:generate` | Generate a migration from the Drizzle schema. |
+| `pnpm --filter @spinova/database db:studio`   | Open Drizzle Studio.                          |
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+## API and code organization
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+The main API routes are `/products`, `/wishlist`, `/cart`, `/addresses`, and `/orders`. Better Auth provides the authentication routes. See `/docs` for current HTTP parameters and contracts.
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+API modules separate the domain, use cases, and infrastructure (routes and repositories). Dependencies are assembled in `apps/api/src/composition-root.ts`. The app accesses the API through the services in `apps/mobile/src/services`.
 
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-pnpm exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-pnpm exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+Checkout requires a delivery address, creates an order, reserves stock, and clears the cart in one transaction. The UI shows a demo payment method; the project does not yet integrate a payment provider.
