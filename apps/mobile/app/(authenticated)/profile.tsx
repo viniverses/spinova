@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   ActivityIndicator,
@@ -16,7 +15,6 @@ import { ProfileActionsMenu } from "@/components/profile/profile-actions-menu";
 const SCROLL_BOTTOM_PADDING = 112;
 
 export default function ProfileScreen() {
-  const router = useRouter();
   const { data: session } = useSession();
   const queryClient = useQueryClient();
 
@@ -27,7 +25,6 @@ export default function ProfileScreen() {
     },
     onSuccess: () => {
       queryClient.clear();
-      router.replace("/login");
     },
     onError: (error) => {
       console.error("Erro ao deslogar:", error);
