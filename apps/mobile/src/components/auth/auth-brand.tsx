@@ -1,5 +1,5 @@
 import { Image } from "expo-image";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 
 export const AuthBrand = () => (
   <View className="mb-6 items-center">
@@ -12,11 +12,16 @@ export const AuthBrand = () => (
       <View
         className="h-16 w-16 items-center justify-center overflow-hidden rounded-[13px] bg-primary"
         style={{
-          shadowColor: "#000000",
-          shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.14,
-          shadowRadius: 16,
-          elevation: 5,
+          ...Platform.select({
+            web: { boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.14)" },
+            default: {
+              shadowColor: "#000000",
+              shadowOffset: { width: 0, height: 8 },
+              shadowOpacity: 0.14,
+              shadowRadius: 16,
+              elevation: 5,
+            },
+          }),
         }}
       >
         <Image

@@ -18,12 +18,7 @@ const glassDropShadowStyle = Platform.select<ViewStyle>({
     elevation: 8,
     shadowColor: "#000000",
   },
-  default: {
-    shadowColor: "#000000",
-    shadowOffset: { width: 7, height: 10 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-  },
+  web: { boxShadow: "7px 10px 10px rgba(0, 0, 0, 0.05)" },
 });
 
 type AuthGlassCardProps = {

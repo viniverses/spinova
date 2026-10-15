@@ -1,7 +1,7 @@
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import type { ComponentProps } from "react";
-import { Pressable, View } from "react-native";
+import { Platform, Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type TabsProps = ComponentProps<typeof import("expo-router").Tabs>;
@@ -102,11 +102,16 @@ export const AppTabBar = ({
           top: -23,
           left: "50%",
           marginLeft: -34,
-          elevation: 8,
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.35,
-          shadowRadius: 6,
+          ...Platform.select({
+            web: { boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.35)" },
+            default: {
+              elevation: 8,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.35,
+              shadowRadius: 6,
+            },
+          }),
         }}
       >
         <Image

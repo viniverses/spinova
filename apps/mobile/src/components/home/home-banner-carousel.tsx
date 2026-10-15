@@ -67,14 +67,15 @@ export const HomeBannerCarousel = () => {
                   colors={["rgba(0,0,0,0.10)", "rgba(0,0,0,0.85)"]}
                   start={{ x: 0, y: 0.05 }}
                   end={{ x: 0, y: 1 }}
-                  style={StyleSheet.absoluteFill}
-                  pointerEvents="none"
+                  style={[StyleSheet.absoluteFill, { pointerEvents: "none" }]}
                 />
 
                 <View
                   className="justify-end p-4"
-                  style={StyleSheet.absoluteFill}
-                  pointerEvents="box-none"
+                  style={[
+                    StyleSheet.absoluteFill,
+                    { pointerEvents: "box-none" },
+                  ]}
                 >
                   <View>
                     <Text

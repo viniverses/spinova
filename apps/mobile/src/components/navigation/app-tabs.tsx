@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
 import type { ComponentProps } from "react";
+import { Platform } from "react-native";
 
 import { AppTabBar, type AppTab } from "./app-tab-bar";
 import { colors } from "@/lib/theme";
@@ -39,8 +40,10 @@ export const AppTabs = () => (
       tabBarStyle: {
         backgroundColor: "transparent",
         borderTopWidth: 0,
-        elevation: 0,
-        shadowOpacity: 0,
+        ...Platform.select({
+          web: { boxShadow: "none" },
+          default: { elevation: 0, shadowOpacity: 0 },
+        }),
       },
     }}
     tabBar={(props) => <AppTabBar {...props} tabs={tabScreens} />}

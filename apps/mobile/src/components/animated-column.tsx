@@ -26,13 +26,15 @@ const DEFAULT_IMAGE_ASPECT_RATIO = 918.62 / 1284.12;
 
 /** Drop shadow (Figma): X 3, Y 7, blur 10, spread 0, #000 @ 10% */
 const imageShadowStyle = {
-  shadowColor: "#000000",
-  shadowOffset: { width: 3, height: 7 },
-  shadowOpacity: 0.1,
-  shadowRadius: 10,
   ...Platform.select({
-    android: { elevation: 6 },
-    default: {},
+    web: { boxShadow: "3px 7px 10px rgba(0, 0, 0, 0.1)" },
+    default: {
+      shadowColor: "#000000",
+      shadowOffset: { width: 3, height: 7 },
+      shadowOpacity: 0.1,
+      shadowRadius: 10,
+      ...(Platform.OS === "android" ? { elevation: 6 } : {}),
+    },
   }),
 };
 

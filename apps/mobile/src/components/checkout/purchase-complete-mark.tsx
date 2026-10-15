@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
+import { Platform } from "react-native";
 import Animated, {
   cancelAnimation,
   Easing,
@@ -146,9 +147,9 @@ export function PurchaseCompleteMark() {
       </Animated.View>
 
       <Animated.View
-        pointerEvents="none"
         style={[
           {
+            pointerEvents: "none",
             position: "absolute",
             bottom: 6,
             right: 6,
@@ -160,11 +161,16 @@ export function PurchaseCompleteMark() {
             borderColor: "#000000",
             alignItems: "center",
             justifyContent: "center",
-            shadowColor: "#000000",
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.4,
-            shadowRadius: 6,
-            elevation: 6,
+            ...Platform.select({
+              web: { boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.4)" },
+              default: {
+                shadowColor: "#000000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.4,
+                shadowRadius: 6,
+                elevation: 6,
+              },
+            }),
           },
           badgeStyle,
         ]}

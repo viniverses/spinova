@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRef, useState } from "react";
-import { Pressable, View } from "react-native";
+import { Platform, Pressable, View } from "react-native";
 import Carousel, {
   type ICarouselInstance,
 } from "react-native-reanimated-carousel";
@@ -81,11 +81,16 @@ export const ProductDetailHero = ({
                 height: width * 0.71,
                 left: width * 0.09,
                 top: width * 0.075,
-                elevation: 8,
-                shadowColor: "#000000",
-                shadowOffset: { width: 4, height: 8 },
-                shadowOpacity: 0.42,
-                shadowRadius: 8,
+                ...Platform.select({
+                  web: { boxShadow: "4px 8px 8px rgba(0, 0, 0, 0.42)" },
+                  default: {
+                    elevation: 8,
+                    shadowColor: "#000000",
+                    shadowOffset: { width: 4, height: 8 },
+                    shadowOpacity: 0.42,
+                    shadowRadius: 8,
+                  },
+                }),
               }}
             >
               {image ? (
@@ -107,7 +112,7 @@ export const ProductDetailHero = ({
               colors={["transparent", "rgba(17,15,18,0.62)"]}
               locations={[0.55, 1]}
               className="absolute inset-0"
-              pointerEvents="none"
+              style={{ pointerEvents: "none" }}
             />
           </View>
         )}
