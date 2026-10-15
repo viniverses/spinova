@@ -18,7 +18,7 @@ export const HomeHeader = ({
   const isBackHeader = leadingVariant === "back";
 
   return (
-    <View className="flex-row items-center gap-3 px-4 pb-3 pt-1">
+    <View className="flex-row items-center gap-3 px-4 py-3">
       <Pressable
         onPress={onPressLogo}
         accessibilityRole="button"

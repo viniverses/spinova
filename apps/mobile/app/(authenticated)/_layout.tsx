@@ -1,7 +1,6 @@
 import { Redirect, usePathname, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
-import { Platform, View } from "react-native";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HelpDrawer } from "@/components/help/help-drawer";
 import { HomeHeader } from "@/components/home/home-header";
@@ -40,11 +39,7 @@ function AuthenticatedContent() {
     <View className="flex-1 bg-black">
       <StatusBar style="light" />
       {!hideHeader ? (
-        <SafeAreaView
-          className="bg-black"
-          edges={["top", "left", "right"]}
-          style={Platform.OS === "web" ? { paddingTop: 12 } : undefined}
-        >
+        <SafeAreaView className="bg-black" edges={["top", "left", "right"]}>
           <HomeHeader
             leadingVariant={showBackButton ? "back" : "brand"}
             onPressLogo={showBackButton ? handleBackPress : undefined}
