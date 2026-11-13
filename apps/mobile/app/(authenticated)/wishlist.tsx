@@ -19,9 +19,7 @@ const GRID_GAP = 14;
 export default function WishlistScreen() {
   const { width } = useWindowDimensions();
   const wishlist = useWishlist();
-  const items = (wishlist.data ?? []).filter(
-    (item) => !("isOptimistic" in item && item.isOptimistic),
-  );
+  const items = wishlist.data ?? [];
 
   const itemLabel = `${items.length} ${items.length === 1 ? "item salvo" : "itens salvos"}`;
   const cardWidth = (width - 32 - GRID_GAP) / 2;

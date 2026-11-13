@@ -39,7 +39,7 @@ export const ProductCard = memo(
     });
     const isFavorite =
       isWishlistItem || (isWishlisted ?? isWishlistedQuery.data ?? false);
-    const { mutate: toggleWishlist, isPending } = useToggleWishlist();
+    const { mutate: toggleWishlist, isPending } = useToggleWishlist(product.id);
 
     const handleToggleFavorite = () => {
       toggleWishlist({

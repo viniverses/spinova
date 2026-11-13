@@ -1,113 +1,56 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
+  selectWishlistIds,
+  selectWishlistItems,
+  wishlistMutationOptions,
+  wishlistQueryOptions,
+} from "@/lib/wishlist-cache";
+import {
   addToWishlist,
   getWishlist,
   removeFromWishlist,
-  type WishlistItem,
 } from "@/services/wishlist";
 
-const wishlistQueryKey = ["wishlist", "list"] as const;
+const wishlistApi = { getWishlist, addToWishlist, removeFromWishlist };
 
-type ToggleWishlistVariables = {
-  productId: string;
-  isFavorited: boolean;
+export const useWishlist = () => {
+  const client = useQueryClient();
+  return useQuery({
+    ...wishlistQueryOptions(client, wishlistApi),
+    select: selectWishlistItems,
+  });
 };
 
-export const useWishlist = () =>
-  useQuery({
-    queryKey: wishlistQueryKey,
-    queryFn: getWishlist,
-  });
-
-export const useWishlistIds = (options?: { enabled?: boolean }) =>
-  useQuery({
-    queryKey: wishlistQueryKey,
-    queryFn: getWishlist,
-    select: (items) => new Set(items.map((item) => item.product.id)),
+export const useWishlistIds = (options?: { enabled?: boolean }) => {
+  const client = useQueryClient();
+  return useQuery({
+    ...wishlistQueryOptions(client, wishlistApi),
+    select: selectWishlistIds,
     enabled: options?.enabled ?? true,
   });
+};
 
 export const useIsWishlisted = (
   productId: string,
   options?: { enabled?: boolean },
-) =>
-  useQuery({
-    queryKey: wishlistQueryKey,
-    queryFn: getWishlist,
-    select: (items) => items.some((item) => item.product.id === productId),
+) => {
+  const client = useQueryClient();
+  return useQuery({
+    ...wishlistQueryOptions(client, wishlistApi),
+    select: (cache) => selectWishlistIds(cache).has(productId),
     enabled: options?.enabled ?? true,
   });
+};
 
-/**
- * Toggles a single product's wishlist state using the state shown to the user
- * when they tap the button.
- */
-export const useToggleWishlist = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({ productId, isFavorited }: ToggleWishlistVariables) => {
-      if (isFavorited) {
-        await removeFromWishlist(productId);
-      } else {
-        await addToWishlist(productId);
-      }
-    },
-    onMutate: async ({ productId }) => {
-      await queryClient.cancelQueries({ queryKey: wishlistQueryKey });
-
-      const previous =
-        queryClient.getQueryData<WishlistItem[]>(wishlistQueryKey);
-
-      queryClient.setQueryData<WishlistItem[]>(wishlistQueryKey, (old) => {
-        if (!old) return old;
-
-        const isFavorited = old.some((item) => item.product.id === productId);
-
-        if (isFavorited) {
-          return old.filter((item) => item.product.id !== productId);
-        }
-
-        // Optimistic add — placeholder shape, flagged so any UI rendering
-        // full wishlist items (not just useIsWishlisted) can skip/skeleton
-        // it until the real data lands on settle.
-        const optimisticItem: WishlistItem & { isOptimistic?: boolean } = {
-          id: `temp-${productId}`,
-          isOptimistic: true,
-          product: {
-            id: productId,
-            albumId: "",
-            title: "",
-            artist: { id: "", name: "", slug: "" },
-            sku: "",
-            format: "vinyl",
-            edition: "standard",
-            price: "0.00",
-            compareAtPrice: null,
-            currency: "BRL",
-            stockQuantity: 0,
-            inStock: false,
-            isImported: false,
-            genre: null,
-            releaseDate: null,
-            image: null,
-          },
-          createdAt: new Date().toISOString(),
-        };
-
-        return [...old, optimisticItem];
-      });
-
-      return { previous };
-    },
-    onError: (_err, _variables, context) => {
-      if (context?.previous !== undefined) {
-        queryClient.setQueryData(wishlistQueryKey, context.previous);
-      }
-    },
-    onSettled: (_data, _err, _variables) => {
-      void queryClient.invalidateQueries({ queryKey: wishlistQueryKey });
-    },
+export const useToggleWishlist = (productId: string) => {
+  const client = useQueryClient();
+  const mutation = useMutation(wishlistMutationOptions(client, wishlistApi));
+  const pending = useQuery({
+    ...wishlistQueryOptions(client, wishlistApi),
+    enabled: false,
+    select: (cache) => cache.changes[productId]?.pending ?? false,
   });
+
+  return { ...mutation, isPending: mutation.isPending || !!pending.data };
 };

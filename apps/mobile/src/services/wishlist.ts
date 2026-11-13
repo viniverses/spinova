@@ -7,8 +7,12 @@ export type WishlistItem = {
   createdAt: string;
 };
 
-export const getWishlist = async (): Promise<WishlistItem[]> => {
-  const { data } = await api.get<{ data: WishlistItem[] }>("/wishlist");
+export const getWishlist = async (
+  signal?: AbortSignal,
+): Promise<WishlistItem[]> => {
+  const { data } = await api.get<{ data: WishlistItem[] }>("/wishlist", {
+    signal,
+  });
   return data.data;
 };
 
