@@ -4,12 +4,16 @@ import type { Cart } from "@/services/cart";
 import { formatCurrency } from "@/utils";
 
 type CartSummaryProps = {
+  className?: string;
   totals: Pick<Cart, "subtotal" | "shipping" | "total">;
 };
 
-export function CartSummary({ totals }: CartSummaryProps) {
+export function CartSummary({
+  totals,
+  className = "mt-6 gap-1",
+}: CartSummaryProps) {
   return (
-    <View className="mt-6 gap-1">
+    <View className={className}>
       <View className="flex-row items-center justify-between">
         <Text className="font-golos text-[17px] text-[#F2F0F2]">Subtotal</Text>
         <Text className="font-golos text-[17px] text-[#F2F0F2]">

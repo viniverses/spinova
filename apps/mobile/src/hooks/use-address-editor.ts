@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { isAxiosError } from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Alert } from "react-native";
@@ -12,7 +11,7 @@ import {
 import { useLookupCep } from "@/hooks/use-lookup-cep";
 import { addressSchema, type AddressFormValues } from "@/schemas/address";
 import type { Address, CreateAddressInput } from "@/services/addresses";
-import { formatCep } from "@/utils";
+import { formatCep, getApiErrorMessage } from "@/utils";
 
 const DEFAULT_VALUES: AddressFormValues = {
   label: "Casa",
@@ -136,13 +135,12 @@ export function useAddressEditor({
       }
       onSaved();
     } catch (error: unknown) {
-      const message =
-        isAxiosError<{ error?: { message?: string } }>(error) &&
-        error.response?.data?.error?.message
-          ? error.response.data.error.message
-          : error instanceof Error
-            ? error.message
-            : "Não foi possível salvar o endereço. Tente novamente.";
+      const message = getApiErrorMessage(
+        error,
+        error instanceof Error
+          ? error.message
+          : "Não foi possível salvar o endereço. Tente novamente.",
+      );
       Alert.alert("Erro ao salvar endereço", message);
     }
   };

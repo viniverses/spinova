@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import type { ComponentProps } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -9,73 +8,20 @@ import {
   Text,
   View,
 } from "react-native";
-import { isAxiosError } from "axios";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { CartSummary } from "@/components/cart/cart-summary";
+import { CheckoutDetail } from "@/components/checkout/checkout-detail";
 import { useCart } from "@/hooks/use-cart";
 import { useDefaultAddress } from "@/hooks/use-addresses";
 import { useCompleteCheckout } from "@/hooks/use-orders";
-import { formatCurrency } from "@/utils";
+import {
+  formatAddressLines,
+  formatCurrency,
+  getApiErrorMessage,
+} from "@/utils";
 
 const CONTENT_BOTTOM_PADDING = 24;
-
-type CheckoutDetailProps = {
-  title: string;
-  icon: ComponentProps<typeof Ionicons>["name"];
-  actionIcon?: ComponentProps<typeof Ionicons>["name"];
-  lines: string[];
-  onEdit: () => void;
-};
-
-function CheckoutDetail({
-  title,
-  icon,
-  actionIcon = "create-outline",
-  lines,
-  onEdit,
-}: CheckoutDetailProps) {
-  return (
-    <View className="flex-row items-center">
-      <View className="h-[104px] w-[104px] shrink-0 items-center justify-center rounded-xl bg-[#272628]">
-        <Ionicons name={icon} size={52} color="#F7F6F7" />
-      </View>
-
-      <View className="ml-3.5 min-w-0 flex-1 self-stretch justify-center">
-        <Text
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          minimumFontScale={0.76}
-          className="font-sans text-[22px] leading-7 text-[#F7F6F7]"
-        >
-          {title}
-        </Text>
-        <View className="mt-1">
-          {lines.map((line) => (
-            <Text
-              key={line}
-              numberOfLines={1}
-              adjustsFontSizeToFit
-              minimumFontScale={0.82}
-              className="font-golos text-[15px] leading-5 text-[#EFEDEF]"
-            >
-              {line}
-            </Text>
-          ))}
-        </View>
-      </View>
-
-      <Pressable
-        onPress={onEdit}
-        accessibilityRole="button"
-        accessibilityLabel={`Editar ${title.toLowerCase()}`}
-        hitSlop={8}
-        className="h-12 w-12 shrink-0 items-center justify-center rounded-full active:bg-white/10"
-      >
-        <Ionicons name={actionIcon} size={25} color="#F7F6F7" />
-      </Pressable>
-    </View>
-  );
-}
 
 export default function CheckoutScreen() {
   const router = useRouter();
@@ -117,15 +63,17 @@ export default function CheckoutScreen() {
       onSuccess: (order) => {
         router.replace({
           pathname: "/order-complete",
-          params: { orderId: order.id, total: formatCurrency(Number(order.total)) },
+          params: {
+            orderId: order.id,
+            total: formatCurrency(Number(order.total)),
+          },
         });
       },
       onError: (error: unknown) => {
-        const message =
-          isAxiosError<{ error?: { message?: string } }>(error) &&
-          error.response?.data?.error?.message
-            ? error.response.data.error.message
-            : "Confira seu carrinho e endereço de entrega, depois tente novamente.";
+        const message = getApiErrorMessage(
+          error,
+          "Confira seu carrinho e endereço de entrega, depois tente novamente.",
+        );
 
         Alert.alert("Não foi possível criar o pedido", message);
       },
@@ -135,12 +83,7 @@ export default function CheckoutScreen() {
   const addressLines = defaultAddress.isLoading
     ? ["Carregando endereço..."]
     : address
-      ? [
-          `${address.street}, ${address.number}${address.complement ? ` - ${address.complement}` : ""}`,
-          address.neighborhood
-            ? `${address.neighborhood}, ${address.city} - ${address.state}`
-            : `${address.city} - ${address.state}`,
-        ]
+      ? formatAddressLines(address)
       : ["Nenhum endereço cadastrado", "Toque para adicionar um endereço"];
 
   return (
@@ -201,37 +144,18 @@ export default function CheckoutScreen() {
             <CheckoutDetail
               title="Forma de Pagamento"
               icon="card"
-              lines={["Cartão de demonstração", "Nenhuma cobrança será realizada"]}
+              lines={[
+                "Cartão de demonstração",
+                "Nenhuma cobrança será realizada",
+              ]}
               onEdit={() => showEditNotice("forma de pagamento")}
             />
           </View>
 
-          <View className="mt-8 gap-1">
-            <View className="flex-row items-center justify-between">
-              <Text className="font-golos text-[17px] text-[#F2F0F2]">
-                Subtotal
-              </Text>
-              <Text className="font-golos text-[17px] text-[#F2F0F2]">
-                {formatCurrency(subtotal)}
-              </Text>
-            </View>
-            <View className="flex-row items-center justify-between">
-              <Text className="font-golos text-[17px] text-[#F2F0F2]">
-                Frete
-              </Text>
-              <Text className="font-golos text-[17px] text-[#F2F0F2]">
-                {formatCurrency(shipping)}
-              </Text>
-            </View>
-            <View className="flex-row items-center justify-between">
-              <Text className="font-golos text-[17px] text-[#F2F0F2]">
-                Total
-              </Text>
-              <Text className="font-golos text-[17px] text-[#F2F0F2]">
-                {formatCurrency(total)}
-              </Text>
-            </View>
-          </View>
+          <CartSummary
+            totals={{ subtotal, shipping, total }}
+            className="mt-8 gap-1"
+          />
 
           {!hasAddress && !defaultAddress.isLoading ? (
             <Pressable
