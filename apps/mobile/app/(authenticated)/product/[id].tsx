@@ -11,22 +11,15 @@ import {
 } from "react-native";
 
 import { ProductDetailHero } from "@/components/product/product-detail-hero";
-import { ProductCard } from "@/components/product/product-card";
+import {
+  EDITION_LABELS,
+  PLACEHOLDER_ALBUM_IMAGES,
+} from "@/components/product/constants";
+import { ProductRecommendationsSection } from "@/components/product/product-recommendations-section";
 import { useAddToCart, useCartItemQuantity } from "@/hooks/use-cart";
-import { useProduct, useProducts } from "@/hooks/use-products";
+import { useProduct } from "@/hooks/use-products";
 import { colors } from "@/lib/theme";
 import { formatCurrency } from "@/utils";
-
-const editionLabels = {
-  standard: "Padrão",
-  deluxe: "Deluxe",
-  colored: "Colorido",
-} as const;
-
-const placeholderAlbumImages = [2, 3, 4].map((position) => ({
-  url: `https://placehold.co/900x900/2A272B/FFFFFF/png?text=Capa+${position}`,
-  altText: `Imagem provisória da capa ${position}`,
-}));
 
 export default function ProductDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -34,10 +27,6 @@ export default function ProductDetailScreen() {
   const product = useProduct(id ?? "");
   const cartQuantity = useCartItemQuantity(id ?? "");
   const addToCart = useAddToCart();
-  const recommendations = useProducts({
-    collection: "recommendations",
-    pageSize: 10,
-  });
 
   if (product.isPending) {
     return (
@@ -84,16 +73,11 @@ export default function ProductDetailScreen() {
     year,
     item.genre,
     item.format.toUpperCase(),
-    editionLabels[item.edition],
+    EDITION_LABELS[item.edition],
   ].filter(Boolean);
-  const recommendedItems =
-    recommendations.data?.data
-      .filter((candidate) => candidate.id !== item.id)
-      .slice(0, 3) ?? [];
-  const recommendationCardWidth = (width - 32 - 20) / 3;
   const albumImages = [
     ...(item.images.length > 0 ? item.images : item.image ? [item.image] : []),
-    ...placeholderAlbumImages,
+    ...PLACEHOLDER_ALBUM_IMAGES,
   ];
 
   return (
@@ -192,43 +176,7 @@ export default function ProductDetailScreen() {
             </Text>
           ) : null}
 
-          <View className="mt-5">
-            <Text className="mb-2 font-sans text-base text-white">
-              Você pode gostar
-            </Text>
-            {recommendations.isPending ? (
-              <View className="h-24 items-center justify-center">
-                <ActivityIndicator color={colors.primary.DEFAULT} />
-              </View>
-            ) : recommendations.isError ? (
-              <Pressable
-                onPress={() => void recommendations.refetch()}
-                accessibilityRole="button"
-                className="h-24 items-center justify-center rounded-xl bg-[#262427] px-5 active:opacity-80"
-              >
-                <Text className="text-center font-golos text-xs text-white/75">
-                  Não foi possível carregar as recomendações. Toque para tentar
-                  novamente.
-                </Text>
-              </Pressable>
-            ) : recommendedItems.length > 0 ? (
-              <View className="flex-row gap-2.5">
-                {recommendedItems.map((recommendedItem) => (
-                  <ProductCard
-                    key={recommendedItem.id}
-                    product={recommendedItem}
-                    width={recommendationCardWidth}
-                  />
-                ))}
-              </View>
-            ) : (
-              <View className="h-24 items-center justify-center rounded-xl bg-[#262427] px-5">
-                <Text className="text-center font-golos text-xs text-white/65">
-                  Nenhuma recomendação disponível no momento.
-                </Text>
-              </View>
-            )}
-          </View>
+          <ProductRecommendationsSection productId={item.id} />
         </View>
       </ScrollView>
     </View>

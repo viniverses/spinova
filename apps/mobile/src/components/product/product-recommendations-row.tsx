@@ -1,4 +1,4 @@
-import { ScrollView, useWindowDimensions } from "react-native";
+import { useWindowDimensions, View } from "react-native";
 import type { ProductCatalogItem } from "@/services/products";
 import { ProductCard } from "./product-card";
 
@@ -6,27 +6,21 @@ type ProductRecommendationsRowProps = {
   items: ProductCatalogItem[];
 };
 
-const CARD_GAP = 12;
+const CARD_GAP = 10;
+const CARD_COUNT = 3;
 
 export const ProductRecommendationsRow = ({
   items,
 }: ProductRecommendationsRowProps) => {
   const { width } = useWindowDimensions();
   const horizontalPad = 16;
-  const cardWidth = Math.min(
-    148,
-    (width - horizontalPad * 2 - CARD_GAP) * 0.42,
-  );
+  const cardWidth =
+    (width - horizontalPad * 2 - CARD_GAP * (CARD_COUNT - 1)) / CARD_COUNT;
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerClassName="px-4"
-      contentContainerStyle={{ gap: CARD_GAP, paddingRight: 20 }}
-    >
+    <View style={{ flexDirection: "row", gap: CARD_GAP }}>
       {items.map((item) => (
         <ProductCard key={item.id} product={item} width={cardWidth} />
       ))}
-    </ScrollView>
+    </View>
   );
 };
