@@ -2,14 +2,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 
+import { ErrorState } from "@/components/ui/error-state";
+import { LoadingState } from "@/components/ui/loading-state";
 import { getOrderStatusConfig } from "@/components/order/status-config";
 import { useOrder } from "@/hooks/use-orders";
 import { colors } from "@/lib/theme";
@@ -22,51 +18,41 @@ export default function OrderDetailScreen() {
 
   if (id && isPending) {
     return (
-      <View className="flex-1 items-center justify-center bg-black px-6">
+      <View className="flex-1 bg-black">
         <StatusBar style="light" />
-        <ActivityIndicator size="large" color={colors.primary.DEFAULT} />
-        <Text className="mt-4 font-golos text-sm text-white/70">
-          Carregando pedido…
-        </Text>
+        <LoadingState message="Carregando pedido…" />
       </View>
     );
   }
 
   if (!id || isError || !order) {
     return (
-      <View className="flex-1 items-center justify-center bg-black px-6">
+      <View className="flex-1 bg-black">
         <StatusBar style="light" />
-        <Ionicons
-          name="receipt-outline"
-          size={52}
-          color={colors.primary.DEFAULT}
-        />
-        <Text className="mt-4 text-center font-sans text-xl text-white">
-          Não foi possível carregar o pedido
-        </Text>
-        <Text className="mt-2 text-center font-golos text-sm text-white/70">
-          Confira sua conexão e tente novamente.
-        </Text>
-        <Pressable
-          onPress={() => void refetch()}
-          accessibilityRole="button"
-          accessibilityLabel="Tentar carregar o pedido novamente"
-          className="mt-6 min-h-12 items-center justify-center rounded-xl bg-primary px-6 active:opacity-85"
+        <ErrorState
+          icon={
+            <Ionicons
+              name="receipt-outline"
+              size={52}
+              color={colors.primary.DEFAULT}
+            />
+          }
+          title="Não foi possível carregar o pedido"
+          description="Confira sua conexão e tente novamente."
+          onRetry={() => void refetch()}
+          retryAccessibilityLabel="Tentar carregar o pedido novamente"
         >
-          <Text className="font-golos-semibold text-base text-white">
-            Tentar novamente
-          </Text>
-        </Pressable>
-        <Pressable
-          onPress={() => router.replace("/orders")}
-          accessibilityRole="button"
-          accessibilityLabel="Ver todos os pedidos"
-          className="mt-3 min-h-12 items-center justify-center px-6"
-        >
-          <Text className="font-golos-semibold text-base text-white">
-            Ver todos os pedidos
-          </Text>
-        </Pressable>
+          <Pressable
+            onPress={() => router.replace("/orders")}
+            accessibilityRole="button"
+            accessibilityLabel="Ver todos os pedidos"
+            className="mt-3 min-h-12 items-center justify-center px-6"
+          >
+            <Text className="font-golos-semibold text-base text-white">
+              Ver todos os pedidos
+            </Text>
+          </Pressable>
+        </ErrorState>
       </View>
     );
   }

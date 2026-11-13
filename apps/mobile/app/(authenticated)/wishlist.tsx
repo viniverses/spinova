@@ -1,15 +1,16 @@
 import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import {
-  ActivityIndicator,
   FlatList,
-  Pressable,
   RefreshControl,
   Text,
   useWindowDimensions,
   View,
 } from "react-native";
 
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { LoadingState } from "@/components/ui/loading-state";
 import { ProductCard } from "@/components/product/product-card";
 import { useWishlist } from "@/hooks/use-wishlist";
 import { colors } from "@/lib/theme";
@@ -82,46 +83,32 @@ export default function WishlistScreen() {
         }
         ListEmptyComponent={
           wishlist.isPending ? (
-            <View className="flex-1 items-center justify-center pb-28">
-              <ActivityIndicator color={colors.primary.DEFAULT} size="large" />
-              <Text className="mt-4 font-golos text-sm text-white/60">
-                Carregando seus favoritos…
-              </Text>
-            </View>
+            <LoadingState
+              className="pb-28"
+              message="Carregando seus favoritos…"
+            />
           ) : wishlist.isError ? (
-            <View className="flex-1 items-center justify-center px-5 pb-28">
-              <Ionicons
-                name="cloud-offline-outline"
-                size={48}
-                color="#777179"
-              />
-              <Text className="mt-5 text-center font-sans text-xl text-white">
-                Sua lista não carregou
-              </Text>
-              <Text className="mt-2 text-center font-golos text-sm leading-5 text-white/60">
-                Verifique sua conexão e tente novamente.
-              </Text>
-              <Pressable
-                onPress={() => void wishlist.refetch()}
-                accessibilityRole="button"
-                accessibilityLabel="Tentar carregar a lista novamente"
-                className="mt-6 min-h-12 items-center justify-center rounded-2xl bg-primary px-6 active:opacity-80"
-              >
-                <Text className="font-golos-semibold text-sm text-white">
-                  Tentar novamente
-                </Text>
-              </Pressable>
-            </View>
+            <ErrorState
+              className="pb-28"
+              icon={
+                <Ionicons
+                  name="cloud-offline-outline"
+                  size={48}
+                  color="#777179"
+                />
+              }
+              title="Sua lista não carregou"
+              description="Verifique sua conexão e tente novamente."
+              onRetry={() => void wishlist.refetch()}
+              retryAccessibilityLabel="Tentar carregar a lista novamente"
+            />
           ) : (
-            <View className="flex-1 items-center justify-center px-5 pb-28">
-              <Ionicons name="heart-outline" size={52} color="#777179" />
-              <Text className="mt-5 text-center font-sans text-xl text-white">
-                Sua lista está esperando
-              </Text>
-              <Text className="mt-2 max-w-72 text-center font-golos text-sm leading-5 text-white/60">
-                Toque no coração de um produto para encontrá-lo aqui depois.
-              </Text>
-            </View>
+            <EmptyState
+              className="pb-28"
+              icon={<Ionicons name="heart-outline" size={52} color="#777179" />}
+              title="Sua lista está esperando"
+              description="Toque no coração de um produto para encontrá-lo aqui depois."
+            />
           )
         }
         renderItem={({ item }) => (

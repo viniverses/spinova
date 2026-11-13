@@ -10,6 +10,9 @@ import {
   View,
 } from "react-native";
 
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { LoadingState } from "@/components/ui/loading-state";
 import { OrderCard } from "@/components/order/order-card";
 import { useOrders } from "@/hooks/use-orders";
 import { colors } from "@/lib/theme";
@@ -43,41 +46,23 @@ export default function OrdersScreen() {
 
   if (isLoading) {
     return (
-      <View className="flex-1 items-center justify-center bg-black px-6">
+      <View className="flex-1 bg-black">
         <StatusBar style="light" />
-        <ActivityIndicator size="large" color={colors.primary.DEFAULT} />
-        <Text className="mt-4 font-golos text-sm text-white/60">
-          Carregando seus pedidos…
-        </Text>
+        <LoadingState message="Carregando seus pedidos…" />
       </View>
     );
   }
 
   if (isError && !data) {
     return (
-      <View className="flex-1 items-center justify-center bg-black px-6">
+      <View className="flex-1 bg-black">
         <StatusBar style="light" />
-        <Ionicons
-          name="alert-circle-outline"
-          size={52}
-          color={colors.primary.DEFAULT}
+        <ErrorState
+          title="Não foi possível carregar os pedidos"
+          description="Ocorreu um erro ao buscar o seu histórico."
+          onRetry={() => void refetch()}
+          retryAccessibilityLabel="Tentar carregar os pedidos novamente"
         />
-        <Text className="mt-4 text-center font-sans text-xl text-white">
-          Não foi possível carregar os pedidos
-        </Text>
-        <Text className="mt-2 text-center font-golos text-sm text-white/60">
-          Ocorreu um erro ao buscar o seu histórico.
-        </Text>
-        <Pressable
-          onPress={() => void refetch()}
-          accessibilityRole="button"
-          accessibilityLabel="Tentar carregar os pedidos novamente"
-          className="mt-6 rounded-2xl bg-primary px-6 py-3.5 active:opacity-85"
-        >
-          <Text className="font-golos-semibold text-sm text-white">
-            Tentar novamente
-          </Text>
-        </Pressable>
       </View>
     );
   }
@@ -119,28 +104,21 @@ export default function OrdersScreen() {
           </View>
         }
         ListEmptyComponent={
-          <View className="flex-1 items-center justify-center px-6 py-20">
-            <View className="h-20 w-20 items-center justify-center rounded-full bg-white/5">
-              <Ionicons name="receipt-outline" size={40} color="#777179" />
-            </View>
-            <Text className="mt-5 text-center font-sans text-xl font-bold text-white">
-              Nenhum pedido por aqui
-            </Text>
-            <Text className="mt-2 text-center font-golos text-sm leading-5 text-white/60">
-              Quando você fizer uma compra na Spinova, você poderá acompanhar
-              todos os seus pedidos nesta tela.
-            </Text>
-            <Pressable
-              onPress={() => router.replace("/home")}
-              accessibilityRole="button"
-              accessibilityLabel="Explorar catálogo de produtos"
-              className="mt-6 rounded-2xl bg-primary px-7 py-3.5 active:opacity-85"
-            >
-              <Text className="font-golos-semibold text-sm text-white">
-                Explorar catálogo
-              </Text>
-            </Pressable>
-          </View>
+          <EmptyState
+            className="py-20"
+            icon={
+              <View className="h-20 w-20 items-center justify-center rounded-full bg-white/5">
+                <Ionicons name="receipt-outline" size={40} color="#777179" />
+              </View>
+            }
+            title="Nenhum pedido por aqui"
+            description="Quando você fizer uma compra na Spinova, você poderá acompanhar todos os seus pedidos nesta tela."
+            action={{
+              label: "Explorar catálogo",
+              onPress: () => router.replace("/home"),
+              accessibilityLabel: "Explorar catálogo de produtos",
+            }}
+          />
         }
         ListFooterComponent={
           isFetchingNextPage ? (

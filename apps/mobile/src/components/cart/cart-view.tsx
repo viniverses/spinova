@@ -1,15 +1,16 @@
 import { Ionicons } from "@expo/vector-icons";
 import {
-  ActivityIndicator,
   Pressable,
   ScrollView,
   Text,
   useWindowDimensions,
   View,
 } from "react-native";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { LoadingState } from "@/components/ui/loading-state";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { colors } from "@/lib/theme";
 import type { Cart, CartItem } from "@/services/cart";
 import { formatCurrency } from "@/utils";
 
@@ -88,54 +89,32 @@ export function CartView({
           </Text>
 
           {isLoading ? (
-            <View className="flex-1 items-center justify-center pb-28 pt-16">
-              <ActivityIndicator color={colors.primary.DEFAULT} size="large" />
-              <Text className="mt-4 font-golos text-sm text-white/65">
-                Carregando seu carrinho…
-              </Text>
-            </View>
+            <LoadingState
+              className="pb-28 pt-16"
+              message="Carregando seu carrinho…"
+            />
           ) : isLoadError ? (
-            <View className="flex-1 items-center justify-center px-5 pb-28 pt-12">
-              <Ionicons
-                name="cloud-offline-outline"
-                size={48}
-                color="#777179"
-              />
-              <Text className="mt-5 text-center font-sans text-xl text-white">
-                Seu carrinho não carregou
-              </Text>
-              <Text className="mt-2 text-center font-golos text-sm leading-5 text-white/60">
-                Verifique sua conexão e tente novamente.
-              </Text>
-              <Pressable
-                onPress={() => void retry()}
-                accessibilityRole="button"
-                className="mt-6 min-h-12 items-center justify-center rounded-xl bg-primary px-6 active:opacity-80"
-              >
-                <Text className="font-golos-semibold text-sm text-white">
-                  Tentar novamente
-                </Text>
-              </Pressable>
-            </View>
+            <ErrorState
+              className="pb-28 pt-12"
+              icon={
+                <Ionicons
+                  name="cloud-offline-outline"
+                  size={48}
+                  color="#777179"
+                />
+              }
+              title="Seu carrinho não carregou"
+              description="Verifique sua conexão e tente novamente."
+              onRetry={retry}
+            />
           ) : items.length === 0 ? (
-            <View className="flex-1 items-center justify-center px-5 pb-28 pt-12">
-              <Ionicons name="cart-outline" size={52} color="#777179" />
-              <Text className="mt-5 text-center font-sans text-xl text-white">
-                Seu carrinho está vazio
-              </Text>
-              <Text className="mt-2 max-w-72 text-center font-golos text-sm leading-5 text-white/60">
-                Adicione um disco para encontrá-lo aqui.
-              </Text>
-              <Pressable
-                onPress={onExplore}
-                accessibilityRole="button"
-                className="mt-6 min-h-12 items-center justify-center rounded-xl bg-primary px-6 active:opacity-80"
-              >
-                <Text className="font-golos-semibold text-sm text-white">
-                  Explorar discos
-                </Text>
-              </Pressable>
-            </View>
+            <EmptyState
+              className="pb-28 pt-12"
+              icon={<Ionicons name="cart-outline" size={52} color="#777179" />}
+              title="Seu carrinho está vazio"
+              description="Adicione um disco para encontrá-lo aqui."
+              action={{ label: "Explorar discos", onPress: onExplore }}
+            />
           ) : (
             <>
               <View className="gap-2.5">

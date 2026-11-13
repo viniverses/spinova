@@ -10,6 +10,8 @@ import {
   View,
 } from "react-native";
 
+import { ErrorState } from "@/components/ui/error-state";
+import { LoadingState } from "@/components/ui/loading-state";
 import { ProductDetailHero } from "@/components/product/product-detail-hero";
 import {
   EDITION_LABELS,
@@ -18,7 +20,6 @@ import {
 import { ProductRecommendationsSection } from "@/components/product/product-recommendations-section";
 import { useAddToCart, useCartItemQuantity } from "@/hooks/use-cart";
 import { useProduct } from "@/hooks/use-products";
-import { colors } from "@/lib/theme";
 import { formatCurrency } from "@/utils";
 
 export default function ProductDetailScreen() {
@@ -30,33 +31,22 @@ export default function ProductDetailScreen() {
 
   if (product.isPending) {
     return (
-      <View className="flex-1 items-center justify-center bg-black">
+      <View className="flex-1 bg-black">
         <StatusBar style="light" />
-        <ActivityIndicator color={colors.primary.DEFAULT} size="large" />
-        <Text className="mt-4 font-golos text-sm text-white/70">
-          Carregando produto…
-        </Text>
+        <LoadingState message="Carregando produto…" />
       </View>
     );
   }
 
   if (product.isError || !product.data) {
     return (
-      <View className="flex-1 items-center justify-center bg-black px-8">
+      <View className="flex-1 bg-black">
         <StatusBar style="light" />
-        <Ionicons name="disc-outline" size={54} color="#777179" />
-        <Text className="mt-4 text-center font-sans text-lg text-white">
-          Não foi possível carregar este disco
-        </Text>
-        <Pressable
-          onPress={() => void product.refetch()}
-          accessibilityRole="button"
-          className="mt-5 min-h-12 items-center justify-center rounded-xl bg-primary px-6 active:opacity-85"
-        >
-          <Text className="font-golos-semibold text-base text-white">
-            Tentar novamente
-          </Text>
-        </Pressable>
+        <ErrorState
+          icon={<Ionicons name="disc-outline" size={54} color="#777179" />}
+          title="Não foi possível carregar este disco"
+          onRetry={() => void product.refetch()}
+        />
       </View>
     );
   }

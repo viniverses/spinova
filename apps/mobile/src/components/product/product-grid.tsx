@@ -1,14 +1,15 @@
 import { useCallback } from "react";
-import { Ionicons } from "@expo/vector-icons";
 import {
   ActivityIndicator,
   FlatList,
-  Pressable,
   RefreshControl,
   Text,
   useWindowDimensions,
   View,
 } from "react-native";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { LoadingState } from "@/components/ui/loading-state";
 import type { ProductCatalogItem } from "@/services/products";
 import { useWishlistIds } from "@/hooks/use-wishlist";
 import { colors } from "@/lib/theme";
@@ -66,35 +67,15 @@ export const ProductGrid = ({
   );
 
   if (isLoading) {
-    return (
-      <View className="flex-1 items-center justify-center">
-        <ActivityIndicator color={colors.primary.DEFAULT} size="large" />
-      </View>
-    );
+    return <LoadingState />;
   }
 
   if (isError) {
     return (
-      <View className="flex-1 items-center justify-center px-6">
-        <Ionicons
-          name="alert-circle-outline"
-          size={48}
-          color={colors.primary.DEFAULT}
-        />
-        <Text className="mt-3 text-center font-golos text-base text-white/80">
-          Não foi possível carregar os produtos.
-        </Text>
-        <Pressable
-          onPress={onRetry}
-          accessibilityRole="button"
-          accessibilityLabel="Tentar novamente"
-          className="mt-4 rounded-2xl bg-primary px-6 py-3 active:opacity-80"
-        >
-          <Text className="font-golos-semibold text-sm text-white">
-            Tentar novamente
-          </Text>
-        </Pressable>
-      </View>
+      <ErrorState
+        title="Não foi possível carregar os produtos."
+        onRetry={onRetry}
+      />
     );
   }
 
@@ -117,12 +98,7 @@ export const ProductGrid = ({
       columnWrapperStyle={{ gap: COLUMN_GAP }}
       ListHeaderComponent={ListHeaderComponent}
       ListEmptyComponent={
-        <View className="flex-1 items-center justify-center px-6 pt-16">
-          <Ionicons name="disc-outline" size={48} color="#444" />
-          <Text className="mt-3 text-center font-golos text-base text-white/50">
-            {emptyMessage}
-          </Text>
-        </View>
+        <EmptyState className="pt-16" description={emptyMessage} />
       }
       ListFooterComponent={
         isFetchingNextPage ? (
