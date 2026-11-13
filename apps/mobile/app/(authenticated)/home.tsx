@@ -1,19 +1,11 @@
 import { useCallback } from "react";
 import { StatusBar } from "expo-status-bar";
-import { colors } from "@/lib/theme";
-import {
-  ActivityIndicator,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import { HomeBannerCarousel } from "@/components/home/home-banner-carousel";
 import { HomeCategoryGrid } from "@/components/home/home-category-grid";
-import { HomeSectionTitle } from "@/components/home/home-section-title";
-import { ProductHorizontalRow } from "@/components/product/product-horizontal-row";
+import { HomeProductSection } from "@/components/home/home-product-section";
 import { useProducts } from "@/hooks/use-products";
+import { colors } from "@/lib/theme";
 
 const SCROLL_BOTTOM_PADDING = 112;
 
@@ -55,59 +47,27 @@ export default function HomeScreen() {
 
         <HomeCategoryGrid />
 
-        <View className="pt-4">
-          <HomeSectionTitle title="Lançamentos" />
-          {releases.isPending ? (
-            <ActivityIndicator
-              className="my-8"
-              color={colors.primary.DEFAULT}
-            />
-          ) : releases.isError ? (
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => void releases.refetch()}
-              className="mx-4 rounded-2xl bg-[#262329] px-4 py-5 active:opacity-80"
-            >
-              <Text className="text-center font-golos text-sm text-white/80">
-                Não foi possível carregar os lançamentos. Toque para tentar
-                novamente.
-              </Text>
-            </Pressable>
-          ) : releases.data.data.length === 0 ? (
-            <Text className="px-4 font-golos text-sm text-white/60">
-              Nenhum lançamento disponível no momento.
-            </Text>
-          ) : (
-            <ProductHorizontalRow items={releases.data.data} />
-          )}
-        </View>
+        <HomeProductSection
+          title="Lançamentos"
+          items={releases.data?.data}
+          isPending={releases.isPending}
+          isError={releases.isError}
+          onRetry={() => void releases.refetch()}
+          errorMessage="Não foi possível carregar os lançamentos. Toque para tentar novamente."
+          emptyMessage="Nenhum lançamento disponível no momento."
+          className="pt-4"
+        />
 
-        <View className="pt-6">
-          <HomeSectionTitle title="Recomendações" />
-          {recommendations.isPending ? (
-            <ActivityIndicator
-              className="my-8"
-              color={colors.primary.DEFAULT}
-            />
-          ) : recommendations.isError ? (
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => void recommendations.refetch()}
-              className="mx-4 rounded-2xl bg-[#262329] px-4 py-5 active:opacity-80"
-            >
-              <Text className="text-center font-golos text-sm text-white/80">
-                Não foi possível carregar as recomendações. Toque para tentar
-                novamente.
-              </Text>
-            </Pressable>
-          ) : recommendations.data.data.length === 0 ? (
-            <Text className="px-4 font-golos text-sm text-white/60">
-              Nenhuma recomendação disponível no momento.
-            </Text>
-          ) : (
-            <ProductHorizontalRow items={recommendations.data.data} />
-          )}
-        </View>
+        <HomeProductSection
+          title="Recomendações"
+          items={recommendations.data?.data}
+          isPending={recommendations.isPending}
+          isError={recommendations.isError}
+          onRetry={() => void recommendations.refetch()}
+          errorMessage="Não foi possível carregar as recomendações. Toque para tentar novamente."
+          emptyMessage="Nenhuma recomendação disponível no momento."
+          className="pt-6"
+        />
       </ScrollView>
     </View>
   );
