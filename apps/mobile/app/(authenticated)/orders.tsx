@@ -1,8 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import type { ComponentProps } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -12,235 +10,9 @@ import {
   View,
 } from "react-native";
 
+import { OrderCard } from "@/components/order/order-card";
 import { useOrders } from "@/hooks/use-orders";
 import { colors } from "@/lib/theme";
-import type { Order, OrderItem, OrderStatus } from "@/services/orders";
-import { formatDate, formatCurrency, formatProductFormat } from "@/utils";
-
-type StatusConfig = {
-  label: string;
-  icon: ComponentProps<typeof Ionicons>["name"];
-  bgClass: string;
-  textClass: string;
-  borderClass: string;
-};
-
-const STATUS_CONFIGS: Record<OrderStatus, StatusConfig> = {
-  pending: {
-    label: "Aguardando pagamento",
-    icon: "time-outline",
-    bgClass: "bg-amber-500/15",
-    textClass: "text-amber-400",
-    borderClass: "border-amber-500/30",
-  },
-  paid: {
-    label: "Pago",
-    icon: "checkmark-circle-outline",
-    bgClass: "bg-emerald-500/15",
-    textClass: "text-emerald-400",
-    borderClass: "border-emerald-500/30",
-  },
-  processing: {
-    label: "Em processamento",
-    icon: "sync-outline",
-    bgClass: "bg-blue-500/15",
-    textClass: "text-blue-400",
-    borderClass: "border-blue-500/30",
-  },
-  shipped: {
-    label: "Enviado",
-    icon: "airplane-outline",
-    bgClass: "bg-purple-500/15",
-    textClass: "text-purple-400",
-    borderClass: "border-purple-500/30",
-  },
-  delivered: {
-    label: "Entregue",
-    icon: "cube-outline",
-    bgClass: "bg-emerald-500/15",
-    textClass: "text-emerald-400",
-    borderClass: "border-emerald-500/30",
-  },
-  cancelled: {
-    label: "Cancelado",
-    icon: "close-circle-outline",
-    bgClass: "bg-rose-500/15",
-    textClass: "text-rose-400",
-    borderClass: "border-rose-500/30",
-  },
-  refunded: {
-    label: "Reembolsado",
-    icon: "return-down-back-outline",
-    bgClass: "bg-gray-500/15",
-    textClass: "text-gray-300",
-    borderClass: "border-gray-500/30",
-  },
-};
-
-function StatusBadge({ status }: { status: OrderStatus }) {
-  const config = STATUS_CONFIGS[status] ?? STATUS_CONFIGS.pending;
-
-  return (
-    <View
-      className={`flex-row items-center gap-1.5 rounded-full border px-2.5 py-1 ${config.bgClass} ${config.borderClass}`}
-    >
-      <Ionicons
-        name={config.icon}
-        size={14}
-        color={
-          status === "paid" || status === "delivered"
-            ? "#34D399"
-            : status === "processing"
-              ? "#60A5FA"
-              : status === "shipped"
-                ? "#C084FC"
-                : status === "cancelled"
-                  ? "#FB7185"
-                  : "#FBBF24"
-        }
-      />
-      <Text className={`font-golos-semibold text-xs ${config.textClass}`}>
-        {config.label}
-      </Text>
-    </View>
-  );
-}
-
-function OrderCardItem({ item }: { item: OrderItem }) {
-  const router = useRouter();
-
-  const handleProductPress = () => {
-    router.push({
-      pathname: "/product/[id]",
-      params: { id: item.productId },
-    });
-  };
-
-  return (
-    <Pressable
-      onPress={handleProductPress}
-      accessibilityRole="button"
-      accessibilityLabel={`Ver produto ${item.product.title}`}
-      className="flex-row items-center gap-3 py-2.5 active:opacity-80"
-    >
-      <View className="h-14 w-14 overflow-hidden rounded-xl bg-[#242126]">
-        {item.product.image ? (
-          <Image
-            source={item.product.image.url}
-            accessibilityLabel={
-              item.product.image.altText ?? item.product.title
-            }
-            contentFit="cover"
-            style={{ width: "100%", height: "100%" }}
-            transition={150}
-          />
-        ) : (
-          <View className="flex-1 items-center justify-center">
-            <Ionicons name="disc-outline" size={24} color="#777179" />
-          </View>
-        )}
-      </View>
-
-      <View className="flex-1">
-        <Text
-          numberOfLines={1}
-          className="font-sans text-sm font-semibold text-white"
-        >
-          {item.product.title}
-        </Text>
-        <Text numberOfLines={1} className="font-golos text-xs text-white/60">
-          {item.product.artist.name}
-        </Text>
-        <View className="mt-1 flex-row items-center gap-2">
-          <View className="rounded bg-white/10 px-1.5 py-0.5">
-            <Text className="font-golos text-[10px] text-white/80">
-              {formatProductFormat(item.product.format)}
-            </Text>
-          </View>
-          <Text className="font-golos text-xs text-white/50">
-            Qtd: {item.quantity}
-          </Text>
-        </View>
-      </View>
-
-      <Text className="font-golos-semibold text-sm text-white">
-        {formatCurrency(item.unitPrice)}
-      </Text>
-    </Pressable>
-  );
-}
-
-function OrderCard({ order }: { order: Order }) {
-  const router = useRouter();
-  const orderCode = `#${order.id.slice(0, 8).toUpperCase()}`;
-
-  return (
-    <View className="mb-4 rounded-3xl border border-white/10 bg-[#161418] p-4">
-      {/* Header do Card */}
-      <View className="flex-row items-center justify-between border-b border-white/10 pb-3">
-        <View>
-          <Text className="font-sans text-base font-bold text-white">
-            {orderCode}
-          </Text>
-          <Text className="mt-0.5 font-golos text-xs text-white/60">
-            {formatDate(order.createdAt)}
-          </Text>
-        </View>
-
-        <StatusBadge status={order.status} />
-      </View>
-
-      {/* Itens do Pedido */}
-      <View className="divide-y divide-white/5 py-1">
-        {order.items.map((item) => (
-          <OrderCardItem key={item.id} item={item} />
-        ))}
-      </View>
-
-      {/* Endereço e Rodapé */}
-      <View className="mt-2 border-t border-white/10 pt-3">
-        <View className="flex-row items-start gap-2">
-          <Ionicons
-            name="location-outline"
-            size={16}
-            color="#A1A1AA"
-            className="mt-0.5"
-          />
-          <Text
-            numberOfLines={1}
-            className="flex-1 font-golos text-xs text-white/60"
-          >
-            {order.address.street}, {order.address.number} •{" "}
-            {order.address.city}/{order.address.state}
-          </Text>
-        </View>
-
-        <View className="mt-3 flex-row items-center justify-between">
-          <Text className="font-golos text-sm text-white/70">
-            Total do pedido
-          </Text>
-          <Text className="font-sans text-lg font-bold text-white">
-            {formatCurrency(order.total)}
-          </Text>
-        </View>
-
-        <Pressable
-          onPress={() =>
-            router.push({ pathname: "/order/[id]", params: { id: order.id } })
-          }
-          accessibilityRole="button"
-          accessibilityLabel={`Visualizar pedido ${orderCode}`}
-          className="mt-4 min-h-12 flex-row items-center justify-center gap-2 rounded-xl border border-white/20 active:bg-white/10"
-        >
-          <Text className="font-golos-semibold text-sm text-white">
-            Visualizar pedido
-          </Text>
-          <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
-        </Pressable>
-      </View>
-    </View>
-  );
-}
 
 export default function OrdersScreen() {
   const router = useRouter();
@@ -388,7 +160,17 @@ export default function OrdersScreen() {
             </Pressable>
           ) : null
         }
-        renderItem={({ item }) => <OrderCard order={item} />}
+        renderItem={({ item }) => (
+          <OrderCard
+            order={item}
+            onOrderPress={(id) =>
+              router.push({ pathname: "/order/[id]", params: { id } })
+            }
+            onProductPress={(id) =>
+              router.push({ pathname: "/product/[id]", params: { id } })
+            }
+          />
+        )}
       />
     </View>
   );

@@ -10,20 +10,10 @@ import {
   View,
 } from "react-native";
 
+import { getOrderStatusConfig } from "@/components/order/status-config";
 import { useOrder } from "@/hooks/use-orders";
 import { colors } from "@/lib/theme";
-import type { OrderStatus } from "@/services/orders";
 import { formatCurrency, formatDate, formatProductFormat } from "@/utils";
-
-const STATUS_LABELS: Record<OrderStatus, string> = {
-  pending: "Aguardando pagamento",
-  paid: "Pago",
-  processing: "Em processamento",
-  shipped: "Enviado",
-  delivered: "Entregue",
-  cancelled: "Cancelado",
-  refunded: "Reembolsado",
-};
 
 export default function OrderDetailScreen() {
   const router = useRouter();
@@ -108,7 +98,7 @@ export default function OrderDetailScreen() {
             color={colors.primary.DEFAULT}
           />
           <Text className="flex-1 font-golos-semibold text-sm text-white">
-            {STATUS_LABELS[order.status] ?? STATUS_LABELS.pending}
+            {getOrderStatusConfig(order.status).label}
           </Text>
         </View>
 
@@ -144,7 +134,8 @@ export default function OrderDetailScreen() {
                 {item.product.artist.name}
               </Text>
               <Text className="mt-1 font-golos text-xs text-white/70">
-                {formatProductFormat(item.product.format)} · Qtd: {item.quantity}
+                {formatProductFormat(item.product.format)} · Qtd:{" "}
+                {item.quantity}
               </Text>
               <Text className="mt-1 font-golos-semibold text-sm text-white">
                 {formatCurrency(Number(item.unitPrice) * item.quantity)}
@@ -153,9 +144,7 @@ export default function OrderDetailScreen() {
           </View>
         ))}
 
-        <Text className="mb-3 mt-8 font-sans text-xl text-white">
-          Entrega
-        </Text>
+        <Text className="mb-3 mt-8 font-sans text-xl text-white">Entrega</Text>
         <Text className="font-golos text-sm leading-6 text-white/80">
           {address.street}, {address.number}
           {address.complement ? `, ${address.complement}` : ""}
