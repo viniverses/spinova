@@ -11,9 +11,8 @@ import {
 } from "react-native";
 import { HomeBannerCarousel } from "@/components/home/home-banner-carousel";
 import { HomeCategoryGrid } from "@/components/home/home-category-grid";
-import { HomeRecommendationRow } from "@/components/home/home-recommendation-row";
-import { HomeReleaseRow } from "@/components/home/home-release-row";
 import { HomeSectionTitle } from "@/components/home/home-section-title";
+import { ProductHorizontalRow } from "@/components/product/product-horizontal-row";
 import { useProducts } from "@/hooks/use-products";
 
 const SCROLL_BOTTOM_PADDING = 112;
@@ -79,7 +78,7 @@ export default function HomeScreen() {
               Nenhum lançamento disponível no momento.
             </Text>
           ) : (
-            <HomeReleaseRow items={releases.data.data} />
+            <ProductHorizontalRow items={releases.data.data} />
           )}
         </View>
 
@@ -106,7 +105,7 @@ export default function HomeScreen() {
               Nenhuma recomendação disponível no momento.
             </Text>
           ) : (
-            <HomeRecommendationRow items={recommendations.data.data} />
+            <ProductHorizontalRow items={recommendations.data.data} />
           )}
         </View>
       </ScrollView>

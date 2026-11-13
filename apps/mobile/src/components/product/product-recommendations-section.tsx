@@ -2,7 +2,7 @@ import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 import { useProducts } from "@/hooks/use-products";
 import { colors } from "@/lib/theme";
-import { ProductRecommendationsRow } from "./product-recommendations-row";
+import { ProductHorizontalRow } from "./product-horizontal-row";
 
 type ProductRecommendationsSectionProps = {
   productId: string;
@@ -41,7 +41,7 @@ export const ProductRecommendationsSection = ({
           </Text>
         </Pressable>
       ) : items.length > 0 ? (
-        <ProductRecommendationsRow items={items} />
+        <ProductHorizontalRow items={items} variant="compact" />
       ) : (
         <View className="h-24 items-center justify-center rounded-xl bg-[#262427] px-5">
           <Text className="text-center font-golos text-xs text-white/65">
