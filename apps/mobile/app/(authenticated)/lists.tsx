@@ -2,14 +2,8 @@ import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import type { ComponentProps } from "react";
-import {
-  Pressable,
-  ScrollView,
-  Text,
-  useWindowDimensions,
-  View,
-} from "react-native";
-import { colors } from "@/lib/theme";
+import { Pressable, ScrollView, useWindowDimensions, View } from "react-native";
+import { CategoryCard } from "@/components/categories/category-card";
 
 const FEATURED_CATEGORIES = [
   {
@@ -35,22 +29,26 @@ const FEATURED_CATEGORIES = [
 ] as const;
 
 const GENRE_CATEGORIES = [
-  { id: "new", label: "Novos", icon: "sparkles" },
-  { id: "r-and-b", label: "RNB", icon: "musical-notes" },
+  { id: "new", label: "Novos", icon: "sparkles-outline" },
+  { id: "r-and-b", label: "RNB", icon: "musical-notes-outline" },
   { id: "electronic", label: "Eletrônico", icon: "pulse" },
-  { id: "pop", label: "Pop", icon: "mic" },
+  { id: "pop", label: "Pop", icon: "mic-outline" },
   {
     id: "alternative",
     label: "Alternativo",
     icon: "color-wand-outline",
   },
-  { id: "rock", label: "Rock", icon: "flash" },
+  { id: "rock", label: "Rock", icon: "flash-outline" },
   { id: "folk", label: "Country", icon: "leaf-outline" },
   { id: "rap", label: "Hip Hop", icon: "mic-outline" },
   { id: "city-pop", label: "City Pop", icon: "moon-outline" },
-  { id: "reggaeton", label: "Reggaeton", icon: "flame" },
+  { id: "reggaeton", label: "Reggaeton", icon: "flame-outline" },
   { id: "experimental", label: "Experimental", icon: "flask-outline" },
-];
+] satisfies {
+  id: string;
+  label: string;
+  icon: ComponentProps<typeof Ionicons>["name"];
+}[];
 
 const ALL_PRODUCTS_CATEGORY = {
   id: "all",
@@ -69,13 +67,15 @@ const BOTTOM_NAV_CLEARANCE = 116;
 
 export default function CategoriesScreen() {
   const router = useRouter();
-  const { width } = useWindowDimensions();
+  const { width, fontScale } = useWindowDimensions();
   const contentWidth = Math.min(
     width - CONTENT_HORIZONTAL_PADDING * 2,
     MAX_CONTENT_WIDTH,
   );
   const featuredWidth = (contentWidth - GRID_GAP) / 2;
-  const filterWidth = (contentWidth - GRID_GAP * 2) / 3;
+  const genreColumns = contentWidth < 320 || fontScale > 1.2 ? 2 : 3;
+  const filterWidth =
+    (contentWidth - GRID_GAP * (genreColumns - 1)) / genreColumns;
 
   const openCollection = (id: string) => {
     router.push({ pathname: "/collection/[id]", params: { id } });
@@ -126,31 +126,14 @@ export default function CategoriesScreen() {
           }}
         >
           {CATEGORY_BUTTONS.map((category) => (
-            <Pressable
+            <CategoryCard
               key={category.id}
               onPress={() => openCollection(category.id)}
-              accessibilityRole="button"
-              accessibilityLabel={category.label.replace("\n", " ")}
-              className={`min-h-[60] flex-row items-center justify-center gap-1.5 rounded-[10] px-2 active:opacity-85 ${
-                "featured" in category && category.featured
-                  ? "bg-primary"
-                  : "bg-[#F2F2F4]"
-              }`}
-              style={{ width: filterWidth }}
-            >
-              <Ionicons
-                name={category.icon as ComponentProps<typeof Ionicons>["name"]}
-                size={16}
-                color={
-                  "featured" in category && category.featured
-                    ? "#FFFFFF"
-                    : colors.primary.DEFAULT
-                }
-              />
-              <Text className="text-center font-golos-semibold text-black leading-4 ">
-                {category.label}
-              </Text>
-            </Pressable>
+              label={category.label}
+              icon={category.icon}
+              featured={"featured" in category && category.featured}
+              width={filterWidth}
+            />
           ))}
         </View>
       </ScrollView>
