@@ -90,6 +90,8 @@ export const getOrders = async (
 };
 
 export const getOrderById = async (id: string): Promise<Order> => {
-  const { data } = await api.get<{ data: Order }>(`/orders/${id}`);
+  const { data } = await api.get<{ data: Order }>(
+    `/orders/${encodeURIComponent(id)}`,
+  );
   return data.data;
 };

@@ -17,9 +17,9 @@ export const getWishlist = async (
 };
 
 export const addToWishlist = async (productId: string): Promise<void> => {
-  await api.post(`/wishlist/${productId}`);
+  await api.post(`/wishlist/${encodeURIComponent(productId)}`);
 };
 
 export const removeFromWishlist = async (productId: string): Promise<void> => {
-  await api.delete(`/wishlist/${productId}`);
+  await api.delete(`/wishlist/${encodeURIComponent(productId)}`);
 };

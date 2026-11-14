@@ -9,6 +9,8 @@ export const productKeys = {
   all: ["products"] as const,
   list: (params: ProductListParams) =>
     [...productKeys.all, "list", params] as const,
+  infinite: (params: Omit<ProductListParams, "page">) =>
+    [...productKeys.all, "infinite", params] as const,
   detail: (productId: string) =>
     [...productKeys.all, "detail", productId] as const,
 };

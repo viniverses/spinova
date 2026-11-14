@@ -1,4 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { productKeys } from "@/hooks/use-products";
 import { getProducts, type ProductListParams } from "@/services/products";
 
 export const useInfiniteProducts = (
@@ -6,7 +7,7 @@ export const useInfiniteProducts = (
   options?: { enabled?: boolean },
 ) =>
   useInfiniteQuery({
-    queryKey: ["products", "infinite", params],
+    queryKey: productKeys.infinite(params),
     queryFn: ({ pageParam = 1 }) =>
       getProducts({ ...params, page: pageParam as number }),
     initialPageParam: 1,
