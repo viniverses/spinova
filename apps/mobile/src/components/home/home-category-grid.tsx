@@ -2,16 +2,7 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Pressable, Text, useWindowDimensions, View } from "react-native";
-import { HOME_CATEGORIES } from "./constants";
-
-// Categories that map to a /collection/[id] route
-const NAVIGABLE_IDS = new Set([
-  "bestsellers",
-  "new",
-  "promo",
-  "import",
-  "national",
-]);
+import { HOME_CATEGORIES, type HomeCategory } from "./constants";
 
 type HomeCategoryGridProps = {
   onPressCategory?: (id: string) => void;
@@ -19,14 +10,6 @@ type HomeCategoryGridProps = {
 
 const H_PADDING = 16;
 const GAP = 12;
-const CATEGORY_ICONS = {
-  bestsellers: require("../../../assets/svg/best-sellers.svg"),
-  new: require("../../../assets/svg/new.svg"),
-  promo: require("../../../assets/svg/sales.svg"),
-  import: require("../../../assets/svg/imported.svg"),
-  national: require("../../../assets/svg/national.svg"),
-  more: require("../../../assets/svg/more.png"),
-} as const;
 
 export const HomeCategoryGrid = ({
   onPressCategory,
@@ -35,15 +18,9 @@ export const HomeCategoryGrid = ({
   const router = useRouter();
   const itemWidth = (width - H_PADDING * 2 - GAP * 2) / 3;
 
-  const handlePress = (id: string) => {
-    onPressCategory?.(id);
-    if (id === "more") {
-      router.push("/lists");
-      return;
-    }
-    if (NAVIGABLE_IDS.has(id)) {
-      router.push({ pathname: "/collection/[id]", params: { id } });
-    }
+  const handlePress = (category: HomeCategory) => {
+    onPressCategory?.(category.id);
+    router.push(category.href);
   };
 
   return (
@@ -54,7 +31,7 @@ export const HomeCategoryGrid = ({
           return (
             <Pressable
               key={item.id}
-              onPress={() => handlePress(item.id)}
+              onPress={() => handlePress(item)}
               accessibilityRole="button"
               accessibilityLabel={item.label}
               style={{ width: itemWidth, height: 72 }}
@@ -63,7 +40,7 @@ export const HomeCategoryGrid = ({
               }`}
             >
               <Image
-                source={CATEGORY_ICONS[item.id as keyof typeof CATEGORY_ICONS]}
+                source={item.icon}
                 contentFit="contain"
                 style={{ width: 26, height: 26 }}
                 accessible={false}

@@ -1,64 +1,11 @@
 import { Image } from "expo-image";
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import type { ComponentProps } from "react";
 import { Pressable, ScrollView, useWindowDimensions, View } from "react-native";
 import { CategoryCard } from "@/components/categories/category-card";
-
-const FEATURED_CATEGORIES = [
-  {
-    id: "bestsellers",
-    label: "Mais vendidos",
-    image: require("../../assets/categories/best-sellers.png"),
-  },
-  {
-    id: "promo",
-    label: "Promoções",
-    image: require("../../assets/categories/sales.png"),
-  },
-  {
-    id: "national",
-    label: "Nacionais",
-    image: require("../../assets/categories/national.png"),
-  },
-  {
-    id: "import",
-    label: "Importados",
-    image: require("../../assets/categories/imported.png"),
-  },
-] as const;
-
-const GENRE_CATEGORIES = [
-  { id: "new", label: "Novos", icon: "sparkles-outline" },
-  { id: "r-and-b", label: "RNB", icon: "musical-notes-outline" },
-  { id: "electronic", label: "Eletrônico", icon: "pulse" },
-  { id: "pop", label: "Pop", icon: "mic-outline" },
-  {
-    id: "alternative",
-    label: "Alternativo",
-    icon: "color-wand-outline",
-  },
-  { id: "rock", label: "Rock", icon: "flash-outline" },
-  { id: "folk", label: "Country", icon: "leaf-outline" },
-  { id: "rap", label: "Hip Hop", icon: "mic-outline" },
-  { id: "city-pop", label: "City Pop", icon: "moon-outline" },
-  { id: "reggaeton", label: "Reggaeton", icon: "flame-outline" },
-  { id: "experimental", label: "Experimental", icon: "flask-outline" },
-] satisfies {
-  id: string;
-  label: string;
-  icon: ComponentProps<typeof Ionicons>["name"];
-}[];
-
-const ALL_PRODUCTS_CATEGORY = {
-  id: "all",
-  label: "Todos",
-  icon: "grid-outline",
-  featured: true,
-} as const;
-
-// Keep this derived list so “Todos os produtos” is always rendered last.
-const CATEGORY_BUTTONS = [...GENRE_CATEGORIES, ALL_PRODUCTS_CATEGORY] as const;
+import {
+  CATEGORY_BUTTONS,
+  FEATURED_COLLECTIONS,
+} from "@/constants/collections";
 
 const CONTENT_HORIZONTAL_PADDING = 20;
 const GRID_GAP = 12;
@@ -76,10 +23,6 @@ export default function CategoriesScreen() {
   const genreColumns = contentWidth < 320 || fontScale > 1.2 ? 2 : 3;
   const filterWidth =
     (contentWidth - GRID_GAP * (genreColumns - 1)) / genreColumns;
-
-  const openCollection = (id: string) => {
-    router.push({ pathname: "/collection/[id]", params: { id } });
-  };
 
   return (
     <View className="flex-1 bg-black">
@@ -99,10 +42,10 @@ export default function CategoriesScreen() {
             gap: GRID_GAP,
           }}
         >
-          {FEATURED_CATEGORIES.map((category) => (
+          {FEATURED_COLLECTIONS.map((category) => (
             <Pressable
               key={category.id}
-              onPress={() => openCollection(category.id)}
+              onPress={() => router.push(category.href)}
               accessibilityRole="button"
               accessibilityLabel={`Ver ${category.label}`}
               className="overflow-hidden rounded-xl active:opacity-85"
@@ -128,10 +71,10 @@ export default function CategoriesScreen() {
           {CATEGORY_BUTTONS.map((category) => (
             <CategoryCard
               key={category.id}
-              onPress={() => openCollection(category.id)}
+              onPress={() => router.push(category.href)}
               label={category.label}
               icon={category.icon}
-              featured={"featured" in category && category.featured}
+              featured={category.featured}
               width={filterWidth}
             />
           ))}

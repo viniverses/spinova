@@ -1,35 +1,18 @@
-export type HomeCategory = {
-  id: string;
-  label: string;
-  icon: string;
-  variant: "default" | "primary";
-};
+import { HOME_COLLECTIONS } from "@/constants/collections";
 
-export const HOME_CATEGORIES: HomeCategory[] = [
-  {
-    id: "bestsellers",
-    label: "Mais vendidos",
-    icon: "flame",
-    variant: "default",
-  },
-  { id: "new", label: "Novos", icon: "sparkles", variant: "default" },
-  { id: "promo", label: "Promoções", icon: "pricetag", variant: "default" },
-  {
-    id: "import",
-    label: "Importados",
-    icon: "globe-outline",
-    variant: "default",
-  },
-  {
-    id: "national",
-    label: "Nacionais",
-    icon: "map-outline",
-    variant: "default",
-  },
+export const HOME_CATEGORIES = [
+  ...HOME_COLLECTIONS.map((collection) => ({
+    ...collection,
+    icon: collection.homeIcon,
+    variant: "default" as const,
+  })),
   {
     id: "more",
     label: "Mais categorias",
-    icon: "ellipsis-horizontal",
-    variant: "primary",
+    icon: require("../../../assets/svg/more.png"),
+    variant: "primary" as const,
+    href: "/lists" as const,
   },
 ];
+
+export type HomeCategory = (typeof HOME_CATEGORIES)[number];
