@@ -7,18 +7,39 @@ import { formatCurrency, formatProductFormat } from "@/utils";
 
 type OrderCardItemProps = {
   item: OrderItem;
-  onProductPress: (productId: string) => void;
+  onProductPress?: (productId: string) => void;
+  variant?: "card" | "detail";
 };
 
-export function OrderCardItem({ item, onProductPress }: OrderCardItemProps) {
+export function OrderCardItem({
+  item,
+  onProductPress,
+  variant = "card",
+}: OrderCardItemProps) {
+  const isDetail = variant === "detail";
+  const priceValue = isDetail
+    ? Number(item.unitPrice) * item.quantity
+    : item.unitPrice;
+
   return (
     <Pressable
-      onPress={() => onProductPress(item.productId)}
-      accessibilityRole="button"
-      accessibilityLabel={`Ver produto ${item.product.title}`}
-      className="flex-row items-center gap-3 py-2.5 active:opacity-80"
+      onPress={
+        onProductPress ? () => onProductPress(item.productId) : undefined
+      }
+      disabled={!onProductPress}
+      accessibilityRole={onProductPress ? "button" : undefined}
+      accessibilityLabel={
+        onProductPress ? `Ver produto ${item.product.title}` : undefined
+      }
+      className={`flex-row items-center gap-3 ${
+        isDetail ? "border-b border-white/10 py-4" : "py-2.5"
+      } ${onProductPress ? "active:opacity-80" : ""}`}
     >
-      <View className="h-14 w-14 overflow-hidden rounded-xl bg-[#242126]">
+      <View
+        className={`${
+          isDetail ? "h-16 w-16" : "h-14 w-14"
+        } overflow-hidden rounded-xl bg-[#242126]`}
+      >
         {item.product.image ? (
           <Image
             source={item.product.image.url}
@@ -31,19 +52,30 @@ export function OrderCardItem({ item, onProductPress }: OrderCardItemProps) {
           />
         ) : (
           <View className="flex-1 items-center justify-center">
-            <Ionicons name="disc-outline" size={24} color="#777179" />
+            <Ionicons
+              name="disc-outline"
+              size={isDetail ? 26 : 24}
+              color="#777179"
+            />
           </View>
         )}
       </View>
 
-      <View className="flex-1">
+      <View className="min-w-0 flex-1">
         <Text
-          numberOfLines={1}
-          className="font-sans text-sm font-semibold text-white"
+          numberOfLines={isDetail ? 2 : 1}
+          className={`font-sans font-semibold text-white ${
+            isDetail ? "text-base" : "text-sm"
+          }`}
         >
           {item.product.title}
         </Text>
-        <Text numberOfLines={1} className="font-golos text-xs text-white/60">
+        <Text
+          numberOfLines={1}
+          className={`font-golos ${
+            isDetail ? "mt-0.5 text-sm text-white/70" : "text-xs text-white/60"
+          }`}
+        >
           {item.product.artist.name}
         </Text>
         <View className="mt-1 flex-row items-center gap-2">
@@ -52,15 +84,26 @@ export function OrderCardItem({ item, onProductPress }: OrderCardItemProps) {
               {formatProductFormat(item.product.format)}
             </Text>
           </View>
-          <Text className="font-golos text-xs text-white/50">
+          <Text
+            className={`font-golos text-xs ${
+              isDetail ? "text-white/60" : "text-white/50"
+            }`}
+          >
             Qtd: {item.quantity}
           </Text>
         </View>
       </View>
 
-      <Text className="font-golos-semibold text-sm text-white">
-        {formatCurrency(item.unitPrice)}
-      </Text>
+      <View className="items-end">
+        <Text className="font-golos-semibold text-sm text-white">
+          {formatCurrency(priceValue)}
+        </Text>
+        {isDetail && item.quantity > 1 ? (
+          <Text className="mt-0.5 font-golos text-xs text-white/50">
+            {formatCurrency(item.unitPrice)} cada
+          </Text>
+        ) : null}
+      </View>
     </Pressable>
   );
 }

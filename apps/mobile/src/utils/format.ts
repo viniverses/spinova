@@ -57,3 +57,11 @@ export const formatProductFormat = (format: string): string => {
       return format;
   }
 };
+
+/**
+ * Formats an order ID into a short uppercase display code.
+ * Example: formatOrderCode("a1b2c3d4-...") -> "#A1B2C3D4"
+ */
+export const formatOrderCode = (orderId: string): string => {
+  return `#${orderId.slice(0, 8).toUpperCase()}`;
+};

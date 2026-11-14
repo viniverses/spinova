@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Pressable, Text, View } from "react-native";
 
 import type { Order } from "@/services/orders";
-import { formatDate, formatCurrency } from "@/utils";
+import { formatCurrency, formatDate, formatOrderCode } from "@/utils";
 
 import { OrderCardItem } from "./order-card-item";
 import { StatusBadge } from "./status-badge";
@@ -18,7 +18,7 @@ export function OrderCard({
   onOrderPress,
   onProductPress,
 }: OrderCardProps) {
-  const orderCode = `#${order.id.slice(0, 8).toUpperCase()}`;
+  const orderCode = formatOrderCode(order.id);
 
   return (
     <View className="mb-4 rounded-3xl border border-white/10 bg-[#161418] p-4">

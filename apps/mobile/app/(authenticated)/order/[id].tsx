@@ -1,15 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
+import { OrderCardItem } from "@/components/order/order-card-item";
+import { StatusBadge } from "@/components/order/status-badge";
 import { ErrorState } from "@/components/ui/error-state";
 import { LoadingState } from "@/components/ui/loading-state";
-import { getOrderStatusConfig } from "@/components/order/status-config";
 import { useOrder } from "@/hooks/use-orders";
 import { colors } from "@/lib/theme";
-import { formatCurrency, formatDate, formatProductFormat } from "@/utils";
+import { formatCurrency, formatDate, formatOrderCode } from "@/utils";
 
 export default function OrderDetailScreen() {
   const router = useRouter();
@@ -57,7 +57,7 @@ export default function OrderDetailScreen() {
     );
   }
 
-  const orderCode = `#${order.id.slice(0, 8).toUpperCase()}`;
+  const orderCode = formatOrderCode(order.id);
   const address = order.address;
 
   return (
@@ -73,61 +73,34 @@ export default function OrderDetailScreen() {
         }}
       >
         <Text className="font-sans text-3xl text-white">Seu pedido</Text>
-        <Text className="mt-2 font-golos text-sm text-white/70">
-          {orderCode} · {formatDate(order.createdAt)}
-        </Text>
+        <View className="mt-4 flex-row items-center justify-between gap-3 border-b border-white/10 pb-4">
+          <View>
+            <Text className="font-sans text-base font-bold text-white">
+              {orderCode}
+            </Text>
+            <Text className="mt-0.5 font-golos text-xs text-white/60">
+              {formatDate(order.createdAt)}
+            </Text>
+          </View>
 
-        <View className="mt-6 flex-row items-center gap-2 rounded-xl bg-[#242126] px-4 py-3">
-          <Ionicons
-            name="receipt-outline"
-            size={22}
-            color={colors.primary.DEFAULT}
-          />
-          <Text className="flex-1 font-golos-semibold text-sm text-white">
-            {getOrderStatusConfig(order.status).label}
-          </Text>
+          <StatusBadge status={order.status} />
         </View>
 
-        <Text className="mb-2 mt-8 font-sans text-xl text-white">
+        <Text className="mb-2 mt-6 font-sans text-xl text-white">
           Itens do pedido
         </Text>
         {order.items.map((item) => (
-          <View
+          <OrderCardItem
             key={item.id}
-            className="flex-row items-center gap-3 border-b border-white/10 py-4"
-          >
-            <View className="h-16 w-16 overflow-hidden rounded-xl bg-[#242126]">
-              {item.product.image ? (
-                <Image
-                  source={item.product.image.url}
-                  contentFit="cover"
-                  accessibilityLabel={
-                    item.product.image.altText ?? item.product.title
-                  }
-                  style={{ width: "100%", height: "100%" }}
-                />
-              ) : (
-                <View className="flex-1 items-center justify-center">
-                  <Ionicons name="disc-outline" size={26} color="#777179" />
-                </View>
-              )}
-            </View>
-            <View className="min-w-0 flex-1">
-              <Text className="font-sans text-base text-white">
-                {item.product.title}
-              </Text>
-              <Text className="mt-0.5 font-golos text-sm text-white/70">
-                {item.product.artist.name}
-              </Text>
-              <Text className="mt-1 font-golos text-xs text-white/70">
-                {formatProductFormat(item.product.format)} · Qtd:{" "}
-                {item.quantity}
-              </Text>
-              <Text className="mt-1 font-golos-semibold text-sm text-white">
-                {formatCurrency(Number(item.unitPrice) * item.quantity)}
-              </Text>
-            </View>
-          </View>
+            item={item}
+            variant="detail"
+            onProductPress={(productId) =>
+              router.push({
+                pathname: "/product/[id]",
+                params: { id: productId },
+              })
+            }
+          />
         ))}
 
         <Text className="mb-3 mt-8 font-sans text-xl text-white">Entrega</Text>
