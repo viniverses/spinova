@@ -34,7 +34,7 @@ export function HelpFaqAccordion({ faqs }: HelpFaqAccordionProps) {
               accessibilityRole="button"
               accessibilityLabel={faq.question}
               accessibilityState={{ expanded: isOpen }}
-              className="rounded-2xl bg-[#171518] p-4 border border-white/5 active:opacity-90"
+              className="rounded-2xl bg-surface-base p-4 border border-white/5 active:opacity-90"
             >
               <View className="flex-row items-center justify-between gap-3">
                 <Text className="flex-1 font-golos-semibold text-sm text-white">

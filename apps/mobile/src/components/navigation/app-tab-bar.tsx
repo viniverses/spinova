@@ -54,7 +54,7 @@ export const AppTabBar = ({
 
   return (
     <View
-      className="absolute bottom-0 left-0 right-0 bg-[#2C2C2E]"
+      className="absolute bottom-0 left-0 right-0 bg-surface-control"
       style={{
         paddingBottom: Math.max(insets.bottom, 10),
         borderTopLeftRadius: 40,

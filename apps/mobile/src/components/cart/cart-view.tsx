@@ -11,6 +11,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { LoadingState } from "@/components/ui/loading-state";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { colors } from "@/lib/theme";
 import type { Cart, CartItem } from "@/services/cart";
 import { formatCurrency } from "@/utils";
 
@@ -65,7 +66,7 @@ export function CartView({
   const compact = width < 370;
 
   return (
-    <View className="flex-1 bg-[#151315]">
+    <View className="flex-1 bg-surface">
       <SafeAreaView className="flex-1" edges={["top", "left", "right"]}>
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -79,7 +80,7 @@ export function CartView({
             onPress={onBack}
             accessibilityRole="button"
             accessibilityLabel="Voltar"
-            className="mt-6 h-14 w-14 items-center justify-center rounded-xl bg-[#272628] active:opacity-75"
+            className="mt-6 h-14 w-14 items-center justify-center rounded-xl bg-surface-elevated active:opacity-75"
           >
             <Ionicons name="chevron-back" size={24} color="#D5D4D7" />
           </Pressable>
@@ -100,7 +101,7 @@ export function CartView({
                 <Ionicons
                   name="cloud-offline-outline"
                   size={48}
-                  color="#777179"
+                  color={colors.muted.foreground}
                 />
               }
               title="Seu carrinho não carregou"
@@ -110,7 +111,13 @@ export function CartView({
           ) : items.length === 0 ? (
             <EmptyState
               className="pb-28 pt-12"
-              icon={<Ionicons name="cart-outline" size={52} color="#777179" />}
+              icon={
+                <Ionicons
+                  name="cart-outline"
+                  size={52}
+                  color={colors.muted.foreground}
+                />
+              }
               title="Seu carrinho está vazio"
               description="Adicione um disco para encontrá-lo aqui."
               action={{ label: "Explorar discos", onPress: onExplore }}

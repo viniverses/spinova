@@ -27,7 +27,7 @@ const AuthScreen = () => {
   const horizontalGutter = windowWidth < 380 ? 20 : 32;
 
   return (
-    <View className="flex-1 bg-[#171518]">
+    <View className="flex-1 bg-surface-base">
       <AuthBackground />
       <AuthScrim />
 

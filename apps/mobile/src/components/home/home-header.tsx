@@ -44,7 +44,7 @@ export const HomeHeader = ({
         onPress={onPressSearch}
         accessibilityRole="button"
         accessibilityLabel="Buscar artista ou álbum"
-        className="h-12 flex-1 flex-row items-center rounded-2xl bg-[#2C2C2E] px-3.5 active:opacity-90"
+        className="h-12 flex-1 flex-row items-center rounded-2xl bg-surface-control px-3.5 active:opacity-90"
       >
         <Ionicons name="search" size={20} color="#A3A3A3" />
         <Text

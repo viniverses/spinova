@@ -115,7 +115,7 @@ export const HelpDrawer = ({ isOpen, onClose }: HelpDrawerProps) => {
           </Text>
         </View>
 
-        <View className="mt-4 rounded-2xl bg-[#171518] px-4 py-3">
+        <View className="mt-4 rounded-2xl bg-surface-base px-4 py-3">
           <View className="flex-row items-center gap-3">
             <BottomSheetTextInput
               value={query}

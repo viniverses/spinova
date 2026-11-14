@@ -56,7 +56,7 @@ export default function HelpDetailScreen() {
         }}
       >
         {/* Banner de Categoria / Badge */}
-        <View className="rounded-2xl bg-[#171518] p-5 border border-white/5">
+        <View className="rounded-2xl bg-surface-base p-5 border border-white/5">
           <View className="flex-row items-center gap-2 mb-2">
             <View className="rounded-full bg-primary/20 px-3 py-1">
               <Text className="font-golos-semibold text-xs text-primary">

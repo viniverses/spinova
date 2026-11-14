@@ -15,7 +15,9 @@ export function HeaderIconButton({
   ...props
 }: HeaderIconButtonProps) {
   const variantClassName =
-    variant === "primary" ? "overflow-hidden bg-primary" : "bg-[#2C2C2E]";
+    variant === "primary"
+      ? "overflow-hidden bg-primary"
+      : "bg-surface-control";
 
   return (
     <Pressable

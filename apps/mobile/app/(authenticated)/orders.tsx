@@ -101,7 +101,11 @@ export default function OrdersScreen() {
             className="py-20"
             icon={
               <View className="h-20 w-20 items-center justify-center rounded-full bg-white/5">
-                <Ionicons name="receipt-outline" size={40} color="#777179" />
+                <Ionicons
+                  name="receipt-outline"
+                  size={40}
+                  color={colors.muted.foreground}
+                />
               </View>
             }
             title="Nenhum pedido por aqui"

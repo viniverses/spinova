@@ -30,7 +30,7 @@ export const SearchSuggestions = ({
       contentContainerStyle={{ paddingBottom: 120 }}
     >
       <View className="items-center py-6">
-        <View className="h-16 w-16 items-center justify-center rounded-full bg-[#2C2C2E]">
+        <View className="h-16 w-16 items-center justify-center rounded-full bg-surface-control">
           <Ionicons name="search" size={28} color={colors.primary.DEFAULT} />
         </View>
         <Text className="mt-4 font-sans text-xl text-white">
@@ -52,7 +52,7 @@ export const SearchSuggestions = ({
               onPress={() => onSuggestionPress(suggestion)}
               accessibilityRole="button"
               accessibilityLabel={`Buscar ${suggestion}`}
-              className="flex-row items-center gap-1.5 rounded-full bg-[#2C2C2E] px-4 py-2 active:opacity-75"
+              className="flex-row items-center gap-1.5 rounded-full bg-surface-control px-4 py-2 active:opacity-75"
             >
               <Ionicons name="search-outline" size={14} color="#A3A3A3" />
               <Text className="font-golos text-sm text-white">

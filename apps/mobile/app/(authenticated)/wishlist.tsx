@@ -94,7 +94,7 @@ export default function WishlistScreen() {
                 <Ionicons
                   name="cloud-offline-outline"
                   size={48}
-                  color="#777179"
+                  color={colors.muted.foreground}
                 />
               }
               title="Sua lista não carregou"
@@ -105,7 +105,13 @@ export default function WishlistScreen() {
           ) : (
             <EmptyState
               className="pb-28"
-              icon={<Ionicons name="heart-outline" size={52} color="#777179" />}
+              icon={
+                <Ionicons
+                  name="heart-outline"
+                  size={52}
+                  color={colors.muted.foreground}
+                />
+              }
               title="Sua lista está esperando"
               description="Toque no coração de um produto para encontrá-lo aqui depois."
             />

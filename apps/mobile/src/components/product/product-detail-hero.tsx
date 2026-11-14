@@ -7,6 +7,7 @@ import Carousel, {
   type ICarouselInstance,
 } from "react-native-reanimated-carousel";
 
+import { colors } from "@/lib/theme";
 import type { ProductImage } from "@/services/products";
 
 type ProductDetailHeroProps = {
@@ -103,7 +104,11 @@ export const ProductDetailHero = ({
                 />
               ) : (
                 <View className="flex-1 items-center justify-center">
-                  <Ionicons name="disc-outline" size={64} color="#777179" />
+                  <Ionicons
+                    name="disc-outline"
+                    size={64}
+                    color={colors.muted.foreground}
+                  />
                 </View>
               )}
             </View>

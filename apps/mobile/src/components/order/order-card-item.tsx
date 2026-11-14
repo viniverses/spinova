@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Pressable, Text, View } from "react-native";
 
+import { colors } from "@/lib/theme";
 import type { OrderItem } from "@/services/orders";
 import { formatCurrency, formatProductFormat } from "@/utils";
 
@@ -55,7 +56,7 @@ export function OrderCardItem({
             <Ionicons
               name="disc-outline"
               size={isDetail ? 26 : 24}
-              color="#777179"
+              color={colors.muted.foreground}
             />
           </View>
         )}

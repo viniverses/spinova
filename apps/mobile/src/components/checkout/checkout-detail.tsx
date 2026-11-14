@@ -19,7 +19,7 @@ export function CheckoutDetail({
 }: CheckoutDetailProps) {
   return (
     <View className="flex-row items-center">
-      <View className="h-[104px] w-[104px] shrink-0 items-center justify-center rounded-xl bg-[#272628]">
+      <View className="h-[104px] w-[104px] shrink-0 items-center justify-center rounded-xl bg-surface-elevated">
         <Ionicons name={icon} size={52} color="#F7F6F7" />
       </View>
 

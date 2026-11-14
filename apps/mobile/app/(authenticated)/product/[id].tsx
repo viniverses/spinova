@@ -20,6 +20,7 @@ import {
 import { ProductRecommendationsSection } from "@/components/product/product-recommendations-section";
 import { useAddToCart, useCartItemQuantity } from "@/hooks/use-cart";
 import { useProduct } from "@/hooks/use-products";
+import { colors } from "@/lib/theme";
 import { formatCurrency } from "@/utils";
 
 export default function ProductDetailScreen() {
@@ -43,7 +44,13 @@ export default function ProductDetailScreen() {
       <View className="flex-1 bg-black">
         <StatusBar style="light" />
         <ErrorState
-          icon={<Ionicons name="disc-outline" size={54} color="#777179" />}
+          icon={
+            <Ionicons
+              name="disc-outline"
+              size={54}
+              color={colors.muted.foreground}
+            />
+          }
           title="Não foi possível carregar este disco"
           onRetry={() => void product.refetch()}
         />
@@ -160,7 +167,7 @@ export default function ProductDetailScreen() {
           {addToCart.isError ? (
             <Text
               accessibilityRole="alert"
-              className="mt-2 font-golos text-xs text-[#FF9B96]"
+              className="mt-2 font-golos text-xs text-error"
             >
               Não foi possível atualizar o carrinho. Tente novamente.
             </Text>

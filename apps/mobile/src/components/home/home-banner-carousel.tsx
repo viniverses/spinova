@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { HOME_BANNERS } from "@/data/home-banners";
+import { colors } from "@/lib/theme";
 
 const BANNER_HEIGHT = 196;
 const BANNER_RADIUS = 10;
@@ -50,7 +51,7 @@ export const HomeBannerCarousel = () => {
                   alignSelf: "center",
                   borderRadius: BANNER_RADIUS,
                   overflow: "hidden",
-                  backgroundColor: "#171518",
+                  backgroundColor: colors.surface.base,
                 }}
               >
                 <Image

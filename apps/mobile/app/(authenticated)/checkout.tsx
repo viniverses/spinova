@@ -35,7 +35,7 @@ export default function CheckoutScreen() {
   });
 
   return (
-    <View className="flex-1 bg-[#151315]">
+    <View className="flex-1 bg-surface">
       <SafeAreaView
         className="flex-1"
         edges={["top", "bottom", "left", "right"]}
@@ -52,7 +52,7 @@ export default function CheckoutScreen() {
             onPress={() => router.back()}
             accessibilityRole="button"
             accessibilityLabel="Voltar ao carrinho"
-            className="mt-6 h-14 w-14 items-center justify-center rounded-xl bg-[#272628] active:opacity-75"
+            className="mt-6 h-14 w-14 items-center justify-center rounded-xl bg-surface-elevated active:opacity-75"
           >
             <Ionicons name="chevron-back" size={24} color="#D5D4D7" />
           </Pressable>

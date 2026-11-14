@@ -76,7 +76,11 @@ export const ProductCard = memo(
                 />
               ) : (
                 <View className="flex-1 items-center justify-center bg-[#242126]">
-                  <Ionicons name="disc-outline" size={44} color="#777179" />
+                  <Ionicons
+                    name="disc-outline"
+                    size={44}
+                    color={colors.muted.foreground}
+                  />
                 </View>
               )}
 
