@@ -1,6 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text } from "react-native";
+import { HeaderIconButton } from "@/components/navigation/header-icon-button";
+import { NavigationHeader } from "@/components/navigation/navigation-header";
 
 type HomeHeaderProps = {
   onPressSearch?: () => void;
@@ -18,27 +20,26 @@ export const HomeHeader = ({
   const isBackHeader = leadingVariant === "back";
 
   return (
-    <View className="flex-row items-center gap-3 px-4 py-3">
-      <Pressable
-        onPress={onPressLogo}
-        accessibilityRole="button"
-        accessibilityLabel={isBackHeader ? "Voltar" : "Spinova, menu"}
-        className={`h-12 w-12 items-center justify-center rounded-2xl overflow-hidden active:opacity-90 ${
-          isBackHeader ? "bg-[#2C2C2E]" : "bg-primary"
-        }`}
-      >
-        {isBackHeader ? (
-          <Ionicons name="chevron-back" size={22} color="#D4D4D4" />
-        ) : (
-          <Image
-            source={require("../../../assets/rounded-logo.svg")}
-            contentFit="contain"
-            style={{ width: "100%", height: "100%" }}
-            accessible={false}
-          />
-        )}
-      </Pressable>
-
+    <NavigationHeader
+      onPressBack={isBackHeader ? onPressLogo : undefined}
+      onPressHelp={onPressHelp}
+      leading={
+        isBackHeader ? undefined : (
+          <HeaderIconButton
+            variant="primary"
+            onPress={onPressLogo}
+            accessibilityLabel="Spinova, menu"
+          >
+            <Image
+              source={require("../../../assets/rounded-logo.svg")}
+              contentFit="contain"
+              style={{ width: "100%", height: "100%" }}
+              accessible={false}
+            />
+          </HeaderIconButton>
+        )
+      }
+    >
       <Pressable
         onPress={onPressSearch}
         accessibilityRole="button"
@@ -53,17 +54,6 @@ export const HomeHeader = ({
           Buscar artista ou álbum...
         </Text>
       </Pressable>
-
-      <Pressable
-        onPress={onPressHelp}
-        accessibilityRole="button"
-        accessibilityLabel="Ajuda"
-        className="h-12 w-12 items-center justify-center rounded-2xl bg-[#2C2C2E] active:opacity-90"
-      >
-        <View className="h-8 w-8 items-center justify-center rounded-full bg-white/10">
-          <Ionicons name="help" size={20} color="#D4D4D4" />
-        </View>
-      </Pressable>
-    </View>
+    </NavigationHeader>
   );
 };
