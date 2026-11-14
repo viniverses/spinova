@@ -7,7 +7,7 @@ import {
   View,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
-import { HOME_BANNERS } from "../../../data/home-banners";
+import { HOME_BANNERS } from "@/data/home-banners";
 
 const BANNER_HEIGHT = 196;
 const BANNER_RADIUS = 10;

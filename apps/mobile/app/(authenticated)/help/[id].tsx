@@ -11,8 +11,8 @@ import {
   Text,
   View,
 } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { getHelpTopicById, HELP_TOPICS } from "../../../data/help-content";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { getHelpTopicById, HELP_TOPICS } from "@/data/help-content";
 import { useHelp } from "@/providers/help-provider";
 
 export default function HelpDetailScreen() {

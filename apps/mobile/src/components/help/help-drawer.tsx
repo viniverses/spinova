@@ -10,7 +10,7 @@ import { useRouter } from "expo-router";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { getAllHelpTopics } from "../../../data/help-content";
+import { getAllHelpTopics } from "@/data/help-content";
 
 export type HelpDrawerProps = {
   isOpen?: boolean;
