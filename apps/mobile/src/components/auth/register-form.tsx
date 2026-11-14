@@ -3,8 +3,7 @@ import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
-import { useSession } from "../../hooks/use-auth";
-import { authClient } from "../../lib/auth-client";
+import { useSession, useSignUp } from "../../hooks/use-auth";
 import { colors } from "../../lib/theme";
 import {
   registerSchema,
@@ -16,6 +15,7 @@ import { PasswordVisibilityToggle } from "./password-visibility-toggle";
 export const RegisterForm = () => {
   const router = useRouter();
   const { refetch: refetchSession } = useSession();
+  const { mutateAsync: signUp } = useSignUp();
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const {
@@ -39,11 +39,7 @@ export const RegisterForm = () => {
       clearErrors("root");
 
       try {
-        const { error } = await authClient.signUp.email({
-          email: values.email.trim(),
-          password: values.password,
-          name: values.name.trim(),
-        });
+        const { error } = await signUp(values);
 
         if (error) {
           setError("root", {
@@ -58,7 +54,7 @@ export const RegisterForm = () => {
         setError("root", { message: "Algo deu errado. Tente novamente." });
       }
     },
-    [router, refetchSession, setError, clearErrors],
+    [router, refetchSession, signUp, setError, clearErrors],
   );
 
   const busy = isSubmitting;
