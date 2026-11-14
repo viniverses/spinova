@@ -10,14 +10,8 @@ import { Cart, CartItemEntity } from "../../domain/entities/index.ts";
 import type { ICartRepository } from "../../domain/repositories/cart.repository.interface.ts";
 
 import { RepositoryError } from "../../../../database/errors/repository.ts";
+import type { DatabaseTransaction } from "../../../../database/transaction.ts";
 import { ConcurrentCartUpdateError } from "../../domain/cart.errors.ts";
-
-
-type DatabaseTransaction = Parameters<typeof db.transaction>[0] extends (
-  tx: infer Transaction,
-) => unknown
-  ? Transaction
-  : never;
 
 export class DrizzleCartRepository implements ICartRepository {
   private async getOrCreateCartId(

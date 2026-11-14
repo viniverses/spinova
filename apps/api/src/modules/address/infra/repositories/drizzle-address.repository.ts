@@ -8,12 +8,7 @@ import type {
 } from "../../domain/address.types.ts";
 import type { IAddressRepository } from "../../domain/repositories/address.repository.interface.ts";
 import { RepositoryError } from "../../../../database/errors/repository.ts";
-
-type DatabaseTransaction = Parameters<typeof db.transaction>[0] extends (
-  tx: infer Transaction,
-) => unknown
-  ? Transaction
-  : never;
+import type { DatabaseTransaction } from "../../../../database/transaction.ts";
 
 export class DrizzleAddressRepository implements IAddressRepository {
   async findById(userId: string, addressId: string): Promise<Address | null> {
