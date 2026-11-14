@@ -1,22 +1,22 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
-import { useCallback, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { useCallback } from "react";
+import { useForm } from "react-hook-form";
+import { ActivityIndicator, Pressable, Text } from "react-native";
 import { useSession, useSignUp } from "../../hooks/use-auth";
 import { colors } from "../../lib/theme";
 import {
   registerSchema,
   type RegisterFormValues,
 } from "../../schemas/auth/register";
-import { TextInput } from "../ui/textinput";
-import { PasswordVisibilityToggle } from "./password-visibility-toggle";
+import { FormField } from "../ui/form-field";
+import { AuthErrorBanner } from "./auth-error-banner";
+import { PasswordField } from "./password-field";
 
 export const RegisterForm = () => {
   const router = useRouter();
   const { refetch: refetchSession } = useSession();
   const { mutateAsync: signUp } = useSignUp();
-  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const {
     control,
@@ -58,6 +58,7 @@ export const RegisterForm = () => {
   );
 
   const busy = isSubmitting;
+  const clearRootError = useCallback(() => clearErrors("root"), [clearErrors]);
 
   return (
     <>
@@ -68,137 +69,56 @@ export const RegisterForm = () => {
         Crie sua conta e descubra novos sons.
       </Text>
 
-      {errors.root?.message ? (
-        <View
-          className="mb-4 rounded-xl border border-error/30 bg-error/10 px-4 py-3"
-          accessibilityLiveRegion="polite"
-        >
-          <Text className="font-golos text-sm leading-5 text-error">
-            {errors.root.message}
-          </Text>
-        </View>
-      ) : null}
+      <AuthErrorBanner message={errors.root?.message} />
 
-      <View className="mb-4">
-        <Text className="mb-2 font-golos-semibold text-sm text-white/80">
-          Nome
-        </Text>
-        <Controller
-          control={control}
-          name="name"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder="Como podemos chamar você?"
-              placeholderTextColor="rgba(255,255,255,0.38)"
-              autoCapitalize="words"
-              autoCorrect={false}
-              autoComplete="name"
-              textContentType="name"
-              returnKeyType="next"
-              value={value}
-              onChangeText={(text) => {
-                onChange(text);
-                clearErrors("root");
-              }}
-              onBlur={onBlur}
-              editable={!busy}
-              accessibilityLabel="Nome"
-            />
-          )}
-        />
-        {errors.name?.message ? (
-          <Text
-            className="mt-2 font-golos text-sm text-error"
-            accessibilityLiveRegion="polite"
-          >
-            {errors.name.message}
-          </Text>
-        ) : null}
-      </View>
+      <FormField
+        control={control}
+        name="name"
+        label="Nome"
+        placeholder="Como podemos chamar você?"
+        autoCapitalize="words"
+        autoCorrect={false}
+        autoComplete="name"
+        textContentType="name"
+        returnKeyType="next"
+        disabled={busy}
+        containerClassName="mb-4"
+        accessibilityLabel="Nome"
+        onChangeText={clearRootError}
+      />
 
-      <View className="mb-4">
-        <Text className="mb-2 font-golos-semibold text-sm text-white/80">
-          E-mail
-        </Text>
-        <Controller
-          control={control}
-          name="email"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder="voce@exemplo.com"
-              placeholderTextColor="rgba(255,255,255,0.38)"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-              autoComplete="email"
-              textContentType="emailAddress"
-              returnKeyType="next"
-              value={value}
-              onChangeText={(text) => {
-                onChange(text);
-                clearErrors("root");
-              }}
-              onBlur={onBlur}
-              editable={!busy}
-              accessibilityLabel="E-mail"
-            />
-          )}
-        />
-        {errors.email?.message ? (
-          <Text
-            className="mt-2 font-golos text-sm text-error"
-            accessibilityLiveRegion="polite"
-          >
-            {errors.email.message}
-          </Text>
-        ) : null}
-      </View>
+      <FormField
+        control={control}
+        name="email"
+        label="E-mail"
+        placeholder="voce@exemplo.com"
+        keyboardType="email-address"
+        autoCapitalize="none"
+        autoCorrect={false}
+        autoComplete="email"
+        textContentType="emailAddress"
+        returnKeyType="next"
+        disabled={busy}
+        containerClassName="mb-4"
+        accessibilityLabel="E-mail"
+        onChangeText={clearRootError}
+      />
 
-      <View className="mb-6">
-        <Text className="mb-2 font-golos-semibold text-sm text-white/80">
-          Senha
-        </Text>
-        <Controller
-          control={control}
-          name="password"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <View className="relative">
-              <TextInput
-                placeholder="8+ caracteres, com letras e número"
-                placeholderTextColor="rgba(255,255,255,0.38)"
-                secureTextEntry={!passwordVisible}
-                autoComplete="new-password"
-                textContentType="newPassword"
-                returnKeyType="done"
-                value={value}
-                onChangeText={(text) => {
-                  onChange(text);
-                  clearErrors("root");
-                }}
-                onBlur={onBlur}
-                onSubmitEditing={handleSubmit(onSubmit)}
-                editable={!busy}
-                className="pr-16"
-                accessibilityLabel="Senha"
-                accessibilityHint="Use pelo menos oito caracteres, uma letra maiúscula, uma minúscula e um número"
-              />
-              <PasswordVisibilityToggle
-                visible={passwordVisible}
-                disabled={busy}
-                onPress={() => setPasswordVisible((visible) => !visible)}
-              />
-            </View>
-          )}
-        />
-        {errors.password?.message ? (
-          <Text
-            className="mt-2 font-golos text-sm text-error"
-            accessibilityLiveRegion="polite"
-          >
-            {errors.password.message}
-          </Text>
-        ) : null}
-      </View>
+      <PasswordField
+        control={control}
+        name="password"
+        label="Senha"
+        placeholder="8+ caracteres, com letras e número"
+        autoComplete="new-password"
+        textContentType="newPassword"
+        returnKeyType="done"
+        disabled={busy}
+        containerClassName="mb-6"
+        accessibilityLabel="Senha"
+        accessibilityHint="Use pelo menos oito caracteres, uma letra maiúscula, uma minúscula e um número"
+        onSubmitEditing={handleSubmit(onSubmit)}
+        onChangeText={clearRootError}
+      />
 
       <Pressable
         onPress={handleSubmit(onSubmit)}

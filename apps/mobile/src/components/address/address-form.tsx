@@ -1,74 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Controller, FormProvider, useFormContext } from "react-hook-form";
+import { FormProvider, useFormContext } from "react-hook-form";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 import { AddressCepField } from "@/components/address/address-cep-field";
-import { TextInput, type TextInputProps } from "@/components/ui/textinput";
+import { FormField } from "@/components/ui/form-field";
 import { useAddressEditor } from "@/hooks/use-address-editor";
 import type { AddressFormValues } from "@/schemas/address";
-
-type FieldName = Exclude<keyof AddressFormValues, "zipCode">;
-
-type AddressFieldProps = {
-  name: FieldName;
-  label: string;
-  placeholder: string;
-  accessibilityLabel: string;
-  disabled: boolean;
-  keyboardType?: TextInputProps["keyboardType"];
-  maxLength?: number;
-  autoCapitalize?: TextInputProps["autoCapitalize"];
-  transform?: (value: string) => string;
-};
-
-function AddressField({
-  name,
-  label,
-  placeholder,
-  accessibilityLabel,
-  disabled,
-  keyboardType,
-  maxLength,
-  autoCapitalize,
-  transform,
-}: AddressFieldProps) {
-  const {
-    control,
-    formState: { errors },
-  } = useFormContext<AddressFormValues>();
-
-  return (
-    <View>
-      <Text className="mb-2 font-golos-semibold text-sm text-white/80">
-        {label}
-      </Text>
-      <Controller
-        control={control}
-        name={name}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            placeholder={placeholder}
-            keyboardType={keyboardType}
-            maxLength={maxLength}
-            autoCapitalize={autoCapitalize}
-            value={value}
-            onChangeText={(text) =>
-              onChange(transform ? transform(text) : text)
-            }
-            onBlur={onBlur}
-            editable={!disabled}
-            accessibilityLabel={accessibilityLabel}
-          />
-        )}
-      />
-      {errors[name]?.message ? (
-        <Text className="mt-1 font-golos text-sm text-error">
-          {errors[name]?.message}
-        </Text>
-      ) : null}
-    </View>
-  );
-}
 
 function AddressFields({
   isBusy,
@@ -83,6 +20,8 @@ function AddressFields({
   lookupCep: (cep: string) => void;
   onSave: () => void;
 }) {
+  const { control } = useFormContext<AddressFormValues>();
+
   return (
     <View className="mt-6 gap-4">
       <AddressCepField
@@ -92,7 +31,8 @@ function AddressFields({
         onLookup={lookupCep}
       />
 
-      <AddressField
+      <FormField
+        control={control}
         name="street"
         label="Logradouro / Rua *"
         placeholder="Ex: Av. Paulista, Rua dos Discos"
@@ -102,7 +42,8 @@ function AddressFields({
 
       <View className="flex-row gap-3">
         <View className="flex-1">
-          <AddressField
+          <FormField
+            control={control}
             name="number"
             label="Número *"
             placeholder="123"
@@ -112,7 +53,8 @@ function AddressFields({
           />
         </View>
         <View className="flex-1">
-          <AddressField
+          <FormField
+            control={control}
             name="complement"
             label="Complemento"
             placeholder="Apto, Bloco (opcional)"
@@ -122,7 +64,8 @@ function AddressFields({
         </View>
       </View>
 
-      <AddressField
+      <FormField
+        control={control}
         name="neighborhood"
         label="Bairro"
         placeholder="Ex: Bela Vista, República"
@@ -132,7 +75,8 @@ function AddressFields({
 
       <View className="flex-row gap-3">
         <View className="flex-[2]">
-          <AddressField
+          <FormField
+            control={control}
             name="city"
             label="Cidade *"
             placeholder="São Paulo"
@@ -141,7 +85,8 @@ function AddressFields({
           />
         </View>
         <View className="flex-1">
-          <AddressField
+          <FormField
+            control={control}
             name="state"
             label="UF *"
             placeholder="SP"
@@ -154,7 +99,8 @@ function AddressFields({
         </View>
       </View>
 
-      <AddressField
+      <FormField
+        control={control}
         name="label"
         label="Identificador do endereço *"
         placeholder="Ex: Casa, Trabalho"
