@@ -1,11 +1,12 @@
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { ActivityIndicator, Keyboard, Text, View } from "react-native";
 import { ProductGrid } from "@/components/product/product-grid";
 import { SearchHeader } from "@/components/search/search-header";
 import { SearchSuggestions } from "@/components/search/search-suggestions";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
+import { useInfiniteList } from "@/hooks/use-infinite-list";
 import { useInfiniteProducts } from "@/hooks/use-infinite-products";
 import { colors } from "@/lib/theme";
 import { useHelp } from "@/providers/help-provider";
@@ -23,32 +24,23 @@ export default function SearchScreen() {
   const isSearching = trimmedQuery.length > 0;
   const isWaitingDebounce = query.trim() !== trimmedQuery;
 
-  const {
-    data,
-    isPending,
-    isError,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-    refetch,
-    isRefetching,
-  } = useInfiniteProducts(
+  const productsQuery = useInfiniteProducts(
     isSearching ? { search: trimmedQuery, pageSize: SEARCH_PAGE_SIZE } : {},
     { enabled: isSearching },
   );
 
-  const items = useMemo(
-    () => (isSearching ? data?.pages.flatMap((p) => p.data) ?? [] : []),
-    [data, isSearching],
-  );
+  const {
+    isPending,
+    isError,
+    isFetchingNextPage,
+    hasNextPage,
+    refetch,
+    isRefetching,
+  } = productsQuery;
 
-  const totalItems = data?.pages[0]?.pagination.totalItems;
-
-  const handleEndReached = () => {
-    if (hasNextPage && !isFetchingNextPage) {
-      void fetchNextPage();
-    }
-  };
+  const { items, totalItems, handleEndReached } = useInfiniteList(productsQuery, {
+    enabled: isSearching,
+  });
 
   const handleSuggestionPress = (suggestion: string) => {
     Keyboard.dismiss();

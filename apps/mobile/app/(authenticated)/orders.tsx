@@ -14,35 +14,28 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { LoadingState } from "@/components/ui/loading-state";
 import { OrderCard } from "@/components/order/order-card";
+import { useInfiniteList } from "@/hooks/use-infinite-list";
 import { useOrders } from "@/hooks/use-orders";
 import { colors } from "@/lib/theme";
 
 export default function OrdersScreen() {
   const router = useRouter();
+  const query = useOrders();
   const {
     data,
     isLoading,
     isError,
     isFetchingNextPage,
     isFetchNextPageError,
-    hasNextPage,
     fetchNextPage,
     refetch,
     isRefetching,
-  } = useOrders();
-  const orders = data?.pages.flatMap((page) => page.data) ?? [];
-  const totalItems = data?.pages[0]?.pagination.totalItems ?? 0;
-
-  const handleEndReached = () => {
-    if (
-      hasNextPage &&
-      !isFetchingNextPage &&
-      !isFetchNextPageError &&
-      !isRefetching
-    ) {
-      void fetchNextPage();
-    }
-  };
+  } = query;
+  const {
+    items: orders,
+    totalItems = 0,
+    handleEndReached,
+  } = useInfiniteList(query);
 
   if (isLoading) {
     return (

@@ -1,10 +1,10 @@
 import { StatusBar } from "expo-status-bar";
 import { useLocalSearchParams } from "expo-router";
-import { useMemo } from "react";
 import { View } from "react-native";
 import { findCollection } from "@/constants/collections";
 import { ProductGrid } from "@/components/product/product-grid";
 import { ProductListHeader } from "@/components/product/product-list-header";
+import { useInfiniteList } from "@/hooks/use-infinite-list";
 import { useInfiniteProducts } from "@/hooks/use-infinite-products";
 
 const PAGE_SIZE = 20;
@@ -14,28 +14,20 @@ export default function CollectionScreen() {
 
   const config = findCollection(id ?? "");
 
+  const query = useInfiniteProducts(
+    config ? { ...config.params, pageSize: PAGE_SIZE } : {},
+  );
+
   const {
-    data,
     isPending,
     isError,
     isFetchingNextPage,
     hasNextPage,
-    fetchNextPage,
     refetch,
     isRefetching,
-  } = useInfiniteProducts(
-    config ? { ...config.params, pageSize: PAGE_SIZE } : {},
-  );
+  } = query;
 
-  const items = useMemo(() => data?.pages.flatMap((p) => p.data) ?? [], [data]);
-
-  const totalItems = data?.pages[0]?.pagination.totalItems;
-
-  const handleEndReached = () => {
-    if (hasNextPage && !isFetchingNextPage) {
-      void fetchNextPage();
-    }
-  };
+  const { items, totalItems, handleEndReached } = useInfiniteList(query);
 
   const title = config?.label ?? "Produtos";
   const emptyMessage = config?.emptyMessage ?? "Nenhum produto encontrado.";
