@@ -3,6 +3,15 @@ import { authClient } from "../lib/auth-client";
 
 export const useSession = authClient.useSession;
 
+export const useSignIn = () =>
+  useMutation({
+    mutationFn: (values: { email: string; password: string }) =>
+      authClient.signIn.email({
+        email: values.email.trim().toLowerCase(),
+        password: values.password,
+      }),
+  });
+
 export const useSignUp = () =>
   useMutation({
     mutationFn: (values: { email: string; password: string; name: string }) =>

@@ -1,10 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { ActivityIndicator, Pressable, Text } from "react-native";
-import { useSession } from "../../hooks/use-auth";
-import { authClient } from "../../lib/auth-client";
+import { useSession, useSignIn } from "../../hooks/use-auth";
 import { colors } from "../../lib/theme";
 import { loginSchema, type LoginFormValues } from "../../schemas/auth/login";
 import { FormField } from "../ui/form-field";
@@ -14,7 +13,7 @@ import { PasswordField } from "./password-field";
 export const LoginForm = () => {
   const router = useRouter();
   const { refetch: refetchSession } = useSession();
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const { mutateAsync: signIn } = useSignIn();
 
   const {
     control,
@@ -34,16 +33,11 @@ export const LoginForm = () => {
   const onSubmit = useCallback(
     async (values: LoginFormValues) => {
       clearErrors("root");
-      setIsLoggingIn(true);
 
       try {
-        const { error } = await authClient.signIn.email({
-          email: values.email.trim().toLowerCase(),
-          password: values.password,
-        });
+        const { error } = await signIn(values);
 
         if (error) {
-          setIsLoggingIn(false);
           setError("root", {
             message:
               error.message ||
@@ -56,16 +50,15 @@ export const LoginForm = () => {
         await refetchSession();
         router.replace("/home");
       } catch {
-        setIsLoggingIn(false);
         setError("root", {
           message: "Não foi possível conectar ao servidor. Tente novamente.",
         });
       }
     },
-    [refetchSession, setError, clearErrors, router],
+    [refetchSession, signIn, setError, clearErrors, router],
   );
 
-  const busy = isSubmitting || isLoggingIn;
+  const busy = isSubmitting;
   const clearRootError = useCallback(() => clearErrors("root"), [clearErrors]);
 
   return (
