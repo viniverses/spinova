@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   ActivityIndicator,
   Pressable,
@@ -7,8 +6,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { authClient } from "@/lib/auth-client";
-import { useSession } from "@/hooks/use-auth";
+import { useLogout, useSession } from "@/hooks/use-auth";
 import { colors } from "@/lib/theme";
 import { ProfileActionsMenu } from "@/components/profile/profile-actions-menu";
 
@@ -16,20 +14,7 @@ const SCROLL_BOTTOM_PADDING = 112;
 
 export default function ProfileScreen() {
   const { data: session } = useSession();
-  const queryClient = useQueryClient();
-
-  const logout = useMutation({
-    mutationFn: async () => {
-      const { error } = await authClient.signOut();
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.clear();
-    },
-    onError: (error) => {
-      console.error("Erro ao deslogar:", error);
-    },
-  });
+  const logout = useLogout();
 
   return (
     <View className="flex-1 bg-black">
