@@ -31,7 +31,7 @@ export default function WishlistScreen() {
 
       <FlatList
         data={items}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.product.id}
         numColumns={2}
         showsVerticalScrollIndicator={false}
         columnWrapperStyle={{ gap: GRID_GAP }}
@@ -43,7 +43,7 @@ export default function WishlistScreen() {
         }}
         refreshControl={
           <RefreshControl
-            refreshing={wishlist.isRefetching}
+            refreshing={wishlist.isRefreshing}
             onRefresh={() => void wishlist.refetch()}
             tintColor={colors.primary.DEFAULT}
             colors={[colors.primary.DEFAULT]}
