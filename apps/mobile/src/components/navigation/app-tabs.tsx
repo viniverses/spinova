@@ -57,15 +57,15 @@ export const AppTabs = () => (
         }}
       />
     ))}
-    <Tabs.Screen name="search" options={{ href: null }} />
-    <Tabs.Screen name="collection/[id]" options={{ href: null }} />
-    <Tabs.Screen name="product/[id]" options={{ href: null }} />
-    <Tabs.Screen name="cart" options={{ href: null }} />
-    <Tabs.Screen name="checkout" options={{ href: null }} />
-    <Tabs.Screen name="address" options={{ href: null }} />
-    <Tabs.Screen name="order-complete" options={{ href: null }} />
-    <Tabs.Screen name="orders" options={{ href: null }} />
-    <Tabs.Screen name="order/[id]" options={{ href: null }} />
-    <Tabs.Screen name="help/[id]" options={{ href: null }} />
+    <Tabs.Screen name="search" />
+    <Tabs.Screen name="collection/[id]" />
+    <Tabs.Screen name="product/[id]" />
+    <Tabs.Screen name="cart" />
+    <Tabs.Screen name="checkout" />
+    <Tabs.Screen name="address" />
+    <Tabs.Screen name="order-complete" />
+    <Tabs.Screen name="orders" />
+    <Tabs.Screen name="order/[id]" />
+    <Tabs.Screen name="help/[id]" />
   </Tabs>
 );

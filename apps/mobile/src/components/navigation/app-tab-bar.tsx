@@ -25,7 +25,8 @@ const TAB_ICONS = {
 
 export const AppTabBar = ({
   state,
-  navigation,
+  emitter,
+  navigateToTab,
   tabs,
 }: AppTabBarPropsWithTabs) => {
   const insets = useSafeAreaInsets();
@@ -41,14 +42,14 @@ export const AppTabBar = ({
 
     if (!route) return;
 
-    const event = navigation.emit({
+    const event = emitter.emit({
       type: "tabPress",
       target: route.key,
       canPreventDefault: true,
     });
 
     if (activeRouteName !== name && !event.defaultPrevented) {
-      navigation.navigate(route.name);
+      navigateToTab(route.key);
     }
   };
 
